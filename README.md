@@ -15,7 +15,7 @@ now run "flutter doctor"
 Before move farword make sure all the ticks are green. 
 
 ## Repo Clone:	
-Copy and Paste Github URL “https://github.com/RazaNorgic/VDOTOK-Android-chat”
+Copy and Paste Github URL “https://github.com/vdotok/Flutter-one2one”
 	Click on “Code” button
 	From HTTPS section copy repo URL
 	Open terminal and go to that directory where you want to clone project.
