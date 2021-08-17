@@ -8,7 +8,9 @@ import 'constant.dart';
 class NoContactsScreen extends StatelessWidget {
   AuthProvider authProvider;
   final refreshList;
-  NoContactsScreen({this.refreshList});
+  final bool state;
+  final bool isSocketConnect;
+  NoContactsScreen({this.authProvider,this.refreshList, this.state, this.isSocketConnect});
 
   @override
   Widget build(BuildContext context) {
@@ -123,24 +125,40 @@ class NoContactsScreen extends StatelessWidget {
                   ))),
             ),
             SizedBox(height: 40),
-            SizedBox(
-                width: 105,
-                child: FlatButton(
-                  onPressed: () {
-                    authProvider.logout();
-                    // emitter.disconnect();
-                  },
-                  child: Text(
-                    "LOG OUT",
-                    style: TextStyle(
-                        fontSize: 14.0,
-                        fontFamily: primaryFontFamily,
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w700,
-                        color: logoutButtonColor,
-                        letterSpacing: 0.90),
-                  ),
-                ))
+            Row(
+              children: [
+                SizedBox(
+                    width: 105,
+                    child: FlatButton(
+                      onPressed: () {
+                        authProvider.logout();
+                        // emitter.disconnect();
+                      },
+                      child: Text(
+                        "LOG OUT",
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            fontFamily: primaryFontFamily,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w700,
+                            color: logoutButtonColor,
+                            letterSpacing: 0.90),
+                      ),
+                    )),
+                Container(
+                  height: 10,
+                  width: 10,
+                  decoration: BoxDecoration(
+                      color:
+                          state && isSocketConnect ? Colors.green : Colors.red,
+                      shape: BoxShape.circle),
+                )
+              ],
+                
+            ),
+            Container(
+                  padding: const EdgeInsets.only(bottom: 60),
+                  child: Text(authProvider.getUser.full_name))
           ],
         ),
       ),

@@ -162,24 +162,7 @@ class _HomeState extends State<Home> {
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
     print("this is user data auth ${_auth.getUser}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
-// if(widget.state==true && !isSocketConnect)
-// {
-//   signalingClient.connect();
-//    //if(widget.state==true)
-//     signalingClient.onConnect = (res) {
-//       print("onConnect $res");
-//       setState(() {
-//         isSocketConnect = true;
-//          print("this is onconnect socket $isSocketConnect");
-//       });
-//       signalingClient.register(_auth.getUser.toJson());
-//       // signalingClient.register(user);
-//     };
-// }
-    // _contactBloc = BlocProvider.of<ContactBloc>(context);
-    // _loginBloc = BlocProvider.of<LoginBloc>(context);
-    // _callBloc = BlocProvider.of<CallBloc>(context);
-    // _contactBloc.add(GetContactEvent(widget.user.auth_token));
+
     _contactProvider.getContacts(_auth.getUser.auth_token);
     // signalingClient.closeSocket();
     signalingClient.connect();
@@ -461,7 +444,10 @@ class _HomeState extends State<Home> {
                       else if (contact.contactState == ContactStates.Success) {
                         if (contact.contactList.users == null)
                           return NoContactsScreen(
+                            state: widget.state,
+                            isSocketConnect: isSocketConnect,
                             refreshList: renderList,
+                            authProvider: _auth,
                           );
                         else
                           return contactList(contact.contactList);
@@ -594,6 +580,7 @@ class _HomeState extends State<Home> {
                   stopRinging();
                   signalingClient.declineCall(
                       _auth.getUser.ref_id, registerRes["mcToken"]);
+                 
                   // _callBloc.add(CallNewEvent());
                   _callProvider.initial();
                   // signalingClient.onDeclineCall(widget.registerUser);
@@ -623,55 +610,10 @@ class _HomeState extends State<Home> {
         ),
       ]);
     }));
-    //   floatingActionButton: Padding(
-    //     padding: const EdgeInsets.only(bottom: 70),
-    //     child: Row(
-    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //       children: <Widget>[
-    //         Container(
-    //           // width: 80,
-    //           // height: 80,
-    //           child: FloatingActionButton(
-    //             backgroundColor: redColor,
-    //             onPressed: () {
-    //               stopRinging();
-    //               signalingClient.onDeclineCall(_auth.getUser.ref_id);
-    //               // _callBloc.add(CallNewEvent());
-    //               _callProvider.initial();
-    //               // signalingClient.onDeclineCall(widget.registerUser);
-    //               // setState(() {
-    //               //   _isCalling = false;
-    //               // });
-    //             },
-    //             child: Icon(Icons.clear),
-    //           ),
-    //         ),
-    //         Container(
-    //           // width: 80,
-    //           // height: 80,
-    //           child: FloatingActionButton(
-    //             backgroundColor: Colors.green,
-    //             onPressed: () {
-    //               stopRinging();
-    //               signalingClient.createAnswer(incomingfrom);
-    //               // setState(() {
-    //               //   _isCalling = true;
-    //               //   incomingfrom = null;
-    //               // });
-    //               // FlutterRingtonePlayer.stop();
-    //               // Vibration.cancel();
-    //             },
-    //             child: Icon(Icons.phone),
-    //           ),
-    //         )
-    //       ],
-    //     ),
-    //   ),
-    //   floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    // );
   }
 
   Scaffold callDial() {
+    print("remoteVideoFlag is $remoteVideoFlag");
     print(
         "ths is width ${MediaQuery.of(context).size.height}, ${MediaQuery.of(context).size.width}");
     return Scaffold(
@@ -727,7 +669,6 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-
             Container(
                 padding: EdgeInsets.only(top: 120),
                 alignment: Alignment.center,
@@ -759,61 +700,6 @@ class _HomeState extends State<Home> {
                             fontSize: 24),
                       )
                     ])),
-            // Container(
-            //   height: 79,
-            //   //width: MediaQuery.of(context).size.width,
-            //   padding: EdgeInsets.only(
-            //     left: 20,
-            //   ),
-            //   child: Column(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       Text(
-            //         callTo,
-            //         style: TextStyle(
-            //             fontSize: 14,
-            //             decoration: TextDecoration.none,
-            //             fontFamily: secondaryFontFamily,
-            //             fontWeight: FontWeight.w400,
-            //             fontStyle: FontStyle.normal,
-            //             color: darkBlackColor),
-            //       ),
-            //       Container(
-            //         padding: EdgeInsets.only(
-            //           right: 25,
-            //         ),
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //           crossAxisAlignment: CrossAxisAlignment.end,
-            //           children: [
-            //             Text(
-            //               'Dialing...',
-            //               style: TextStyle(
-            //                   fontFamily: primaryFontFamily,
-            //                   // background: Paint()..color = yellowColor,
-            //                   color: darkBlackColor,
-            //                   decoration: TextDecoration.none,
-            //                   fontWeight: FontWeight.w700,
-            //                   fontStyle: FontStyle.normal,
-            //                   fontSize: 24),
-            //             ),
-            //             // Text(
-            //             //   "00:00",
-            //             //   style: TextStyle(
-            //             //       decoration: TextDecoration.none,
-            //             //       fontSize: 14,
-            //             //       fontFamily: secondaryFontFamily,
-            //             //       fontWeight: FontWeight.w400,
-            //             //       fontStyle: FontStyle.normal,
-            //             //       color: Colors.black),
-            //             // ),
-            //           ],
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             Container(
               padding: EdgeInsets.only(bottom: 56),
               alignment: Alignment.bottomCenter,
@@ -824,43 +710,12 @@ class _HomeState extends State<Home> {
                 onTap: () {
                   signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
                   _callProvider.initial();
-                  // _callBloc.add(CallNewEvent());
-                  // signalingClient.onDeclineCall(widget.user.ref_id);
-                  // setState(() {
-                  //   _isCalling = false;
-                  // });
                 },
               ),
             ),
           ],
         );
       }),
-      // floatingActionButton: Padding(
-      //   padding: const EdgeInsets.only(bottom: 70),
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //     children: <Widget>[
-      //       Container(
-      //         // width: 80,
-      //         // height: 80,
-      //         child: FloatingActionButton(
-      //           backgroundColor: redColor,
-      //           onPressed: () {
-      //             signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
-      //             _callProvider.initial();
-      //             // _callBloc.add(CallNewEvent());
-      //             // signalingClient.onDeclineCall(widget.user.ref_id);
-      //             // setState(() {
-      //             //   _isCalling = false;
-      //             // });
-      //           },
-      //           child: Icon(Icons.clear),
-      //         ),
-      //       )
-      //     ],
-      //   ),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -869,16 +724,6 @@ class _HomeState extends State<Home> {
       body: OrientationBuilder(builder: (context, orientation) {
         return Container(
           child: Stack(children: <Widget>[
-            // Positioned(
-            //     left: 0.0,
-            //     right: 0.0,
-            //     top: 0.0,
-            //     bottom: 0.0,
-            //     child: Container(
-            //       margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-            //       width: MediaQuery.of(context).size.width,
-            //       height: MediaQuery.of(context).size.height,
-            //       child:
             meidaType == MediaType.video
                 ? remoteVideoFlag
                     ? RTCVideoView(_remoteRenderer,
@@ -1134,20 +979,6 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    // Flexible(
-                    //   child: new Container(
-                    //       key: new Key("local"),
-                    //       margin: new EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
-                    //       decoration: new BoxDecoration(color: Colors.black),
-                    //       child: new RTCVideoView(_localRenderer)),
-                    // ),
-                    //     Container(
-                    //   width: orientation == Orientation.portrait ? 90.0 : 120.0,
-                    //   height: orientation == Orientation.portrait ? 120.0 : 90.0,
-                    //   child: RTCVideoView(_localRenderer,
-                    //       key: forsmallView, mirror: true),
-                    //   decoration: BoxDecoration(color: Colors.red),
-                    // ),
                   )
                 : Container(),
 
@@ -1183,34 +1014,15 @@ class _HomeState extends State<Home> {
                           ],
                         )
                       : SizedBox(),
-                  // : Container(),
 
-                  // FloatingActionButton(
-                  //   backgroundColor:
-                  //       switchSpeaker ? chatRoomColor : Colors.white,
-                  //   elevation: 0.0,
-                  //   onPressed: () {
-                  //     setState(() {
-                  //       switchSpeaker = !switchSpeaker;
-                  //     });
-                  //     signalingClient.switchSpeaker(switchSpeaker);
-                  //   },
-                  //   child: switchSpeaker
-                  //       ? Icon(Icons.volume_up)
-                  //       : Icon(
-                  //           Icons.volume_off,
-                  //           color: chatRoomColor,
-                  //         ),
-                  // ),
-                  // SizedBox(
-                  //   width: 20,
-                  // ),
                   GestureDetector(
                     child: SvgPicture.asset(
                       'assets/end.svg',
                     ),
                     onTap: () {
+                       remoteVideoFlag = true;
                       stopCall();
+                      
                       // setState(() {
                       //   _isCalling = false;
                       // });
@@ -1238,66 +1050,6 @@ class _HomeState extends State<Home> {
           ]),
         );
       }),
-
-      // floatingActionButton: Padding(
-      //   padding: const EdgeInsets.only(bottom: 50),
-      //   child: Row(
-      //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //       children: <Widget>[
-      //         FloatingActionButton(
-      //           backgroundColor: !switchMute ? redColor : Colors.grey,
-      //           onPressed: () {
-      //             final bool enabled = signalingClient.muteMic();
-      //             print("this is enabled $enabled");
-      //             setState(() {
-      //               switchMute = enabled;
-      //             });
-      //           },
-      //           child: !switchMute ? Icon(Icons.mic_off) : Icon(Icons.mic),
-      //         ),
-      //         FloatingActionButton(
-      //           backgroundColor: switchSpeaker ? redColor : Colors.grey,
-      //           onPressed: () {
-      //             setState(() {
-      //               switchSpeaker = !switchSpeaker;
-      //             });
-      //             signalingClient.switchSpeaker(switchSpeaker);
-      //           },
-      //           child: Icon(Icons.volume_up),
-      //         ),
-      //         FloatingActionButton(
-      //           backgroundColor: !enableCamera ? redColor : Colors.grey,
-      //           onPressed: () {
-      // setState(() {
-      //   enableCamera = !enableCamera;
-      // });
-      // signalingClient.enableCamera(enableCamera);
-      //           },
-      //           child: Icon(Icons.videocam_off),
-      //         ),
-      //         FloatingActionButton(
-      //           backgroundColor: Colors.grey,
-      //           onPressed: () {
-      //             signalingClient.switchCamera();
-      //           },
-      //           child: Icon(Icons.loop),
-      //         ),
-      //         Container(
-      //           // width: 80,
-      //           // height: 80,
-      //           child: FloatingActionButton(
-      //             onPressed: () {
-      // stopCall();
-      // // setState(() {
-      // //   _isCalling = false;
-      // // });
-      //             },
-      //             child: Icon(Icons.phone),
-      //           ),
-      //         )
-      //       ]),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -1513,7 +1265,9 @@ class _HomeState extends State<Home> {
                     height: 10,
                     width: 10,
                     decoration: BoxDecoration(
-                        color: widget.state && isSocketConnect? Colors.green : Colors.red,
+                        color: widget.state && isSocketConnect
+                            ? Colors.green
+                            : Colors.red,
                         shape: BoxShape.circle),
                   )
                 ],
@@ -1526,264 +1280,5 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
-    // return Container(
-    //   padding: EdgeInsets.all(10),
-    //   child: Column(
-    //     children: [
-    //       Card(
-    //         child: TextFormField(
-    //           controller: _searchController,
-    //           onChanged: (value) {
-    //             onSearch(value);
-    //           },
-    //           validator: (value) =>
-    //               value.isEmpty ? "Field cannot be empty." : null,
-    //           decoration: new InputDecoration(
-    //             prefixIcon: Icon(Icons.search),
-    //             suffixIcon: IconButton(
-    //               icon: Icon(Icons.clear),
-    //               onPressed: () {
-    //                 setState(() {
-    //                   _searchController.clear();
-    //                 });
-    //               },
-    //             ),
-    //             // contentPadding: EdgeInsets.only(left: 10),
-    //             enabledBorder: OutlineInputBorder(
-    //               borderSide:
-    //                   BorderSide(color: textfieldBorderColor, width: 1.0),
-    //             ),
-    //             focusedBorder: OutlineInputBorder(
-    //               borderSide: BorderSide(color: redColor, width: 2.0),
-    //             ),
-    //             hintText: "Search... ",
-    //             hintStyle: TextStyle(
-    //                 fontSize: 14.0,
-    //                 fontWeight: FontWeight.w300,
-    //                 fontFamily: font_Family,
-    //                 fontStyle: FontStyle.normal,
-    //                 color: placeholderTextColor),
-    //           ),
-    //         ),
-    //       ),
-    //       Expanded(
-    //         child: ListView.builder(
-    //           cacheExtent: 9999,
-    //           itemCount: _searchController.text.isEmpty
-    //               ? state.users.length
-    //               : _filteredList.length,
-    //           itemBuilder: (context, position) {
-    //             var element = _searchController.text.isEmpty
-    //                 ? state.users[position]
-    //                 : _filteredList[position];
-    //             return Card(
-    //               child: ListTile(
-    //                 leading: Container(
-    //                   child: Icon(
-    //                     Icons.person,
-    //                     color: redColor,
-    //                     size: 30,
-    //                   ),
-    //                 ),
-    //                 title: Text(element.full_name),
-    //                 // subtitle: Text(state.contactList.users[position].ref_id),
-    //                 trailing: Row(
-    //                   mainAxisSize: MainAxisSize.min,
-    //                   children: [
-    //                     IconButton(
-    //                         icon: Icon(
-    //                           Icons.videocam,
-    //                           color: redColor,
-    //                         ),
-    //                         onPressed: () {
-    //                           _startCall(element.ref_id, false);
-    //                           setState(() {
-    //                             callTo = element.full_name;
-    //                           });
-    //                         }),
-    //                     kIsWeb
-    //                         ? IconButton(
-    //                             icon: Icon(
-    //                               Icons.screen_share,
-    //                               color: redColor,
-    //                             ),
-    //                             onPressed: () {
-    //                               _startCall(element.ref_id, true);
-    //                               setState(() {
-    //                                 callTo = element.full_name;
-    //                               });
-    //                             })
-    //                         : !Platform.isIOS
-    //                             ? IconButton(
-    //                                 icon: Icon(
-    //                                   Icons.screen_share,
-    //                                   color: redColor,
-    //                                 ),
-    //                                 onPressed: () {
-    //                                   _startCall(element.ref_id, true);
-    //                                   setState(() {
-    //                                     callTo = element.full_name;
-    //                                   });
-    //                                 })
-    //                             : Container(),
-    //                   ],
-    //                 ),
-
-    //                 //   IconButton(
-    //                 //       icon: Icon(
-    //                 //         Icons.videocam,
-    //                 //         color: redColor,
-    //                 //       ),
-    //                 //       onPressed: () {
-    //                 //         _startCall(element.ref_id);
-    //                 //         setState(() {
-    //                 //           callTo = element.username;
-    //                 //         });
-    //                 //       }),
-    //               ),
-    //             );
-    //           },
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
-
-  // Widget build(BuildContext context) {
-  //   return incomingfrom == null
-  //       ? Scaffold(
-  //           appBar: AppBar(
-  //             title: Text("Home"),
-  //           ),
-  //           body: Container(
-  //             child: Column(
-  //               children: [
-  //                 videoRenderers(),
-  //                 RaisedButton(
-  //                   onPressed: _startCall,
-  //                   child: Text("start call"),
-  //                 )
-  //                 // offerAndAnswerButtons(),
-  //                 // sdpCandidatesTF(),
-  //                 // sdpCandidateButtons(),
-  //                 // registerUser(),
-  //                 // calltoUser(),
-  //               ],
-  //             ),
-  //           ),
-  //         )
-  //       : Scaffold(
-  //           body: OrientationBuilder(builder: (context, orientation) {
-  //             return Container(
-  //               child: Stack(children: <Widget>[
-  //                 Positioned(
-  //                     left: 0.0,
-  //                     right: 0.0,
-  //                     top: 0.0,
-  //                     bottom: 0.0,
-  //                     child: Container(
-  //                       margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-  //                       width: MediaQuery.of(context).size.width,
-  //                       height: MediaQuery.of(context).size.height,
-  //                       child: RTCVideoView(
-  //                         _localRenderer,
-  //                         mirror: true,
-  //                       ),
-  //                       // decoration: BoxDecoration(color: Colors.red[100]),
-  //                     )),
-  //                 Positioned(
-  //                   left: 0.0,
-  //                   top: 0.0,
-  //                   child: Container(
-  //                     width: MediaQuery.of(context).size.width,
-  //                     height:
-  //                         orientation == Orientation.portrait ? 120.0 : 120.0,
-  //                     child: Column(
-  //                       mainAxisAlignment: MainAxisAlignment.end,
-  //                       children: [
-  //                         Text(
-  //                           incomingfrom,
-  //                           style: TextStyle(
-  //                               color: Colors.red,
-  //                               fontSize: 30,
-  //                               fontWeight: FontWeight.w700),
-  //                         ),
-  //                         SizedBox(
-  //                           height: 10,
-  //                         ),
-  //                         Text(
-  //                           "Calling...",
-  //                           style: TextStyle(
-  //                             color: Colors.white,
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     // decoration: BoxDecoration(color: Colors.black54),
-  //                   ),
-  //                 ),
-  //               ]),
-  //             );
-  //           }),
-  //           floatingActionButton: Padding(
-  //             padding: const EdgeInsets.only(bottom: 50),
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //               children: <Widget>[
-  //                 Container(
-  //                   width: 80,
-  //                   height: 80,
-  //                   child: FloatingActionButton(
-  //                     backgroundColor: redColor,
-  //                     onPressed: () {
-  //                       // signalingClient.onDeclineCall(widget.registerUser);
-  //                       // setState(() {
-  //                       //   _isCalling = false;
-  //                       // });
-  //                     },
-  //                     child: Icon(Icons.clear),
-  //                   ),
-  //                 ),
-  //                 Container(
-  //                   width: 80,
-  //                   height: 80,
-  //                   child: FloatingActionButton(
-  //                     backgroundColor: Colors.green,
-  //                     onPressed: () {
-  //                       signalingClient.createAnswer(incomingfrom);
-  //                       setState(() {
-  //                         // _isCalling = true;
-  //                         incomingfrom = null;
-  //                       });
-  //                       // FlutterRingtonePlayer.stop();
-  //                       // Vibration.cancel();
-  //                     },
-  //                     child: Icon(Icons.phone),
-  //                   ),
-  //                 )
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  // }
-
-  // SizedBox videoRenderers() => SizedBox(
-  //     height: 210,
-  //     child: Row(children: [
-  //       Flexible(
-  //         child: new Container(
-  //             key: new Key("local"),
-  //             margin: new EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
-  //             decoration: new BoxDecoration(color: Colors.white),
-  //             child: new RTCVideoView(_localRenderer)),
-  //       ),
-  //       Flexible(
-  //         child: new Container(
-  //             key: new Key("Remote"),
-  //             margin: new EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
-  //             decoration: new BoxDecoration(color: Colors.white),
-  //             child: new RTCVideoView(_remoteRenderer)),
-  //       )
-  //     ]));
 }
