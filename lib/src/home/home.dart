@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:vdotok_stream_example/noContactsScreen.dart';
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
 import 'package:provider/provider.dart';
+import 'package:vdotok_stream_example/src/core/config/config.dart';
 import 'package:vibration/vibration.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 
@@ -18,6 +20,18 @@ import '../core/models/contactList.dart';
 import '../core/providers/auth.dart';
 import '../core/providers/call_provider.dart';
 import '../core/providers/contact_provider.dart';
+
+String pressDuration = "";
+bool remoteVideoFlag = true;
+bool isDeviceConnected = false;
+SignalingClient signalingClient = SignalingClient.instance;
+bool enableCamera = true;
+bool switchMute = true;
+bool switchSpeaker = true;
+RTCVideoRenderer localRenderer = new RTCVideoRenderer();
+RTCVideoRenderer remoteRenderer = new RTCVideoRenderer();
+MediaStream local;
+MediaStream remote;
 
 class Home extends StatefulWidget {
   bool state;
@@ -33,12 +47,15 @@ class _HomeState extends State<Home> {
   bool isConnect = false;
   DateTime _time;
   Timer _ticker;
-  String _pressDuration = "";
+
+  bool sockett = true;
+  bool isSocketregis = false;
+  bool isPushed = false;
   void _updateTimer() {
     final duration = DateTime.now().difference(_time);
     final newDuration = _formatDuration(duration);
     setState(() {
-      _pressDuration = newDuration;
+      pressDuration = newDuration;
     });
   }
 
@@ -59,27 +76,28 @@ class _HomeState extends State<Home> {
     ;
   }
 
-  SignalingClient signalingClient = SignalingClient.instance;
+  // SignalingClient signalingClient = SignalingClient.instance;
   RTCPeerConnection _peerConnection;
   RTCPeerConnection _answerPeerConnection;
   MediaStream _localStream;
-  RTCVideoRenderer _localRenderer = new RTCVideoRenderer();
-  RTCVideoRenderer _remoteRenderer = new RTCVideoRenderer();
+
   GlobalKey forsmallView = new GlobalKey();
   GlobalKey forlargView = new GlobalKey();
   GlobalKey forDialView = new GlobalKey();
   var registerRes;
+  bool isdev = true;
   String incomingfrom;
   // ContactBloc _contactBloc;
   // CallBloc _callBloc;
   // LoginBloc _loginBloc;
   CallProvider _callProvider;
   AuthProvider _auth;
-  bool enableCamera = true;
-  bool switchMute = true;
-  bool switchSpeaker = true;
+
   String callTo = "";
   List _filteredList = [];
+  bool iscalloneto1 = false;
+  bool inCall = false;
+  bool onRemoteStream = false;
   final _searchController = new TextEditingController();
   List<int> vibrationList = [
     500,
@@ -148,14 +166,39 @@ class _HomeState extends State<Home> {
     1000
   ];
   String meidaType = MediaType.video;
-  bool remoteVideoFlag = true;
+
   bool remoteAudioFlag = true;
   ContactProvider _contactProvider;
-  bool isSocketConnect = true;
+
+  void checkConnectivity() async {
+    isDeviceConnected = false;
+    if (!kIsWeb) {
+      DataConnectionChecker().onStatusChange.listen((status) async {
+        print("this on listener");
+        isDeviceConnected = await DataConnectionChecker().hasConnection;
+        print("this is is connected in $isDeviceConnected");
+        if (isDeviceConnected == true) {
+          setState(() {
+            isdev = true;
+          });
+          // showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+        } else {
+          setState(() {
+            isdev = false;
+          });
+          // showSnackbar(
+          //     "No Internet Connection", whiteColor, primaryColor, true);
+
+        }
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkConnectivity();
     initRenderers();
 
     _auth = Provider.of<AuthProvider>(context, listen: false);
@@ -165,73 +208,94 @@ class _HomeState extends State<Home> {
 
     _contactProvider.getContacts(_auth.getUser.auth_token);
     // signalingClient.closeSocket();
-    signalingClient.connect();
+    signalingClient.connect(project_id, _auth.completeAddress);
     //if(widget.state==true)
     signalingClient.onConnect = (res) {
       print("onConnect $res");
       setState(() {
-        isSocketConnect = true;
-        print("this is onconnect socket $isSocketConnect");
+        sockett = true;
       });
-      signalingClient.register(_auth.getUser.toJson());
+      signalingClient.register(_auth.getUser.toJson(), project_id);
       // signalingClient.register(user);
     };
     signalingClient.onError = (code, res) {
       print("onError $code $res");
-      print("hey i am here");
-      if (code == 1002) {
+      print("hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
+      if (code == 1002 || code == 1001) {
         setState(() {
-          isSocketConnect = false;
-          print("this is onerror socket $isSocketConnect");
+          sockett = false;
+          isSocketregis = false;
+          isPushed = false;
+          isdev = false;
+
           print("disconnected socket");
         });
+      } else {
+        print("ffgfffff $res");
+        // snackBar = SnackBar(content: Text(res));
       }
 
-      _callProvider.initial();
-      final snackBar = SnackBar(content: Text(res));
+      if (code == 1005) {
+        sockett = false;
+        isSocketregis = false;
+        isPushed = false;
+        isdev = false;
+      }
 
-// Find the Scaffold in the widget tree and use it to show a SnackBar.
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      setState(() {
-        _localRenderer.srcObject = null;
-        _remoteRenderer.srcObject = null;
-      });
-      // signalingClient.register(user);
     };
     signalingClient.onRegister = (res) {
       print("onRegister  $res");
       setState(() {
         registerRes = res;
+        print("this is mc token in register ${registerRes["mcToken"]}");
       });
       // signalingClient.register(user);
     };
     signalingClient.onLocalStream = (stream) {
       print("this is local stream id ${stream.id}");
       setState(() {
-        _localRenderer.srcObject = stream;
+        localRenderer.srcObject = stream;
+        local = stream;
+        print("this is local $local");
       });
     };
-    signalingClient.onRemoteStream = (stream) {
-      // final snackBar = SnackBar(content: Text('Yay! A SnackBar!'));
-
-// Find the Scaffold in the widget tree and use it to show a SnackBar.
-      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      // print("this is remote stream id ${stream.id}");
+    signalingClient.onRemoteStream = (stream, refid) async {
+      print("this is home page on remote stream ${stream.id} $refid");
       setState(() {
-        _remoteRenderer.srcObject = stream;
+        remoteRenderer.srcObject = stream;
+        remote = stream;
+        print("this is remote ${stream.id}");
         _time = DateTime.now();
         _updateTimer();
         _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+        onRemoteStream = true;
+        if (inCall == true) {
+          print("here in in call true");
+          // _callProvider.initial();
+        }
       });
       //here
       // _callBloc.add(CallStartEvent());
       _callProvider.callStart();
     };
-    signalingClient.onReceiveCallFromUser = (receivefrom, type) async {
+    signalingClient.onParticipantsLeft = (refID) async {
+      print("call callback on call left by participant");
+
+      // on participants left
+      if (refID == _auth.getUser.ref_id) {
+      } else {
+       
+      }
+    };
+    signalingClient.onReceiveCallFromUser =
+        (receivefrom, type, isonetone) async {
       print("incomming call from user");
       startRinging();
+      inCall = true;
 
       setState(() {
+        onRemoteStream = false;
+        iscalloneto1 = isonetone;
         incomingfrom = receivefrom;
         meidaType = type;
         switchMute = true;
@@ -245,18 +309,18 @@ class _HomeState extends State<Home> {
       _callProvider.callReceive();
     };
     signalingClient.onCallAcceptedByUser = () async {
-      //here
-      // _callBloc.add(CallStartEvent());
+      inCall = true;
+    
       _callProvider.callStart();
     };
-    signalingClient.onCallHungUpByUser = () {
+    signalingClient.onCallHungUpByUser = (isLocal) {
       print("call decliend by other user");
       //here
       // _callBloc.add(CallNewEvent());
       _callProvider.initial();
       setState(() {
-        _localRenderer.srcObject = null;
-        _remoteRenderer.srcObject = null;
+        localRenderer.srcObject = null;
+        remoteRenderer.srcObject = null;
       });
       stopRinging();
     };
@@ -265,8 +329,8 @@ class _HomeState extends State<Home> {
       // _callBloc.add(CallNewEvent());
       _callProvider.initial();
       setState(() {
-        _localRenderer.srcObject = null;
-        _remoteRenderer.srcObject = null;
+        localRenderer.srcObject = null;
+        remoteRenderer.srcObject = null;
       });
       stopRinging();
     };
@@ -279,8 +343,8 @@ class _HomeState extends State<Home> {
 // Find the Scaffold in the widget tree and use it to show a SnackBar.
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       setState(() {
-        _localRenderer.srcObject = null;
-        _remoteRenderer.srcObject = null;
+        localRenderer.srcObject = null;
+        remoteRenderer.srcObject = null;
       });
     };
     signalingClient.onCallRejectedByUser = () {
@@ -291,12 +355,12 @@ class _HomeState extends State<Home> {
       _callProvider.initial();
 
       setState(() {
-        _localRenderer.srcObject = null;
-        _remoteRenderer.srcObject = null;
+        localRenderer.srcObject = null;
+        remoteRenderer.srcObject = null;
       });
     };
 
-    signalingClient.onAudioVideoStateInfo = (audioFlag, videoFlag) {
+    signalingClient.onAudioVideoStateInfo = (audioFlag, videoFlag, refID) {
       setState(() {
         remoteVideoFlag = videoFlag == 0 ? false : true;
         remoteAudioFlag = audioFlag == 0 ? false : true;
@@ -307,11 +371,12 @@ class _HomeState extends State<Home> {
   _startCall(
       List<String> to, String mtype, String callType, String sessionType) {
     setState(() {
+      onRemoteStream = false;
       switchMute = true;
       enableCamera = true;
       switchSpeaker = mtype == MediaType.audio ? true : false;
     });
-    signalingClient.startCall(
+    signalingClient.startCallonetoone(
         from: _auth.getUser.ref_id,
         to: to,
         mcToken: registerRes["mcToken"],
@@ -327,8 +392,8 @@ class _HomeState extends State<Home> {
   }
 
   initRenderers() async {
-    await _localRenderer.initialize();
-    await _remoteRenderer.initialize();
+    await localRenderer.initialize();
+    await remoteRenderer.initialize();
   }
 
   startRinging() async {
@@ -359,8 +424,8 @@ class _HomeState extends State<Home> {
 
   @override
   dispose() {
-    _localRenderer.dispose();
-    _remoteRenderer.dispose();
+    localRenderer.dispose();
+    remoteRenderer.dispose();
     _ticker.cancel();
     // FlutterRingtonePlayer.stop();
     // Vibration.cancel();
@@ -381,13 +446,14 @@ class _HomeState extends State<Home> {
   }
 
   stopCall() {
+    print("this is mc token in stop call home ${registerRes["mcToken"]}");
     signalingClient.stopCall(registerRes["mcToken"]);
     //here
     // _callBloc.add(CallNewEvent());
     _callProvider.initial();
     setState(() {
-      _localRenderer.srcObject = null;
-      _remoteRenderer.srcObject = null;
+      localRenderer.srcObject = null;
+      remoteRenderer.srcObject = null;
     });
     if (!kIsWeb) stopRinging();
   }
@@ -399,18 +465,25 @@ class _HomeState extends State<Home> {
       statusBarIconBrightness: Brightness.dark, //status barIcon Brightness
     ));
     print("jee i am here");
-    if (widget.state == true && !isSocketConnect) {
-      signalingClient.connect();
-      //if(widget.state==true)
-      signalingClient.onConnect = (res) {
-        print("onConnect widget build $res");
-        setState(() {
-          isSocketConnect = true;
-          print("this is onconnect socket widget build$isSocketConnect");
-        });
-        signalingClient.register(_auth.getUser.toJson());
-        // signal
-      };
+    if (isdev == true && sockett == false) {
+      print("i am here in widget build");
+
+      if (isSocketregis == false) {
+        isSocketregis = true;
+
+        print("IN WIODGET TRUE AND SOCKET FALSE");
+        signalingClient.connect(project_id, _auth.completeAddress);
+        print("I am in Re Reregister");
+        remoteVideoFlag = true;
+        signalingClient.register(_auth.getUser.toJson(), project_id);
+        isPushed = false;
+        signalingClient.onRegister = (res) {
+          print("onRegister after reconnection $res");
+          setState(() {
+            registerRes = res;
+          });
+        };
+      }
     }
     return Consumer<CallProvider>(
       builder: (context, callProvider, child) {
@@ -418,7 +491,50 @@ class _HomeState extends State<Home> {
         if (callProvider.callStatus == CallStatus.CallReceive)
           return callReceive();
 
-        if (callProvider.callStatus == CallStatus.CallStart) return callStart();
+        if (callProvider.callStatus == CallStatus.CallStart) {
+          print("here in call provider status");
+          // if (isPushed == false) {
+          //   isPushed = true;
+          //   WidgetsBinding.instance.addPostFrameCallback((_) {
+          //     Navigator.of(context).push(
+          //       MaterialPageRoute(
+          //         builder: (BuildContext context) => MultiProvider(
+          //             providers: [
+          //               ChangeNotifierProvider<AuthProvider>(
+          //                   create: (context) => AuthProvider()),
+          //               ChangeNotifierProvider(
+          //                   create: (context) => ContactProvider()),
+          //               ChangeNotifierProvider(
+          //                   create: (context) => CallProvider()),
+          //             ],
+          //             child: CallStartScreen(
+          //               // onSpeakerCallBack: onSpeakerCallBack,
+          //               // onCameraCallBack: onCameraCallBack,
+          //               // onMicCallBack: onMicCallBack,
+          //               //  rendererListWithRefID:rendererListWithRefID,
+          //               //  onRemoteStream:onRemoteStream,
+          //               mediaType: meidaType,
+          //               localRenderer: localRenderer,
+          //               remoteRenderer: remoteRenderer,
+          //               incomingfrom: incomingfrom,
+          //               registerRes: registerRes,
+          //               stopCall: stopCall,
+          //               callTo: callTo,
+          //               // signalingClient: signalingClient,
+          //               callProvider: _callProvider,
+          //               authProvider: _auth,
+          //               contactProvider: _contactProvider,
+          //               mcToken: registerRes["mcToken"],
+
+          //               contactList: _contactProvider.contactList,
+          //               //  popCallBAck: screenPopCallBack
+          //             )),
+          //       ),
+          //     );
+          //   });
+          // }
+          return callStart();
+        }
         if (callProvider.callStatus == CallStatus.CallDial)
           return callDial();
         else if (callProvider.callStatus == CallStatus.Initial)
@@ -445,7 +561,7 @@ class _HomeState extends State<Home> {
                         if (contact.contactList.users == null)
                           return NoContactsScreen(
                             state: widget.state,
-                            isSocketConnect: isSocketConnect,
+                            isSocketConnect: sockett,
                             refreshList: renderList,
                             authProvider: _auth,
                           );
@@ -473,7 +589,7 @@ class _HomeState extends State<Home> {
             ? Container()
             : meidaType == MediaType.video
                 ? Container(
-                    child: RTCVideoView(_localRenderer,
+                    child: RTCVideoView(localRenderer,
                         key: forlargView,
                         mirror: false,
                         objectFit:
@@ -578,9 +694,9 @@ class _HomeState extends State<Home> {
                 ),
                 onTap: () {
                   stopRinging();
-                  signalingClient.declineCall(
+                  signalingClient.onDeclineCall(
                       _auth.getUser.ref_id, registerRes["mcToken"]);
-                 
+
                   // _callBloc.add(CallNewEvent());
                   _callProvider.initial();
                   // signalingClient.onDeclineCall(widget.registerUser);
@@ -627,7 +743,7 @@ class _HomeState extends State<Home> {
                         //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
-                        child: RTCVideoView(_localRenderer,
+                        child: RTCVideoView(localRenderer,
                             key: forDialView,
                             mirror: false,
                             objectFit: RTCVideoViewObjectFit
@@ -720,13 +836,14 @@ class _HomeState extends State<Home> {
   }
 
   Scaffold callStart() {
+    print("this is media type $meidaType $remoteVideoFlag ");
     return Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Container(
           child: Stack(children: <Widget>[
             meidaType == MediaType.video
                 ? remoteVideoFlag
-                    ? RTCVideoView(_remoteRenderer,
+                    ? RTCVideoView(remoteRenderer,
                         mirror: false,
                         objectFit: kIsWeb
                             ? RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
@@ -856,7 +973,7 @@ class _HomeState extends State<Home> {
                                     fontSize: 24),
                               ),
                         Text(
-                          _pressDuration,
+                          pressDuration,
                           style: TextStyle(
                               decoration: TextDecoration.none,
                               fontSize: 14,
@@ -970,7 +1087,7 @@ class _HomeState extends State<Home> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: enableCamera
-                              ? RTCVideoView(_localRenderer,
+                              ? RTCVideoView(localRenderer,
                                   key: forsmallView,
                                   mirror: false,
                                   objectFit: RTCVideoViewObjectFit
@@ -1020,9 +1137,9 @@ class _HomeState extends State<Home> {
                       'assets/end.svg',
                     ),
                     onTap: () {
-                       remoteVideoFlag = true;
+                      remoteVideoFlag = true;
                       stopCall();
-                      
+
                       // setState(() {
                       //   _isCalling = false;
                       // });
@@ -1265,9 +1382,7 @@ class _HomeState extends State<Home> {
                     height: 10,
                     width: 10,
                     decoration: BoxDecoration(
-                        color: widget.state && isSocketConnect
-                            ? Colors.green
-                            : Colors.red,
+                        color: sockett && isdev ? Colors.green : Colors.red,
                         shape: BoxShape.circle),
                   )
                 ],

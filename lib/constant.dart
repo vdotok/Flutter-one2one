@@ -117,6 +117,7 @@ class CAllType {
   static String one2one = "one_to_one";
   static String one2many = "one_to_many";
   static String many2many = "many_to_many";
+  static String conference = "conference";
 }
 
 class SessionType {

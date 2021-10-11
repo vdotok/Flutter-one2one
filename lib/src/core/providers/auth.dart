@@ -31,6 +31,9 @@ class AuthProvider with ChangeNotifier {
   User _user = new User();
   User get getUser => _user;
 
+  String _completeAddress;
+  String get completeAddress => _completeAddress;
+
   SharedPref _sharedPref = SharedPref();
   String _loginErrorMsg;
   String get loginErrorMsg => _loginErrorMsg;
@@ -109,6 +112,8 @@ class AuthProvider with ChangeNotifier {
       _loginErrorMsg = response['message'];
       notifyListeners();
     } else {
+       _completeAddress  = response['media_server_map']['complete_address'];
+      print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
       _loggedInStatus = Status.LoggedIn;
@@ -216,6 +221,8 @@ class AuthProvider with ChangeNotifier {
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
     } else {
+       _completeAddress =
+          jsonDecode(authUser)['media_server_map']['complete_address'];
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(jsonDecode(authUser));
       notifyListeners();
