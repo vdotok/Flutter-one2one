@@ -47,7 +47,10 @@ class _HomeState extends State<Home> {
   bool isConnect = false;
   DateTime _time;
   Timer _ticker;
-
+  var number;
+  var nummm;
+  double upstream;
+  double downstream;
   bool sockett = true;
   bool isSocketregis = false;
   bool isPushed = false;
@@ -220,7 +223,8 @@ class _HomeState extends State<Home> {
     };
     signalingClient.onError = (code, res) {
       print("onError $code $res");
-      print("hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
+      print(
+          "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
       if (code == 1002 || code == 1001) {
         setState(() {
           sockett = false;
@@ -241,7 +245,6 @@ class _HomeState extends State<Home> {
         isPushed = false;
         isdev = false;
       }
-
     };
     signalingClient.onRegister = (res) {
       print("onRegister  $res");
@@ -265,15 +268,45 @@ class _HomeState extends State<Home> {
         remoteRenderer.srcObject = stream;
         remote = stream;
         print("this is remote ${stream.id}");
-        _time = DateTime.now();
-        _updateTimer();
-        _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+        if (isSocketregis) {
+          print("here after call restart");
+          _time = pressDuration as DateTime;
+          _updateTimer();
+          _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+        } else {
+          _time = DateTime.now();
+          _updateTimer();
+          _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+        }
         onRemoteStream = true;
         if (inCall == true) {
           print("here in in call true");
           // _callProvider.initial();
         }
       });
+      signalingClient.onCallStatsuploads = (uploadstats) {
+        nummm = uploadstats;
+        // String dddi = nummm.toString();
+        // print("DFKMDKSDF//MNKSDFMDKS 0000000$dddi");
+
+        // double myDouble = double.parse(dddi);
+        // assert(myDouble is double);
+
+        // print("dfddfdfdfffffffffffffffff ${myDouble / 1024}"); // 123.45
+        // upstream = double.parse((myDouble/1024).toStringAsFixed(2));
+      };
+      signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
+        print("NOT NULL  $timeStatsdownloads");
+        number = timeStatsdownloads;
+        // String ddd = number.toString();
+        // print("DFKMDKSDFMNKSDFMDKS $ddd");
+
+        // double myDouble = double.parse(ddd);
+        // assert(myDouble is double);
+
+        // print("dfddfdfdf ${myDouble / 1024}"); // 123.45
+        // downstream = double.parse((myDouble/1024).toStringAsFixed(2));
+      };
       //here
       // _callBloc.add(CallStartEvent());
       _callProvider.callStart();
@@ -283,9 +316,7 @@ class _HomeState extends State<Home> {
 
       // on participants left
       if (refID == _auth.getUser.ref_id) {
-      } else {
-       
-      }
+      } else {}
     };
     signalingClient.onReceiveCallFromUser =
         (receivefrom, type, isonetone) async {
@@ -310,7 +341,29 @@ class _HomeState extends State<Home> {
     };
     signalingClient.onCallAcceptedByUser = () async {
       inCall = true;
-    
+      signalingClient.onCallStatsuploads = (uploadstats) {
+        var nummm = uploadstats;
+        // String dddi = nummm.toString();
+        // print("DFKMDKSDF//MNKSDFMDKS 0000000$dddi");
+
+        // double myDouble = double.parse(dddi);
+        // assert(myDouble is double);
+
+        // print("dfddfdfdfffffffffffffffff ${myDouble / 1024}"); // 123.45
+        // upstream = double.parse((myDouble / 1024).toStringAsFixed(2));
+      };
+      signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
+        print("NOT NULL  $timeStatsdownloads");
+        number = timeStatsdownloads;
+        // String ddd = number.toString();
+        // print("DFKMDKSDFMNKSDFMDKS $ddd");
+
+        // double myDouble = double.parse(ddd);
+        // assert(myDouble is double);
+
+        // print("dfddfdfdf ${myDouble / 1024}"); // 123.45
+        // downstream = double.parse((myDouble / 1024).toStringAsFixed(2));
+      };
       _callProvider.callStart();
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
@@ -984,6 +1037,32 @@ class _HomeState extends State<Home> {
                         ),
                       ],
                     ),
+                  ),
+                  Row(
+                    children: [
+                      //SizedBox(width: 10),
+                      number != null
+                          ? Text(
+                              "DownStream $number UpStream $nummm",
+                              style: TextStyle(
+                                  decoration: TextDecoration.none,
+                                  fontSize: 14,
+                                  fontFamily: secondaryFontFamily,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                  color: darkBlackColor),
+                            )
+                          : Text(
+                              "DownStream 0   UpStream 0",
+                              style: TextStyle(
+                                  decoration: TextDecoration.none,
+                                  fontSize: 14,
+                                  fontFamily: secondaryFontFamily,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                  color: darkBlackColor),
+                            ),
+                    ],
                   ),
                 ],
               ),

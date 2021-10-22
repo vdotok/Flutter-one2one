@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:vdotok_stream_example/src/core/config/config.dart';
 import '../../../src/core/services/server.dart';
 
 import '../models/user.dart';
@@ -77,7 +78,8 @@ class AuthProvider with ChangeNotifier {
               : "ios",
       "device_model": model,
       "device_os_ver": version,
-      "app_version": "1.1.5"
+      "app_version": "1.1.5",
+      "project_id":project_id
     };
     final response = await callAPI(jsonData, "SignUp", null);
     print("this is response $response");
@@ -104,6 +106,7 @@ class AuthProvider with ChangeNotifier {
     Map<String, dynamic> jsonData = {
       "email": username,
       "password": password,
+      "project_id":project_id
     };
     final response = await callAPI(jsonData, "Login", null);
     print("this is response $response");

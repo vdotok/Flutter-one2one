@@ -22,6 +22,8 @@ PODS:
     - Flutter
   - vibration (1.7.3):
     - Flutter
+  - wifi_info_flutter (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - device_info (from `.symlinks/plugins/device_info/ios`)
@@ -34,6 +36,7 @@ DEPENDENCIES:
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - vdotok_stream (from `.symlinks/plugins/vdotok_stream/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
+  - wifi_info_flutter (from `.symlinks/plugins/wifi_info_flutter/ios`)
 
 SPEC REPOS:
   trunk:
@@ -61,6 +64,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/vdotok_stream/ios"
   vibration:
     :path: ".symlinks/plugins/vibration/ios"
+  wifi_info_flutter:
+    :path: ".symlinks/plugins/wifi_info_flutter/ios"
 
 SPEC CHECKSUMS:
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
@@ -75,6 +80,7 @@ SPEC CHECKSUMS:
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   vdotok_stream: 744471973756a2efce891fd0c79d2fb7d068c7ef
   vibration: b5a33e764c3f609a975b9dca73dce20fdde627dc
+  wifi_info_flutter: 55d4c2469034f5b5c38063ccefa62f708a503a2b
 
 PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 
