@@ -15,7 +15,7 @@ Now run "flutter doctor" in terminal/command prompt, and make sure all tick-mark
 <img width="603" alt="MicrosoftTeams-image" src="https://user-images.githubusercontent.com/86484384/139054351-32baf182-20d3-476a-b73e-df1927210ffe.png">
 
 ## Repo Clone:	
-1. Open Github URL of VdoTok’s Flutter m2m Audio/Video Call  “https://github.com/vdotok/Flutter-one2one”
+1. Open Github URL of VdoTok’s Flutter one2one Audio/Video Call  “https://github.com/vdotok/Flutter-one2one "
 2. Click on <b>Code</b> button, appearing on R.H.S
 3. A toast for <b>Clone</b> will appear, containing HTTPS, SSH, and GitHub CLI  information
 4. On HTTPS section, copy repository <b>URL</b> 
