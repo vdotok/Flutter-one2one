@@ -82,13 +82,14 @@ class AuthProvider with ChangeNotifier {
       "project_id":project_id
     };
     final response = await callAPI(jsonData, "SignUp", null);
-    print("this is response $response");
+    print("this is response of sign up $response");
     if (response['status'] != 200) {
       _registeredInStatus = Status.Failure;
       _registerErrorMsg = response['message'];
       notifyListeners();
       return false;
     } else {
+      _completeAddress  = response['media_server_map']['complete_address'];
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
       _registeredInStatus = Status.Registered;
@@ -115,7 +116,7 @@ class AuthProvider with ChangeNotifier {
       _loginErrorMsg = response['message'];
       notifyListeners();
     } else {
-       _completeAddress  = response['media_server_map']['complete_address'];
+      _completeAddress  = response['media_server_map']['complete_address'];
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);

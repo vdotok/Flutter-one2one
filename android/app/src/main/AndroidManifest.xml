@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
    <application
-        android:label="vdotok_flutter"
+        android:label="flt_one2one"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/launcher_icon">
         <activity

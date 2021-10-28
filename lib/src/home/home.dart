@@ -198,11 +198,20 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    print('this is local $localRenderer');
+  }
+
+  @override
   void initState() {
+    print("here in home init");
     // TODO: implement initState
     super.initState();
     checkConnectivity();
     initRenderers();
+    print("initilization");
 
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
@@ -223,8 +232,8 @@ class _HomeState extends State<Home> {
     };
     signalingClient.onError = (code, res) {
       print("onError $code $res");
-      print(
-          "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
+      // print(
+      //     "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
       if (code == 1002 || code == 1001) {
         setState(() {
           sockett = false;
@@ -284,29 +293,29 @@ class _HomeState extends State<Home> {
           // _callProvider.initial();
         }
       });
-      signalingClient.onCallStatsuploads = (uploadstats) {
-        nummm = uploadstats;
-        // String dddi = nummm.toString();
-        // print("DFKMDKSDF//MNKSDFMDKS 0000000$dddi");
+      // signalingClient.onCallStatsuploads = (uploadstats) {
+      //   nummm = uploadstats;
+      //   // String dddi = nummm.toString();
+      //   // print("DFKMDKSDF//MNKSDFMDKS 0000000$dddi");
 
-        // double myDouble = double.parse(dddi);
-        // assert(myDouble is double);
+      //   // double myDouble = double.parse(dddi);
+      //   // assert(myDouble is double);
 
-        // print("dfddfdfdfffffffffffffffff ${myDouble / 1024}"); // 123.45
-        // upstream = double.parse((myDouble/1024).toStringAsFixed(2));
-      };
-      signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
-        print("NOT NULL  $timeStatsdownloads");
-        number = timeStatsdownloads;
-        // String ddd = number.toString();
-        // print("DFKMDKSDFMNKSDFMDKS $ddd");
+      //   // print("dfddfdfdfffffffffffffffff ${myDouble / 1024}"); // 123.45
+      //   // upstream = double.parse((myDouble/1024).toStringAsFixed(2));
+      // };
+      // signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
+      //   print("NOT NULL  $timeStatsdownloads");
+      //   number = timeStatsdownloads;
+      //   // String ddd = number.toString();
+      //   // print("DFKMDKSDFMNKSDFMDKS $ddd");
 
-        // double myDouble = double.parse(ddd);
-        // assert(myDouble is double);
+      //   // double myDouble = double.parse(ddd);
+      //   // assert(myDouble is double);
 
-        // print("dfddfdfdf ${myDouble / 1024}"); // 123.45
-        // downstream = double.parse((myDouble/1024).toStringAsFixed(2));
-      };
+      //   // print("dfddfdfdf ${myDouble / 1024}"); // 123.45
+      //   // downstream = double.parse((myDouble/1024).toStringAsFixed(2));
+      // };
       //here
       // _callBloc.add(CallStartEvent());
       _callProvider.callStart();
@@ -445,7 +454,15 @@ class _HomeState extends State<Home> {
   }
 
   initRenderers() async {
-    await localRenderer.initialize();
+    
+    print("this is localRenderer $localRenderer");
+    await localRenderer
+        .initialize()
+        .then((value) => null)
+        .catchError((onError) {
+      print("this is error on initialize $onError");
+    });
+    print("after initialixxation");
     await remoteRenderer.initialize();
   }
 
@@ -477,9 +494,9 @@ class _HomeState extends State<Home> {
 
   @override
   dispose() {
-    localRenderer.dispose();
-    remoteRenderer.dispose();
-    _ticker.cancel();
+    // localRenderer.dispose();
+    // remoteRenderer.dispose();
+     _ticker.cancel();
     // FlutterRingtonePlayer.stop();
     // Vibration.cancel();
     // sdpController.dispose();
@@ -782,6 +799,11 @@ class _HomeState extends State<Home> {
   }
 
   Scaffold callDial() {
+    // return Scaffold(
+    //       body: Container(height: 70,
+    //       width:70,
+    //     child: Text("hello")),
+    // );
     print("remoteVideoFlag is $remoteVideoFlag");
     print(
         "ths is width ${MediaQuery.of(context).size.height}, ${MediaQuery.of(context).size.width}");
@@ -800,8 +822,7 @@ class _HomeState extends State<Home> {
                             key: forDialView,
                             mirror: false,
                             objectFit: RTCVideoViewObjectFit
-                                .RTCVideoViewObjectFitCover),
-                      )
+                                .RTCVideoViewObjectFitCover))
                     : Container(
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -1038,32 +1059,32 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
-                  Row(
-                    children: [
-                      //SizedBox(width: 10),
-                      number != null
-                          ? Text(
-                              "DownStream $number UpStream $nummm",
-                              style: TextStyle(
-                                  decoration: TextDecoration.none,
-                                  fontSize: 14,
-                                  fontFamily: secondaryFontFamily,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                  color: darkBlackColor),
-                            )
-                          : Text(
-                              "DownStream 0   UpStream 0",
-                              style: TextStyle(
-                                  decoration: TextDecoration.none,
-                                  fontSize: 14,
-                                  fontFamily: secondaryFontFamily,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                  color: darkBlackColor),
-                            ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     //SizedBox(width: 10),
+                  //     number != null
+                  //         ? Text(
+                  //             "DownStream $number UpStream $nummm",
+                  //             style: TextStyle(
+                  //                 decoration: TextDecoration.none,
+                  //                 fontSize: 14,
+                  //                 fontFamily: secondaryFontFamily,
+                  //                 fontWeight: FontWeight.w400,
+                  //                 fontStyle: FontStyle.normal,
+                  //                 color: darkBlackColor),
+                  //           )
+                  //         : Text(
+                  //             "DownStream 0   UpStream 0",
+                  //             style: TextStyle(
+                  //                 decoration: TextDecoration.none,
+                  //                 fontSize: 14,
+                  //                 fontFamily: secondaryFontFamily,
+                  //                 fontWeight: FontWeight.w400,
+                  //                 fontStyle: FontStyle.normal,
+                  //                 color: darkBlackColor),
+                  //           ),
+                  //   ],
+                  //),
                 ],
               ),
             ),
@@ -1442,6 +1463,7 @@ class _HomeState extends State<Home> {
                     child: TextButton(
                       onPressed: () {
                         _auth.logout();
+                        signalingClient.unRegister(registerRes["mcToken"]);
                       },
                       child: Text(
                         "LOG OUT",
