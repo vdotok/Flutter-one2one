@@ -441,7 +441,7 @@ class _HomeState extends State<Home> {
     signalingClient.startCallonetoone(
         from: _auth.getUser.ref_id,
         to: to,
-        mcToken: registerRes["mcToken"],
+        // mcToken: registerRes["mcToken"],
         meidaType: mtype,
         callType: callType,
         sessionType: sessionType);
@@ -1091,51 +1091,53 @@ class _HomeState extends State<Home> {
             !kIsWeb
                 ? meidaType == MediaType.video
                     ? Container(
-                        // color: Colors.red,
-                        child: Column(
-                          children: [
-                            Padding(
-                              // height: 500,
-                              // width: 500,
-                              // padding: EdgeInsets.zero,
-                              padding: const EdgeInsets.fromLTRB(
-                                  327.0, 120.0, 25.0, 8.0),
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: GestureDetector(
-                                  child: SvgPicture.asset(
-                                      'assets/switch_camera.svg'),
-                                  onTap: () {
-                                    signalingClient.switchCamera();
-                                  },
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              // padding: EdgeInsets.zero,
-                              // height: 500,
-                              // width: 500,
-                              padding: const EdgeInsets.fromLTRB(
-                                  327.0, 10.0, 20.0, 8.0),
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: GestureDetector(
-                                  child: !switchSpeaker
-                                      ? SvgPicture.asset('assets/VolumnOn.svg')
-                                      : SvgPicture.asset(
-                                          'assets/VolumeOff.svg'),
-                                  onTap: () {
-                                    signalingClient
-                                        .switchSpeaker(switchSpeaker);
-                                    setState(() {
-                                      switchSpeaker = !switchSpeaker;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
+                     
+                        
+                          
+                         
+                          child: Align(
+                            alignment: Alignment.topRight,
+                                                      child: Column(
+                                
+                             
+                                children: [
+                              
+                                  Container(
+                                     padding: const EdgeInsets.fromLTRB(
+                                   0.0,120.33,20,27),
+                                    child: GestureDetector(
+                                      
+                                       child: SvgPicture.asset(
+                                           'assets/switch_camera.svg',
+                                          ),
+                                       onTap: () {
+                                         signalingClient.switchCamera();
+                                       },
+                                     ),
+                                  ),
+                                
+                                     Container(
+                                        padding: const EdgeInsets.only(
+                                   right:20),
+                                       child: GestureDetector(
+                                         child: !switchSpeaker
+                                             ? SvgPicture.asset('assets/VolumnOn.svg')
+                                             : SvgPicture.asset(
+                                                 'assets/VolumeOff.svg'),
+                                         onTap: () {
+                                           signalingClient
+                                               .switchSpeaker(switchSpeaker);
+                                           setState(() {
+                                             switchSpeaker = !switchSpeaker;
+                                           });
+                                         },
+                                       ),
+                                     ),
+                                 // ),
+                                ],
+                              
                         ),
+                          ),
                       )
                     : Container(
                         // color: Colors.red,
@@ -1275,7 +1277,7 @@ class _HomeState extends State<Home> {
       print("this is here $value");
       List temp;
       temp = state.users
-          .where((element) => element.full_name.toLowerCase().startsWith(value))
+          .where((element) => element.full_name.toLowerCase().startsWith(value.toLowerCase()))
           .toList();
       print("this is filtered list $_filteredList");
       setState(() {
