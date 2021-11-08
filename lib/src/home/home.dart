@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:vdotok_stream_example/callscreens/CallDialScreen.dart';
 import 'package:vdotok_stream_example/noContactsScreen.dart';
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
 import 'package:provider/provider.dart';
@@ -606,7 +607,34 @@ class _HomeState extends State<Home> {
           return callStart();
         }
         if (callProvider.callStatus == CallStatus.CallDial)
-          return callDial();
+          //return callDial();
+       Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider<AuthProvider>(
+                              create: (context) => AuthProvider()),
+                          ChangeNotifierProvider(
+                              create: (context) => ContactProvider()),
+                          ChangeNotifierProvider(
+                              create: (context) => CallProvider()),
+                        ],
+                        child: CallDialScreen(
+                          //  rendererListWithRefID:rendererListWithRefID,
+                        
+                          mediaType: meidaType,
+                         callTo:callTo,
+                          incomingfrom: incomingfrom,
+                          callProvider: _callProvider,
+                          registerRes: registerRes,
+                          authProvider: authProvider,
+                          // stopRinging: stopRinging,
+                          signalingClient: signalingClient,
+                          // authtoken: authProvider.getUser.auth_token,
+                          // contactList: contactProvider.contactList,
+                        )),
+                  ),
+                );
         else if (callProvider.callStatus == CallStatus.Initial)
           return SafeArea(
             child: GestureDetector(
@@ -994,24 +1022,7 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        //            Consumer<ContactProvider>(
-                        //   builder: (context, contact, child) {
-                        //     if (contact.contactState == ContactStates.Success) {
-                        //       int index = contact.contactList.users.indexWhere(
-                        //           (element) => element.ref_id == incomingfrom);
-                        //       return Text(
-                        //         contact.contactList.users[index].full_name,
-                        //         style: TextStyle(
-                        //             fontFamily: primaryFontFamily,
-                        //             color: darkBlackColor,
-                        //             decoration: TextDecoration.none,
-                        //             fontWeight: FontWeight.w700,
-                        //             fontStyle: FontStyle.normal,
-                        //             fontSize: 24),
-                        //       );
-                        //     }
-                        //   },
-                        // ),
+                     
                         (callTo == "")
                             ? Consumer<ContactProvider>(
                                 builder: (context, contact, child) {
