@@ -1,4 +1,4 @@
-package com.norgic.example
+package com.vdotok.flutterone2one
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -34,7 +34,8 @@ dependencies:
   provider: ^5.0.0
   flutter_svg: 
   data_connection_checker: ^0.3.4
-  vdotok_stream: ^0.0.10
+  vdotok_stream: 
+    path: ../flutter-sdk-streaming/
   flutter_device_type: ^0.4.0
   dart_ipify: ^1.1.1
 
