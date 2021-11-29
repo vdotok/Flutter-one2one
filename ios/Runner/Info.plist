@@ -29,10 +29,22 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Access to music</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Access to calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) Camera Usage!</string>
+	<string>Access to camera</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Access to contacts</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>$(PRODUCT_NAME) Location Usage!</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(PRODUCT_NAME) Microphone Usage!</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Access to motion</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Access to speech</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

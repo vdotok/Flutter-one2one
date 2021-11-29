@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +14,7 @@ import 'package:vdotok_stream/vdotok_stream.dart';
 import 'dart:io' show Platform;
 
 import '../../constant.dart';
+import '../../main.dart';
 import '../core/models/contactList.dart';
 import '../core/providers/auth.dart';
 import '../core/providers/call_provider.dart';
@@ -24,7 +23,7 @@ import '../core/providers/contact_provider.dart';
 String pressDuration = "";
 bool remoteVideoFlag = true;
 bool isDeviceConnected = false;
-SignalingClient signalingClient = SignalingClient.instance;
+SignalingClient signalingClient = SignalingClient.instance..checkConnectivity();
 bool enableCamera = true;
 bool switchMute = true;
 bool switchSpeaker = true;
@@ -32,6 +31,10 @@ RTCVideoRenderer localRenderer = new RTCVideoRenderer();
 RTCVideoRenderer remoteRenderer = new RTCVideoRenderer();
 MediaStream local;
 MediaStream remote;
+bool islogout = false;
+GlobalKey forsmallView = new GlobalKey();
+GlobalKey forlargView = new GlobalKey();
+GlobalKey forDialView = new GlobalKey();
 
 class Home extends StatefulWidget {
   bool state;
@@ -42,7 +45,7 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool notmatched = false;
   bool isConnect = false;
   DateTime _time;
@@ -54,6 +57,7 @@ class _HomeState extends State<Home> {
   bool sockett = true;
   bool isSocketregis = false;
   bool isPushed = false;
+  bool isInternetConnected = false;
   void _updateTimer() {
     final duration = DateTime.now().difference(_time);
     final newDuration = _formatDuration(duration);
@@ -83,12 +87,9 @@ class _HomeState extends State<Home> {
   RTCPeerConnection _peerConnection;
   RTCPeerConnection _answerPeerConnection;
   MediaStream _localStream;
-
-  GlobalKey forsmallView = new GlobalKey();
-  GlobalKey forlargView = new GlobalKey();
-  GlobalKey forDialView = new GlobalKey();
+  bool isConnected = true;
   var registerRes;
-  bool isdev = true;
+  // bool isdev = true;
   String incomingfrom;
   // ContactBloc _contactBloc;
   // CallBloc _callBloc;
@@ -173,29 +174,53 @@ class _HomeState extends State<Home> {
   bool remoteAudioFlag = true;
   ContactProvider _contactProvider;
 
-  void checkConnectivity() async {
-    isDeviceConnected = false;
-    if (!kIsWeb) {
-      DataConnectionChecker().onStatusChange.listen((status) async {
-        print("this on listener");
-        isDeviceConnected = await DataConnectionChecker().hasConnection;
-        print("this is is connected in $isDeviceConnected");
-        if (isDeviceConnected == true) {
-          setState(() {
-            isdev = true;
-          });
-          // showSnackbar("Internet Connected", whiteColor, Colors.green, false);
-        } else {
-          setState(() {
-            isdev = false;
-          });
-          // showSnackbar(
-          //     "No Internet Connection", whiteColor, primaryColor, true);
+  // void checkConnectivity() async {
+  //   isDeviceConnected = false;
+  //   if (!kIsWeb) {
+  //     DataConnectionChecker().onStatusChange.listen((status) async {
+  //       print("this on listener $status");
+  //       isDeviceConnected = await DataConnectionChecker().hasConnection;
+  //       print("this is is connected in $isDeviceConnected");
+  //       if (isDeviceConnected == true) {
+  //         setState(() {
+  //           isdev = true;
+  //         });
+  //         // showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+  //       } else {
+  //         setState(() {
+  //           isdev = false;
+  //         });
+  //         // showSnackbar(
+  //         //     "No Internet Connection", whiteColor, primaryColor, true);
 
-        }
-      });
-    }
-  }
+  //       }
+  //       print("this is isdev $isdev $isInternetConnected $sockett");
+  //       if (isdev && isInternetConnected == false && sockett == false) {
+  //         signalingClient.connect(project_id, _auth.completeAddress);
+  //         signalingClient.onConnect = (res) {
+  //           print("onConnect $res");
+  //           setState(() {
+  //             sockett = true;
+  //             isSocketregis = true;
+  //           });
+  //           print("here in init state register");
+  //           signalingClient.register(_auth.getUser.toJson(), project_id);
+  //           // signalingClient.register(user);
+  //         };
+  //         print("I am in Re Reregister in error");
+  //         remoteVideoFlag = true;
+  //         // signalingClient.register(_auth.getUser.toJson(), project_id);
+  //         isPushed = false;
+  //         signalingClient.onRegister = (res) {
+  //           print("onRegister after reconnection $res");
+  //           setState(() {
+  //             registerRes = res;
+  //           });
+  //         };
+  //       }
+  //     });
+  //   }
+  // }
 
   @override
   void didChangeDependencies() {
@@ -208,8 +233,10 @@ class _HomeState extends State<Home> {
   void initState() {
     print("here in home init");
     // TODO: implement initState
+
     super.initState();
-    checkConnectivity();
+    WidgetsBinding.instance.addObserver(this);
+    // checkConnectivity();
     initRenderers();
     print("initilization");
 
@@ -221,48 +248,126 @@ class _HomeState extends State<Home> {
     _contactProvider.getContacts(_auth.getUser.auth_token);
     // signalingClient.closeSocket();
     signalingClient.connect(project_id, _auth.completeAddress);
+
     //if(widget.state==true)
     signalingClient.onConnect = (res) {
       print("onConnect $res");
       setState(() {
         sockett = true;
+        // isSocketregis = true;
       });
+      print("here in init state register");
       signalingClient.register(_auth.getUser.toJson(), project_id);
       // signalingClient.register(user);
+    };
+    signalingClient.unRegisterSuccessfullyCallBack = () {
+      _auth.logout();
     };
     signalingClient.onError = (code, res) {
       print("onError $code $res");
       // print(
       //     "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
-      if (code == 1002 || code == 1001) {
+      if (code == 1001 || code == 1002) {
+        setState(() {
+          sockett = false;
+          isConnected = false;
+          isSocketregis = false;
+          isPushed = false;
+          //  isdev = false;
+
+          print("disconnected socket");
+        });
+      } else if (code == 1005) {
         setState(() {
           sockett = false;
           isSocketregis = false;
           isPushed = false;
-          isdev = false;
-
-          print("disconnected socket");
         });
-      } else {
+
+        if (_auth.loggedInStatus == Status.LoggedOut) {
+        } else {
+          if (isConnected == true && sockett == false) {
+            signalingClient.connect(project_id, _auth.completeAddress);
+            print("i am in connect in 1005");
+            signalingClient.register(_auth.getUser.toJson(), project_id);
+          }
+        }
+      }
+      // else if(code == 1002){
+      //   setState(() {
+      //     sockett = false;
+      //     isInternetConnected = false;
+      //     isSocketregis = false;
+      //     isPushed = false;
+      //   });
+      // }
+
+      // else if (code == 1005) {
+      //   setState(() {
+      //     sockett = false;
+      //     isSocketregis = false;
+      //     isPushed = false;
+      //     // isdev = false;
+
+      //     print("disconnected socket ");
+      //   });
+      // }
+
+      else {
         print("ffgfffff $res");
         // snackBar = SnackBar(content: Text(res));
       }
+    };
+    signalingClient.internetConnectivityCallBack = (mesg) {
+      if (mesg == "Connected") {
+        setState(() {
+          isConnected = true;
+        });
 
-      if (code == 1005) {
-        sockett = false;
-        isSocketregis = false;
-        isPushed = false;
-        isdev = false;
+        showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+        if (sockett == false) {
+          signalingClient.connect(project_id, _auth.completeAddress);
+          print("I am in Re Reregister");
+          remoteVideoFlag = true;
+
+          //    signalingClient.onConnect = (res) {
+          // print("onConnect $res");
+          // setState(() {
+          //   sockett = true;
+          //   //isSocketregis = true;
+          // });
+          print("here in init state register");
+          signalingClient.register(_auth.getUser.toJson(), project_id);
+          isSocketregis = true;
+          // signalingClient.register(user);
+          //  };
+
+          isPushed = false;
+          // signalingClient.onRegister = (res) {
+          //   print("onRegister after reconnection $res");
+          //   setState(() {
+          //     registerRes = res;
+          //   });
+          // };
+        }
+      } else {
+        print("no internet connection");
+        setState(() {
+          isConnected = false;
+        });
+        showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
       }
     };
+
     signalingClient.onRegister = (res) {
-      print("onRegister  $res");
+      print("i am in Re  $res");
       setState(() {
         registerRes = res;
         print("this is mc token in register ${registerRes["mcToken"]}");
       });
       // signalingClient.register(user);
     };
+    // signalingClient.pingRequest(registerRes["ping_interval"]);
     signalingClient.onLocalStream = (stream) {
       print("this is local stream id ${stream.id}");
       setState(() {
@@ -293,31 +398,7 @@ class _HomeState extends State<Home> {
           // _callProvider.initial();
         }
       });
-      // signalingClient.onCallStatsuploads = (uploadstats) {
-      //   nummm = uploadstats;
-      //   // String dddi = nummm.toString();
-      //   // print("DFKMDKSDF//MNKSDFMDKS 0000000$dddi");
 
-      //   // double myDouble = double.parse(dddi);
-      //   // assert(myDouble is double);
-
-      //   // print("dfddfdfdfffffffffffffffff ${myDouble / 1024}"); // 123.45
-      //   // upstream = double.parse((myDouble/1024).toStringAsFixed(2));
-      // };
-      // signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
-      //   print("NOT NULL  $timeStatsdownloads");
-      //   number = timeStatsdownloads;
-      //   // String ddd = number.toString();
-      //   // print("DFKMDKSDFMNKSDFMDKS $ddd");
-
-      //   // double myDouble = double.parse(ddd);
-      //   // assert(myDouble is double);
-
-      //   // print("dfddfdfdf ${myDouble / 1024}"); // 123.45
-      //   // downstream = double.parse((myDouble/1024).toStringAsFixed(2));
-      // };
-      //here
-      // _callBloc.add(CallStartEvent());
       _callProvider.callStart();
     };
     signalingClient.onParticipantsLeft = (refID) async {
@@ -349,29 +430,14 @@ class _HomeState extends State<Home> {
       _callProvider.callReceive();
     };
     signalingClient.onCallAcceptedByUser = () async {
+      print("this is call accepted");
       inCall = true;
       signalingClient.onCallStatsuploads = (uploadstats) {
         var nummm = uploadstats;
-        // String dddi = nummm.toString();
-        // print("DFKMDKSDF//MNKSDFMDKS 0000000$dddi");
-
-        // double myDouble = double.parse(dddi);
-        // assert(myDouble is double);
-
-        // print("dfddfdfdfffffffffffffffff ${myDouble / 1024}"); // 123.45
-        // upstream = double.parse((myDouble / 1024).toStringAsFixed(2));
       };
       signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
         print("NOT NULL  $timeStatsdownloads");
         number = timeStatsdownloads;
-        // String ddd = number.toString();
-        // print("DFKMDKSDFMNKSDFMDKS $ddd");
-
-        // double myDouble = double.parse(ddd);
-        // assert(myDouble is double);
-
-        // print("dfddfdfdf ${myDouble / 1024}"); // 123.45
-        // downstream = double.parse((myDouble / 1024).toStringAsFixed(2));
       };
       _callProvider.callStart();
     };
@@ -383,6 +449,7 @@ class _HomeState extends State<Home> {
       setState(() {
         localRenderer.srcObject = null;
         remoteRenderer.srcObject = null;
+        // Navigator.pop(context);
       });
       stopRinging();
     };
@@ -430,6 +497,37 @@ class _HomeState extends State<Home> {
     };
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("this is changeapplifecyclestate");
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print("app in resumed");
+        // signalingClient.sendPing();
+        if (_auth.loggedInStatus == Status.LoggedOut) {
+        } else if (sockett == true) {
+        } else if (isConnected && sockett == false) {
+          print("here in resume");
+          signalingClient.connect(project_id, _auth.completeAddress);
+          signalingClient.register(_auth.getUser.toJson(), project_id);
+        }
+
+        break;
+      case AppLifecycleState.inactive:
+        print("app in inactive");
+        break;
+      case AppLifecycleState.paused:
+        print("app in paused");
+        // signalingClient.socketDrop();
+        break;
+      case AppLifecycleState.detached:
+        print("app in detached");
+        break;
+    }
+    // super.didChangeAppLifecycleState(state);
+    // _isInForeground = state == AppLifecycleState.resumed;
+  }
+
   _startCall(
       List<String> to, String mtype, String callType, String sessionType) {
     setState(() {
@@ -441,20 +539,19 @@ class _HomeState extends State<Home> {
     signalingClient.startCallonetoone(
         from: _auth.getUser.ref_id,
         to: to,
-        // mcToken: registerRes["mcToken"],
+        mcToken: registerRes["mcToken"],
         meidaType: mtype,
         callType: callType,
         sessionType: sessionType);
     // if (_localStream != null) {
     //here
     // _callBloc.add(CallDialEvent());
-
+    print("here in start call");
     _callProvider.callDial();
     // }
   }
 
   initRenderers() async {
-    
     print("this is localRenderer $localRenderer");
     await localRenderer
         .initialize()
@@ -492,15 +589,42 @@ class _HomeState extends State<Home> {
     // setState(() {
   }
 
+  showSnackbar(text, Color color, Color backgroundColor, bool check) {
+    if (check == false) {
+      rootScaffoldMessengerKey.currentState
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text(
+            '$text',
+            style: TextStyle(color: color),
+          ),
+          backgroundColor: backgroundColor,
+          duration: Duration(seconds: 2),
+        ));
+    } else if (check == true) {
+      rootScaffoldMessengerKey.currentState
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text(
+            '$text',
+            style: TextStyle(color: color),
+          ),
+          backgroundColor: backgroundColor,
+          duration: Duration(seconds: 2),
+        ));
+    }
+  }
+
   @override
   dispose() {
     // localRenderer.dispose();
     // remoteRenderer.dispose();
-     _ticker.cancel();
+    _ticker.cancel();
     // FlutterRingtonePlayer.stop();
     // Vibration.cancel();
     // sdpController.dispose();
     super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   Future<Null> refreshList() async {
@@ -534,32 +658,57 @@ class _HomeState extends State<Home> {
       statusBarBrightness: Brightness.light, //status bar brigtness
       statusBarIconBrightness: Brightness.dark, //status barIcon Brightness
     ));
-    print("jee i am here");
-    if (isdev == true && sockett == false) {
-      print("i am here in widget build");
 
-      if (isSocketregis == false) {
-        isSocketregis = true;
+    //  if (widget.state && isInternetConnected == false && sockett == false) {
+    //   print("i am here in widget build");
 
-        print("IN WIODGET TRUE AND SOCKET FALSE");
-        signalingClient.connect(project_id, _auth.completeAddress);
-        print("I am in Re Reregister");
-        remoteVideoFlag = true;
-        signalingClient.register(_auth.getUser.toJson(), project_id);
-        isPushed = false;
-        signalingClient.onRegister = (res) {
-          print("onRegister after reconnection $res");
-          setState(() {
-            registerRes = res;
-          });
-        };
-      }
-    }
-    return Consumer<CallProvider>(
-      builder: (context, callProvider, child) {
+    //   if (isSocketregis == false) {
+    //     isSocketregis = true;
+
+    //     print("IN WIODGET TRUE AND SOCKET FALSE");
+    //     signalingClient.connect(project_id, _auth.completeAddress);
+    //     print("I am in Re Reregister");
+    //     remoteVideoFlag = true;
+    //     signalingClient.register(_auth.getUser.toJson(), project_id);
+    //     isPushed = false;
+    //     signalingClient.onRegister = (res) {
+    //       print("onRegister after reconnection $res");
+    //       setState(() {
+    //         registerRes = res;
+    //       });
+    //     };
+    //   }
+    // }
+    return Consumer3<CallProvider, AuthProvider, ContactProvider>(
+      builder: (context, callProvider, authProvider, contactProvider, child) {
         print("this is callStatus ${callProvider.callStatus}");
         if (callProvider.callStatus == CallStatus.CallReceive)
           return callReceive();
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (BuildContext context) => MultiProvider(
+        //         providers: [
+        //           ChangeNotifierProvider<AuthProvider>(
+        //               create: (context) => AuthProvider()),
+        //           ChangeNotifierProvider(
+        //               create: (context) => ContactProvider()),
+        //           ChangeNotifierProvider(create: (context) => CallProvider()),
+        //         ],
+        //         child: CallReceiveScreen(
+        //           //  rendererListWithRefID:rendererListWithRefID,
+        //           mediaType: meidaType,
+
+        //           incomingfrom: incomingfrom,
+        //           callProvider: _callProvider,
+        //           registerRes: registerRes,
+        //           authProvider: authProvider,
+        //           from: authProvider.getUser.ref_id,
+        //           stopRinging: stopRinging,
+        //           authtoken: authProvider.getUser.auth_token,
+        //           contactList: contactProvider.contactList,
+        //         )),
+        //   ),
+        // );
 
         if (callProvider.callStatus == CallStatus.CallStart) {
           print("here in call provider status");
@@ -607,6 +756,32 @@ class _HomeState extends State<Home> {
         }
         if (callProvider.callStatus == CallStatus.CallDial)
           return callDial();
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (BuildContext context) => MultiProvider(
+        //         providers: [
+        //           ChangeNotifierProvider<AuthProvider>(
+        //               create: (context) => AuthProvider()),
+        //           ChangeNotifierProvider(
+        //               create: (context) => ContactProvider()),
+        //           ChangeNotifierProvider(create: (context) => CallProvider()),
+        //         ],
+        //         child: CallDialScreen(
+        //           //  rendererListWithRefID:rendererListWithRefID,
+
+        //           mediaType: meidaType,
+        //           callTo: callTo,
+        //           //  incomingfrom: incomingfrom,
+        //           callProvider: _callProvider,
+        //           registerRes: registerRes,
+        //           // authProvider: authProvider,
+        //           // stopRinging: stopRinging,
+
+        //           // authtoken: authProvider.getUser.auth_token,
+        //           // contactList: contactProvider.contactList,
+        //         )),
+        //   ),
+        // );
         else if (callProvider.callStatus == CallStatus.Initial)
           return SafeArea(
             child: GestureDetector(
@@ -630,7 +805,7 @@ class _HomeState extends State<Home> {
                       else if (contact.contactState == ContactStates.Success) {
                         if (contact.contactList.users == null)
                           return NoContactsScreen(
-                            state: widget.state,
+                            state: isConnected,
                             isSocketConnect: sockett,
                             refreshList: renderList,
                             authProvider: _auth,
@@ -781,8 +956,13 @@ class _HomeState extends State<Home> {
                   'assets/Accept.svg',
                 ),
                 onTap: () {
+                  print("this is pressed accept");
                   stopRinging();
                   signalingClient.createAnswer(incomingfrom);
+                  // setState(() {
+                  //   inCall = true;
+                  // });
+
                   // setState(() {
                   //   _isCalling = true;
                   //   incomingfrom = null;
@@ -804,7 +984,7 @@ class _HomeState extends State<Home> {
     //       width:70,
     //     child: Text("hello")),
     // );
-    print("remoteVideoFlag is $remoteVideoFlag");
+    print("remoteVideoFlag is $localRenderer");
     print(
         "ths is width ${MediaQuery.of(context).size.height}, ${MediaQuery.of(context).size.width}");
     return Scaffold(
@@ -910,7 +1090,7 @@ class _HomeState extends State<Home> {
   }
 
   Scaffold callStart() {
-    print("this is media type $meidaType $remoteVideoFlag ");
+    print("this is media type $meidaType $remoteVideoFlag $localRenderer");
     return Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Container(
@@ -994,24 +1174,6 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        //            Consumer<ContactProvider>(
-                        //   builder: (context, contact, child) {
-                        //     if (contact.contactState == ContactStates.Success) {
-                        //       int index = contact.contactList.users.indexWhere(
-                        //           (element) => element.ref_id == incomingfrom);
-                        //       return Text(
-                        //         contact.contactList.users[index].full_name,
-                        //         style: TextStyle(
-                        //             fontFamily: primaryFontFamily,
-                        //             color: darkBlackColor,
-                        //             decoration: TextDecoration.none,
-                        //             fontWeight: FontWeight.w700,
-                        //             fontStyle: FontStyle.normal,
-                        //             fontSize: 24),
-                        //       );
-                        //     }
-                        //   },
-                        // ),
                         (callTo == "")
                             ? Consumer<ContactProvider>(
                                 builder: (context, contact, child) {
@@ -1091,53 +1253,43 @@ class _HomeState extends State<Home> {
             !kIsWeb
                 ? meidaType == MediaType.video
                     ? Container(
-                     
-                        
-                          
-                         
-                          child: Align(
-                            alignment: Alignment.topRight,
-                                                      child: Column(
-                                
-                             
-                                children: [
-                              
-                                  Container(
-                                     padding: const EdgeInsets.fromLTRB(
-                                   0.0,120.33,20,27),
-                                    child: GestureDetector(
-                                      
-                                       child: SvgPicture.asset(
-                                           'assets/switch_camera.svg',
-                                          ),
-                                       onTap: () {
-                                         signalingClient.switchCamera();
-                                       },
-                                     ),
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.fromLTRB(
+                                    0.0, 120.33, 20, 27),
+                                child: GestureDetector(
+                                  child: SvgPicture.asset(
+                                    'assets/switch_camera.svg',
                                   ),
-                                
-                                     Container(
-                                        padding: const EdgeInsets.only(
-                                   right:20),
-                                       child: GestureDetector(
-                                         child: !switchSpeaker
-                                             ? SvgPicture.asset('assets/VolumnOn.svg')
-                                             : SvgPicture.asset(
-                                                 'assets/VolumeOff.svg'),
-                                         onTap: () {
-                                           signalingClient
-                                               .switchSpeaker(switchSpeaker);
-                                           setState(() {
-                                             switchSpeaker = !switchSpeaker;
-                                           });
-                                         },
-                                       ),
-                                     ),
-                                 // ),
-                                ],
-                              
-                        ),
+                                  onTap: () {
+                                    signalingClient.switchCamera();
+                                  },
+                                ),
+                              ),
+
+                              Container(
+                                padding: const EdgeInsets.only(right: 20),
+                                child: GestureDetector(
+                                  child: !switchSpeaker
+                                      ? SvgPicture.asset('assets/VolumnOn.svg')
+                                      : SvgPicture.asset(
+                                          'assets/VolumeOff.svg'),
+                                  onTap: () {
+                                    signalingClient
+                                        .switchSpeaker(switchSpeaker);
+                                    setState(() {
+                                      switchSpeaker = !switchSpeaker;
+                                    });
+                                  },
+                                ),
+                              ),
+                              // ),
+                            ],
                           ),
+                        ),
                       )
                     : Container(
                         // color: Colors.red,
@@ -1277,7 +1429,8 @@ class _HomeState extends State<Home> {
       print("this is here $value");
       List temp;
       temp = state.users
-          .where((element) => element.full_name.toLowerCase().startsWith(value.toLowerCase()))
+          .where((element) =>
+              element.full_name.toLowerCase().startsWith(value.toLowerCase()))
           .toList();
       print("this is filtered list $_filteredList");
       setState(() {
@@ -1403,43 +1556,65 @@ class _HomeState extends State<Home> {
                                     // width: 32,
                                     // height: 32,
                                     child: IconButton(
-                                      icon: SvgPicture.asset('assets/call.svg'),
-                                      onPressed: () {
-                                        _startCall(
-                                            [element.ref_id],
-                                            MediaType.audio,
-                                            CAllType.one2one,
-                                            SessionType.call);
-                                        setState(() {
-                                          callTo = element.full_name;
-                                          meidaType = MediaType.audio;
-                                          print("this is callTo $callTo");
-                                        });
-                                        print("three dot icon pressed");
-                                      },
-                                    ),
+                                        icon:
+                                            SvgPicture.asset('assets/call.svg'),
+                                        onPressed: isConnected
+                                            ? () {
+                                                print(
+                                                    "here in connected start call $isConnected");
+                                                _startCall(
+                                                    [element.ref_id],
+                                                    MediaType.audio,
+                                                    CAllType.one2one,
+                                                    SessionType.call);
+                                                setState(() {
+                                                  callTo = element.full_name;
+                                                  meidaType = MediaType.audio;
+                                                  print(
+                                                      "this is callTo $callTo");
+                                                });
+                                                print("three dot icon pressed");
+                                              }
+                                            : () {
+                                                print(
+                                                    "here in connected start call");
+
+                                                final snackBar = SnackBar(
+                                                    content: Text(
+                                                        'Make sure your device has internet connection'));
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(snackBar);
+                                              }),
                                   ),
                                   Container(
                                     padding: EdgeInsets.only(right: 5.9),
                                     // width: 35,
                                     // height: 35,
                                     child: IconButton(
-                                      icon: SvgPicture.asset(
-                                          'assets/videocallicon.svg'),
-                                      onPressed: () {
-                                        _startCall(
-                                            [element.ref_id],
-                                            MediaType.video,
-                                            CAllType.one2one,
-                                            SessionType.call);
-                                        setState(() {
-                                          callTo = element.full_name;
-                                          meidaType = MediaType.video;
-                                          print("this is callTo $callTo");
-                                        });
-                                        print("three dot icon pressed");
-                                      },
-                                    ),
+                                        icon: SvgPicture.asset(
+                                            'assets/videocallicon.svg'),
+                                        onPressed: isConnected
+                                            ? () {
+                                                _startCall(
+                                                    [element.ref_id],
+                                                    MediaType.video,
+                                                    CAllType.one2one,
+                                                    SessionType.call);
+                                                setState(() {
+                                                  callTo = element.full_name;
+                                                  meidaType = MediaType.video;
+                                                  print(
+                                                      "this is callTo $callTo");
+                                                });
+                                                print("three dot icon pressed");
+                                              }
+                                            : () {
+                                                final snackBar = SnackBar(
+                                                    content: Text(
+                                                        'Make sure your device has internet connection'));
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(snackBar);
+                                              }),
                                   ),
                                 ],
                               ),
@@ -1464,8 +1639,10 @@ class _HomeState extends State<Home> {
                   Container(
                     child: TextButton(
                       onPressed: () {
-                        _auth.logout();
+                        islogout = true;
+
                         signalingClient.unRegister(registerRes["mcToken"]);
+                        // _auth.logout();
                       },
                       child: Text(
                         "LOG OUT",
@@ -1485,7 +1662,9 @@ class _HomeState extends State<Home> {
                     height: 10,
                     width: 10,
                     decoration: BoxDecoration(
-                        color: sockett && isdev ? Colors.green : Colors.red,
+                        color: isConnected && sockett == true
+                            ? Colors.green
+                            : Colors.red,
                         shape: BoxShape.circle),
                   )
                 ],

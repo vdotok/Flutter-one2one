@@ -284,10 +284,10 @@
 
 import 'dart:io';
 
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
+import 'package:vdotok_stream_example/src/home/home.dart';
 import 'src/core/providers/auth.dart';
 import 'src/home/homeIndex.dart';
 import 'src/login/SignInScreen.dart';
@@ -297,6 +297,8 @@ import 'src/splash/splash.dart';
 import 'package:provider/provider.dart';
 
 import 'constant.dart';
+
+GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey;
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -318,93 +320,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool state = true;
-  bool connectionState = false;
-  bool keepShowing = false;
-  bool isDeviceConnected = false;
-  bool isdev=true;
-GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey;
-
+  bool isConnected = true;
+ 
 @override
-  void initState() {
-    super.initState();
-    rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-    checkStatus();
-    checkConnectivity();
-  }
-checkStatus() async {
-    if (!kIsWeb) {
-      bool connectivity = await DataConnectionChecker().hasConnection;
-      print("this is for web $connectivity");
-      if (connectivity == true) {
-        setState(() {
-          state = true;
-          print("here in state circle");
-        });
-      } else {
-        setState(() {
-          state = false;
-        });
-      }
-    }
-  }
 
-  void checkConnectivity() async {
-     isDeviceConnected = false;
-    if (!kIsWeb) {
-      DataConnectionChecker().onStatusChange.listen((status) async {
-        print("this on listener");
-        isDeviceConnected = await DataConnectionChecker().hasConnection;
-        print("this is is connected $isDeviceConnected");
-        if (isDeviceConnected == true) {
-        
-          if (state == true)
-            state = false;
-          else{
-          setState(() {
-            isdev=true;
-          });
-            showSnackbar("Internet Connected", whiteColor, Colors.green, false);}
-        } else {
-          {
-            setState(() {
-              isdev=false;
-            });
-          showSnackbar(
-              "No Internet Connection", whiteColor, primaryColor, true);
-          }
-        }
-      });
-    }
-  }
+void initState() {
 
-  showSnackbar(text, Color color, Color backgroundColor, bool check) {
-    if (check == false) {
-      rootScaffoldMessengerKey.currentState
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(
-          content: Text(
-            '$text',
-            style: TextStyle(color: color),
-          ),
-          backgroundColor: backgroundColor,
-          duration: Duration(seconds: 2),
-        ));
-    } else if (check == true) {
-      rootScaffoldMessengerKey.currentState
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(
-          content: Text(
-            '$text',
-            style: TextStyle(color: color),
-          ),
-          backgroundColor: backgroundColor,
-          duration: Duration(days: 1),
-        ));
-    }
-  }
+super.initState();
 
-
+rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+}
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -412,7 +337,7 @@ checkStatus() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()..isUserLogedIn()),
       ],
       child: MaterialApp(
-         scaffoldMessengerKey: rootScaffoldMessengerKey,
+        scaffoldMessengerKey: rootScaffoldMessengerKey,
         debugShowCheckedModeBanner: false,
         title: 'Vdotok Video',
         theme: ThemeData(
@@ -432,9 +357,12 @@ checkStatus() async {
             if (auth.loggedInStatus == Status.Authenticating)
               return SplashScreen();
             else if (auth.loggedInStatus == Status.LoggedIn) {
-              return HomeIndex(state:isdev);
-            } else
+             // return Test();
+             return HomeIndex(state: isConnected);
+            } else {
+             // return Test();
               return SignInScreen();
+            }
           },
         ),
       ),
@@ -449,13 +377,55 @@ class Test extends StatefulWidget {
 
 class _TestState extends State<Test> {
   SignalingClient signalingClient;
+  MediaStream _localStream;
+  RTCVideoRenderer _localRenderer = new RTCVideoRenderer();
   @override
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   void initState() {
     // TODO: implement initState
+
+    initRenderers();
 
     signalingClient = SignalingClient.instance;
     // signalingClient.methodInvoke();
     super.initState();
+
+    signalingClient.onLocalStream = (stream) {
+      print("this is local stream ${stream.id}");
+      setState(() {
+        _localRenderer.srcObject = stream;
+      });
+    };
+    // signalingClient.getPermissions();
+  }
+
+  initRenderers() async {
+    await _localRenderer.initialize();
   }
 
   @override
@@ -465,21 +435,42 @@ class _TestState extends State<Test> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            StreamBuilder(
-                stream: signalingClient.numberStream(),
-                builder: (BuildContext context, snapshot) {
-                  if (snapshot.hasData)
-                    return Text(snapshot.data.toString());
-                  else if (snapshot.hasError)
-                    return Text("no data found");
-                  else
-                    return Text("no data found");
-                }),
+            Container(
+              width: 200,
+              height: 300,
+              child: RTCVideoView(_localRenderer,
+                  mirror: false,
+                  objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover),
+            ),
             RaisedButton(
               onPressed: () {
-                // signalingClient.handleLocationChanges();
+                signalingClient.getNumber();
               },
-              child: Text("invoke method"),
+              child: Text("Create peerConnection"),
+            ),
+            RaisedButton(
+              onPressed: () {
+                signalingClient.creteOffermannual();
+              },
+              child: Text("createOffer"),
+            ),
+            RaisedButton(
+              onPressed: () {
+                signalingClient.getMedia();
+              },
+              child: Text("getUserMedia"),
+            ),
+            RaisedButton(
+              onPressed: () {
+                // signalingClient.getDisplay();
+              },
+              child: Text("getUserDisplayMedia"),
+            ),
+            RaisedButton(
+              onPressed: () {
+                // signalingClient.getinternal();
+              },
+              child: Text("getInternalAudio"),
             )
           ],
         ),

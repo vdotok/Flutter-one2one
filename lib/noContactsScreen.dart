@@ -10,10 +10,12 @@ class NoContactsScreen extends StatelessWidget {
   final refreshList;
   final bool state;
   final bool isSocketConnect;
-  NoContactsScreen({this.authProvider,this.refreshList, this.state, this.isSocketConnect});
+  NoContactsScreen(
+      {this.authProvider, this.refreshList, this.state, this.isSocketConnect});
 
   @override
   Widget build(BuildContext context) {
+    print("here in no chat screen");
     return
         // Scaffold(
         //   backgroundColor: chatRoomBackgroundColor,
@@ -154,11 +156,10 @@ class NoContactsScreen extends StatelessWidget {
                       shape: BoxShape.circle),
                 )
               ],
-                
             ),
             Container(
-                  padding: const EdgeInsets.only(bottom: 60),
-                  child: Text(authProvider.getUser.full_name))
+                padding: const EdgeInsets.only(bottom: 60),
+                child: Text(authProvider.getUser.full_name))
           ],
         ),
       ),
