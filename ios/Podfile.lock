@@ -15,7 +15,7 @@ PODS:
   - MMWormhole/Core (2.0.0)
   - path_provider (0.0.1):
     - Flutter
-  - "permission_handler (5.0.1+1)":
+  - "permission_handler (5.1.0+2)":
     - Flutter
   - Reachability (3.2)
   - replay_kit_launcher (0.0.1):
@@ -89,7 +89,7 @@ SPEC CHECKSUMS:
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
+  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   replay_kit_launcher: e2b85653d7ee455d067abc1a74c4feb8574087d4
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d

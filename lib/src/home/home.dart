@@ -1293,16 +1293,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       )
                     : Container(
                         // color: Colors.red,
+                        child: 
+                         Align(
+                          alignment: Alignment.topRight,
+                        
                         child: Column(
                           children: [
-                            Padding(
-                              // padding: EdgeInsets.zero,
-                              // height: 500,
-                              // width: 500,
-                              padding: const EdgeInsets.fromLTRB(
-                                  327.0, 120.0, 20.0, 8.0),
-                              child: Align(
-                                alignment: Alignment.topRight,
+                          Container(
+                                padding: const EdgeInsets.fromLTRB(
+                                    0.0, 120.33, 20, 27),
+                             
                                 child: GestureDetector(
                                   child: !switchSpeaker
                                       ? SvgPicture.asset('assets/VolumnOn.svg')
@@ -1316,11 +1316,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                     });
                                   },
                                 ),
-                              ),
+                              
                             ),
                           ],
                         ),
-                      )
+                      ))
                 : SizedBox(),
             //),
 
