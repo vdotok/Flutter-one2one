@@ -37,8 +37,7 @@ GlobalKey forlargView = new GlobalKey();
 GlobalKey forDialView = new GlobalKey();
 
 class Home extends StatefulWidget {
-  bool state;
-  Home(this.state);
+ 
   // User user;
   // Home({this.user});
   @override
@@ -51,6 +50,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   DateTime _time;
   DateTime _callTime;
   Timer _ticker;
+  Timer _callticker;
+  int count = 0;
+  bool iscallAcceptedbyuser = false;
   var number;
   var nummm;
   double upstream;
@@ -307,10 +309,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           isConnected = false;
           sockett = false;
         });
-       
+
         showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
-        
-           signalingClient.closeSocket();
+
+        signalingClient.closeSocket();
       }
     };
 
@@ -382,6 +384,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onCallAcceptedByUser = () async {
       print("this is call accepted");
       inCall = true;
+      iscallAcceptedbyuser = true;
       pressDuration = "";
       signalingClient.onCallStatsuploads = (uploadstats) {
         var nummm = uploadstats;
@@ -398,11 +401,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("here in paused");
         signalingClient.closeSocket();
       }
+      if (_callticker != null) {
+        _callticker.cancel();
+      }
       //here
       // _callBloc.add(CallNewEvent());
       _callProvider.initial();
       setState(() {
         inCall = false;
+        iscallAcceptedbyuser = false;
         pressDuration = "";
         localRenderer.srcObject = null;
         remoteRenderer.srcObject = null;
@@ -483,7 +490,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       case AppLifecycleState.inactive:
         print("app in inactive");
         //  isResumed = false;
-       //  signalingClient.closeSocket();
+        //  signalingClient.closeSocket();
         break;
       case AppLifecycleState.paused:
         print("app in paused");
@@ -504,6 +511,42 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // _isInForeground = state == AppLifecycleState.resumed;
   }
 
+  _callcheck() {
+    print("i am here in call chck function $count");
+
+    count = count + 1;
+
+    if (count == 30 && iscallAcceptedbyuser == false) {
+      print("I am here in stopcall if");
+
+      _callticker.cancel();
+
+      count = 0;
+
+      signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
+
+      _callProvider.initial();
+
+      iscallAcceptedbyuser = false;
+    } else if (count == 30 && iscallAcceptedbyuser == true) {
+      _callticker.cancel();
+
+      count = 0;
+
+      print("I am here in stopcall call accept true");
+
+      iscallAcceptedbyuser = false;
+    } else if (iscallAcceptedbyuser == true) {
+      _callticker.cancel();
+
+      print("I am here in emptyyyyyyyyyy stopcall call accept true");
+
+      count = 0;
+
+      iscallAcceptedbyuser = false;
+    } else {}
+  }
+
   _startCall(
       List<String> to, String mtype, String callType, String sessionType) {
     setState(() {
@@ -514,6 +557,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       enableCamera = true;
       switchSpeaker = mtype == MediaType.audio ? true : false;
     });
+
     signalingClient.startCallonetoone(
         from: _auth.getUser.ref_id,
         to: to,
@@ -524,6 +568,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // if (_localStream != null) {
     //here
     // _callBloc.add(CallDialEvent());
+    _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
     print("here in start call");
     _callProvider.callDial();
     // }

@@ -320,7 +320,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool isConnected = true;
+  
  
 @override
 
@@ -358,7 +358,7 @@ rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
               return SplashScreen();
             else if (auth.loggedInStatus == Status.LoggedIn) {
              // return Test();
-             return HomeIndex(state: isConnected);
+             return HomeIndex();
             } else {
              // return Test();
               return SignInScreen();
