@@ -36,8 +36,8 @@ dependencies:
   data_connection_checker: ^0.3.4
   flutter_device_type: ^0.4.0
   dart_ipify: ^1.1.1
-  vdotok_stream: 
-    path: ../vdk_flutter_video/
+  vdotok_stream: ^0.0.12
+    #path: ../vdk_flutter_video/
 
 
 
