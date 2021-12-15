@@ -378,34 +378,9 @@ class Test extends StatefulWidget {
 class _TestState extends State<Test> {
   SignalingClient signalingClient;
   MediaStream _localStream;
-  RTCVideoRenderer _localRenderer = new RTCVideoRenderer();
-  @override
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ RTCVideoRenderer _localRenderer = new RTCVideoRenderer();
   
+  @override  
   void initState() {
     // TODO: implement initState
 

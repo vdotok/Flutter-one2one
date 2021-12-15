@@ -37,7 +37,6 @@ GlobalKey forlargView = new GlobalKey();
 GlobalKey forDialView = new GlobalKey();
 
 class Home extends StatefulWidget {
- 
   // User user;
   // Home({this.user});
   @override
@@ -107,6 +106,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   List _filteredList = [];
   bool iscalloneto1 = false;
   bool inCall = false;
+  bool inInactive = false;
   bool onRemoteStream = false;
   final _searchController = new TextEditingController();
   List<int> vibrationList = [
@@ -213,10 +213,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       setState(() {
         sockett = true;
       });
-      print("here in init state register");
+      print("here in init state register0");
       signalingClient.register(_auth.getUser.toJson(), project_id);
       // signalingClient.register(user);
     };
+
     signalingClient.unRegisterSuccessfullyCallBack = () {
       _auth.logout();
     };
@@ -239,25 +240,36 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           sockett = false;
           isConnected = false;
         });
-      } else {
+      } else if (code == 401) {
+        print("here in 401");
         setState(() {
           sockett = false;
+          isConnected = false;
+          final snackBar = SnackBar(content: Text('$res'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         });
-        if (isResumed) {
-          if (_auth.loggedInStatus == Status.LoggedOut) {
-          } else {
+      } else {
+        if (_auth.loggedInStatus == Status.LoggedOut) {
+        } else {
+          setState(() {
+            sockett = false;
+          });
+          if (isResumed) {
+            // if (_auth.loggedInStatus == Status.LoggedOut) {
+            // } else {
             if (isConnected && sockett == false) {
               print("i am in connect in 1005");
               signalingClient.connect(project_id, _auth.completeAddress);
 
-              signalingClient.register(_auth.getUser.toJson(), project_id);
+              // signalingClient.register(_auth.getUser.toJson(), project_id);
 
               // sockett = true;
             } else {
               //  sockett = false;
             }
-          }
-        } else {}
+            //}
+          } else {}
+        }
       }
       // print(
       //     "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
@@ -298,7 +310,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           print("I am in Re Reregister");
           remoteVideoFlag = true;
           print("here in init state register");
-          signalingClient.register(_auth.getUser.toJson(), project_id);
+          // signalingClient.register(_auth.getUser.toJson(), project_id);
         }
         if (inCall == true) {
           isTimer = true;
@@ -401,6 +413,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("here in paused");
         signalingClient.closeSocket();
       }
+      if (Platform.isIOS) {
+        if (inInactive) {
+          print("here in paused");
+          signalingClient.closeSocket();
+        }
+      }
       if (_callticker != null) {
         _callticker.cancel();
       }
@@ -470,6 +488,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("app in resumed");
         isResumed = true;
         inPaused = false;
+        inInactive = false;
         if (_auth.loggedInStatus == Status.LoggedOut) {
         } else {
           print("this is variable for resume $sockett $isConnected");
@@ -489,6 +508,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.inactive:
         print("app in inactive");
+        inInactive = true;
+        isResumed = false;
+        inPaused = false;
+        if (Platform.isIOS) {
+          if (inCall == true) {
+            print("incall true");
+          } else {
+            print("here in ininactive");
+            signalingClient.closeSocket();
+          }
+        }
         //  isResumed = false;
         //  signalingClient.closeSocket();
         break;
@@ -496,6 +526,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("app in paused");
         inPaused = true;
         isResumed = false;
+        inInactive = false;
         if (inCall == true) {
           print("incall true");
         } else {
@@ -603,7 +634,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   stopRinging() {
     print("this is on rejected ");
-    // startRinging();                                           vc
+    // startRinging();                                         \
     vibrationList.clear();
     // });
     Vibration.cancel();
@@ -642,7 +673,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   dispose() {
     // localRenderer.dispose();
     // remoteRenderer.dispose();
-    _ticker.cancel();
+    if (_ticker != null) {
+      _ticker.cancel();
+    }
     // FlutterRingtonePlayer.stop();
     // Vibration.cancel();
     // sdpController.dispose();
@@ -1563,7 +1596,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                     child: IconButton(
                                         icon:
                                             SvgPicture.asset('assets/call.svg'),
-                                        onPressed: isConnected
+                                        onPressed: isConnected && sockett
                                             ? () {
                                                 print(
                                                     "here in connected start call $isConnected");
@@ -1598,7 +1631,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                     child: IconButton(
                                         icon: SvgPicture.asset(
                                             'assets/videocallicon.svg'),
-                                        onPressed: isConnected
+                                        onPressed: isConnected && sockett
                                             ? () {
                                                 _startCall(
                                                     [element.ref_id],
