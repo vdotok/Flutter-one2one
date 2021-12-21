@@ -1,4 +1,4 @@
-const URL = "http://stenant.vdotok.dev/API/";
+const URL = "https://stenant.vdotok.dev/API/";
 const version = "v0/";
 
 

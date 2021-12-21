@@ -101,7 +101,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   // LoginBloc _loginBloc;
   CallProvider _callProvider;
   AuthProvider _auth;
-
+ bool isRegisteredAlready=false;
   String callTo = "";
   List _filteredList = [];
   bool iscalloneto1 = false;
@@ -239,12 +239,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         setState(() {
           sockett = false;
           isConnected = false;
+          isRegisteredAlready=false;
         });
       } else if (code == 401) {
         print("here in 401");
         setState(() {
           sockett = false;
-          isConnected = false;
+         isRegisteredAlready=true;
+          
           final snackBar = SnackBar(content: Text('$res'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         });
@@ -253,11 +255,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         } else {
           setState(() {
             sockett = false;
+           // isRegisteredAlready=false;
           });
           if (isResumed) {
             // if (_auth.loggedInStatus == Status.LoggedOut) {
             // } else {
-            if (isConnected && sockett == false) {
+            if (isConnected && sockett == false && !isRegisteredAlready) {
               print("i am in connect in 1005");
               signalingClient.connect(project_id, _auth.completeAddress);
 
@@ -599,6 +602,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // if (_localStream != null) {
     //here
     // _callBloc.add(CallDialEvent());
+    print("this is switch speaker $switchSpeaker");
     _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
     print("here in start call");
     _callProvider.callDial();
@@ -634,7 +638,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   stopRinging() {
     print("this is on rejected ");
-    // startRinging();                                         \
+    // startRinging();                                           vc
     vibrationList.clear();
     // });
     Vibration.cancel();

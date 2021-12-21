@@ -320,16 +320,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  
- 
-@override
+  @override
+  void initState() {
+    super.initState();
 
-void initState() {
+    rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  }
 
-super.initState();
-
-rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-}
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -357,10 +354,11 @@ rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
             if (auth.loggedInStatus == Status.Authenticating)
               return SplashScreen();
             else if (auth.loggedInStatus == Status.LoggedIn) {
-             // return Test();
-             return HomeIndex();
+              print("here before home index");
+              // return Test();
+              return HomeIndex();
             } else {
-             // return Test();
+              // return Test();
               return SignInScreen();
             }
           },
@@ -378,9 +376,9 @@ class Test extends StatefulWidget {
 class _TestState extends State<Test> {
   SignalingClient signalingClient;
   MediaStream _localStream;
- RTCVideoRenderer _localRenderer = new RTCVideoRenderer();
-  
-  @override  
+  RTCVideoRenderer _localRenderer = new RTCVideoRenderer();
+
+  @override
   void initState() {
     // TODO: implement initState
 
