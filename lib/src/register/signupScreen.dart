@@ -99,7 +99,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           // CardView(text:"Sign Up to your account"),
                           //    Expanded(
                           Form(
-                            autovalidate: _autoValidate,
+                           autovalidateMode: AutovalidateMode.always,
                             key: _registerformkey,
 
                             child: Container(
