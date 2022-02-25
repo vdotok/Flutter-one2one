@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:move_to_background/move_to_background.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:vdotok_stream_example/noContactsScreen.dart';
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +14,7 @@ import 'package:vdotok_stream_example/src/core/config/config.dart';
 import 'package:vibration/vibration.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 
-import 'dart:io' show Platform;
+import 'dart:io' show File, Platform;
 
 import '../../constant.dart';
 import '../../main.dart';
@@ -35,6 +38,8 @@ bool islogout = false;
 GlobalKey forsmallView = new GlobalKey();
 GlobalKey forlargView = new GlobalKey();
 GlobalKey forDialView = new GlobalKey();
+AudioPlayer _audioPlayer = AudioPlayer();
+bool isRinging = false;
 
 class Home extends StatefulWidget {
   // User user;
@@ -101,7 +106,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   // LoginBloc _loginBloc;
   CallProvider _callProvider;
   AuthProvider _auth;
- bool isRegisteredAlready=false;
+  bool isRegisteredAlready = false;
   String callTo = "";
   List _filteredList = [];
   bool iscalloneto1 = false;
@@ -239,14 +244,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         setState(() {
           sockett = false;
           isConnected = false;
-          isRegisteredAlready=false;
+          isRegisteredAlready = false;
         });
       } else if (code == 401) {
         print("here in 401");
         setState(() {
           sockett = false;
-         isRegisteredAlready=true;
-          
+          isRegisteredAlready = true;
+
           final snackBar = SnackBar(content: Text('$res'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         });
@@ -255,7 +260,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         } else {
           setState(() {
             sockett = false;
-           // isRegisteredAlready=false;
+            // isRegisteredAlready=false;
           });
           if (isResumed) {
             // if (_auth.loggedInStatus == Status.LoggedOut) {
@@ -364,10 +369,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _updateTimer();
         _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
         onRemoteStream = true;
+        _audioPlayer.stop();
         _callProvider.callStart();
       });
     };
-    signalingClient.onParticipantsLeft = (refID) async {
+    signalingClient.onParticipantsLeft = (refID, receive) async {
       print("call callback on call left by participant");
 
       // on participants left
@@ -375,7 +381,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       } else {}
     };
     signalingClient.onReceiveCallFromUser =
-        (receivefrom, type, isonetone) async {
+        (receivefrom, type, isonetone, sessionType, callType) async {
       print("incomming call from user");
       startRinging();
 
@@ -429,7 +435,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       // _callBloc.add(CallNewEvent());
       _callProvider.initial();
       setState(() {
+        _audioPlayer.stop();
         inCall = false;
+        isRinging = false;
         iscallAcceptedbyuser = false;
         pressDuration = "";
         localRenderer.srcObject = null;
@@ -437,6 +445,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         // Navigator.pop(context);
       });
       stopRinging();
+    };
+    signalingClient.onTargetAlerting = () {
+      setState(() {
+        isRinging = true;
+      });
     };
     signalingClient.onCallDeclineByYou = () {
       print("this is oncalldeclinebyyou");
@@ -581,8 +594,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     } else {}
   }
 
-  _startCall(
-      List<String> to, String mtype, String callType, String sessionType) {
+  Future<bool> _onWillPop() async {
+    if (inCall) {
+      MoveToBackground.moveTaskToBack();
+      //return true;
+    } else {
+      return true;
+    }
+  }
+
+  _startCall(List<String> to, String mtype, String callType,
+      String sessionType) async {
     setState(() {
       inCall = true;
       pressDuration = "";
@@ -591,7 +613,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       enableCamera = true;
       switchSpeaker = mtype == MediaType.audio ? true : false;
     });
-
+    final file = new File('${(await getTemporaryDirectory()).path}/music.mp3');
+    await file.writeAsBytes(
+        (await rootBundle.load("assets/audio.mp3")).buffer.asUint8List());
+    // int res = await _audioPlayer.earpieceOrSpeakersToggle();
+    // print("thogh $res");
+    // if (res == 1) {
+    await _audioPlayer.play(file.path, isLocal: true);
     signalingClient.startCallonetoone(
         from: _auth.getUser.ref_id,
         to: to,
@@ -723,152 +751,156 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       statusBarIconBrightness: Brightness.dark, //status barIcon Brightness
     ));
 
-    return Consumer3<CallProvider, AuthProvider, ContactProvider>(
-      builder: (context, callProvider, authProvider, contactProvider, child) {
-        print("this is callStatus ${callProvider.callStatus} $inCall");
-        if (callProvider.callStatus == CallStatus.CallReceive)
-          return callReceive();
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (BuildContext context) => MultiProvider(
-        //         providers: [
-        //           ChangeNotifierProvider<AuthProvider>(
-        //               create: (context) => AuthProvider()),
-        //           ChangeNotifierProvider(
-        //               create: (context) => ContactProvider()),
-        //           ChangeNotifierProvider(create: (context) => CallProvider()),
-        //         ],
-        //         child: CallReceiveScreen(
-        //           //  rendererListWithRefID:rendererListWithRefID,
-        //           mediaType: meidaType,
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Consumer3<CallProvider, AuthProvider, ContactProvider>(
+          builder:
+              (context, callProvider, authProvider, contactProvider, child) {
+            print("this is callStatus ${callProvider.callStatus} $inCall");
+            if (callProvider.callStatus == CallStatus.CallReceive)
+              return callReceive();
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (BuildContext context) => MultiProvider(
+            //         providers: [
+            //           ChangeNotifierProvider<AuthProvider>(
+            //               create: (context) => AuthProvider()),
+            //           ChangeNotifierProvider(
+            //               create: (context) => ContactProvider()),
+            //           ChangeNotifierProvider(create: (context) => CallProvider()),
+            //         ],
+            //         child: CallReceiveScreen(
+            //           //  rendererListWithRefID:rendererListWithRefID,
+            //           mediaType: meidaType,
 
-        //           incomingfrom: incomingfrom,
-        //           callProvider: _callProvider,
-        //           registerRes: registerRes,
-        //           authProvider: authProvider,
-        //           from: authProvider.getUser.ref_id,
-        //           stopRinging: stopRinging,
-        //           authtoken: authProvider.getUser.auth_token,
-        //           contactList: contactProvider.contactList,
-        //         )),
-        //   ),
-        // );
+            //           incomingfrom: incomingfrom,
+            //           callProvider: _callProvider,
+            //           registerRes: registerRes,
+            //           authProvider: authProvider,
+            //           from: authProvider.getUser.ref_id,
+            //           stopRinging: stopRinging,
+            //           authtoken: authProvider.getUser.auth_token,
+            //           contactList: contactProvider.contactList,
+            //         )),
+            //   ),
+            // );
 
-        if (callProvider.callStatus == CallStatus.CallStart) {
-          print("here in call provider status");
-          // if (isPushed == false) {
-          //   isPushed = true;
-          //   WidgetsBinding.instance.addPostFrameCallback((_) {
-          //     Navigator.of(context).push(
-          //       MaterialPageRoute(
-          //         builder: (BuildContext context) => MultiProvider(
-          //             providers: [
-          //               ChangeNotifierProvider<AuthProvider>(
-          //                   create: (context) => AuthProvider()),
-          //               ChangeNotifierProvider(
-          //                   create: (context) => ContactProvider()),
-          //               ChangeNotifierProvider(
-          //                   create: (context) => CallProvider()),
-          //             ],
-          //             child: CallStartScreen(
-          //               // onSpeakerCallBack: onSpeakerCallBack,
-          //               // onCameraCallBack: onCameraCallBack,
-          //               // onMicCallBack: onMicCallBack,
-          //               //  rendererListWithRefID:rendererListWithRefID,
-          //               //  onRemoteStream:onRemoteStream,
-          //               mediaType: meidaType,
-          //               localRenderer: localRenderer,
-          //               remoteRenderer: remoteRenderer,
-          //               incomingfrom: incomingfrom,
-          //               registerRes: registerRes,
-          //               stopCall: stopCall,
-          //               callTo: callTo,
-          //               // signalingClient: signalingClient,
-          //               callProvider: _callProvider,
-          //               authProvider: _auth,
-          //               contactProvider: _contactProvider,
-          //               mcToken: registerRes["mcToken"],
+            if (callProvider.callStatus == CallStatus.CallStart) {
+              print("here in call provider status");
+              // if (isPushed == false) {
+              //   isPushed = true;
+              //   WidgetsBinding.instance.addPostFrameCallback((_) {
+              //     Navigator.of(context).push(
+              //       MaterialPageRoute(
+              //         builder: (BuildContext context) => MultiProvider(
+              //             providers: [
+              //               ChangeNotifierProvider<AuthProvider>(
+              //                   create: (context) => AuthProvider()),
+              //               ChangeNotifierProvider(
+              //                   create: (context) => ContactProvider()),
+              //               ChangeNotifierProvider(
+              //                   create: (context) => CallProvider()),
+              //             ],
+              //             child: CallStartScreen(
+              //               // onSpeakerCallBack: onSpeakerCallBack,
+              //               // onCameraCallBack: onCameraCallBack,
+              //               // onMicCallBack: onMicCallBack,
+              //               //  rendererListWithRefID:rendererListWithRefID,
+              //               //  onRemoteStream:onRemoteStream,
+              //               mediaType: meidaType,
+              //               localRenderer: localRenderer,
+              //               remoteRenderer: remoteRenderer,
+              //               incomingfrom: incomingfrom,
+              //               registerRes: registerRes,
+              //               stopCall: stopCall,
+              //               callTo: callTo,
+              //               // signalingClient: signalingClient,
+              //               callProvider: _callProvider,
+              //               authProvider: _auth,
+              //               contactProvider: _contactProvider,
+              //               mcToken: registerRes["mcToken"],
 
-          //               contactList: _contactProvider.contactList,
-          //               //  popCallBAck: screenPopCallBack
-          //             )),
-          //       ),
-          //     );
-          //   });
-          // }
-          return callStart();
-        }
-        if (callProvider.callStatus == CallStatus.CallDial)
-          return callDial();
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (BuildContext context) => MultiProvider(
-        //         providers: [
-        //           ChangeNotifierProvider<AuthProvider>(
-        //               create: (context) => AuthProvider()),
-        //           ChangeNotifierProvider(
-        //               create: (context) => ContactProvider()),
-        //           ChangeNotifierProvider(create: (context) => CallProvider()),
-        //         ],
-        //         child: CallDialScreen(
-        //           //  rendererListWithRefID:rendererListWithRefID,
+              //               contactList: _contactProvider.contactList,
+              //               //  popCallBAck: screenPopCallBack
+              //             )),
+              //       ),
+              //     );
+              //   });
+              // }
+              return callStart();
+            }
+            if (callProvider.callStatus == CallStatus.CallDial)
+              return callDial();
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (BuildContext context) => MultiProvider(
+            //         providers: [
+            //           ChangeNotifierProvider<AuthProvider>(
+            //               create: (context) => AuthProvider()),
+            //           ChangeNotifierProvider(
+            //               create: (context) => ContactProvider()),
+            //           ChangeNotifierProvider(create: (context) => CallProvider()),
+            //         ],
+            //         child: CallDialScreen(
+            //           //  rendererListWithRefID:rendererListWithRefID,
 
-        //           mediaType: meidaType,
-        //           callTo: callTo,
-        //           //  incomingfrom: incomingfrom,
-        //           callProvider: _callProvider,
-        //           registerRes: registerRes,
-        //           // authProvider: authProvider,
-        //           // stopRinging: stopRinging,
+            //           mediaType: meidaType,
+            //           callTo: callTo,
+            //           //  incomingfrom: incomingfrom,
+            //           callProvider: _callProvider,
+            //           registerRes: registerRes,
+            //           // authProvider: authProvider,
+            //           // stopRinging: stopRinging,
 
-        //           // authtoken: authProvider.getUser.auth_token,
-        //           // contactList: contactProvider.contactList,
-        //         )),
-        //   ),
-        // );
-        else if (callProvider.callStatus == CallStatus.Initial)
-          return SafeArea(
-            child: GestureDetector(
-              onTap: () {
-                FocusScopeNode currentFous = FocusScope.of(context);
-                if (!currentFous.hasPrimaryFocus) {
-                  return currentFous.unfocus();
-                }
-              },
-              child: Scaffold(
-                  backgroundColor: chatRoomBackgroundColor,
-                  appBar: CustomAppBar(authProvider: _auth),
-                  body: Consumer<ContactProvider>(
-                    builder: (context, contact, child) {
-                      if (contact.contactState == ContactStates.Loading)
-                        return Center(
-                            child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(chatRoomColor),
-                        ));
-                      else if (contact.contactState == ContactStates.Success) {
-                        if (contact.contactList.users == null)
-                          return NoContactsScreen(
-                            state: isConnected,
-                            isSocketConnect: sockett,
-                            refreshList: renderList,
-                            authProvider: _auth,
-                          );
-                        else
-                          return contactList(contact.contactList);
-                      } else
-                        return Container(
-                          child: Text("no contacts found"),
-                        );
-                    },
-                  )),
-            ),
-          );
-        return Container(
-          child: Text("test"),
-        );
-      },
-    );
+            //           // authtoken: authProvider.getUser.auth_token,
+            //           // contactList: contactProvider.contactList,
+            //         )),
+            //   ),
+            // );
+            else if (callProvider.callStatus == CallStatus.Initial)
+              return SafeArea(
+                child: GestureDetector(
+                  onTap: () {
+                    FocusScopeNode currentFous = FocusScope.of(context);
+                    if (!currentFous.hasPrimaryFocus) {
+                      return currentFous.unfocus();
+                    }
+                  },
+                  child: Scaffold(
+                      backgroundColor: chatRoomBackgroundColor,
+                      appBar: CustomAppBar(authProvider: _auth),
+                      body: Consumer<ContactProvider>(
+                        builder: (context, contact, child) {
+                          if (contact.contactState == ContactStates.Loading)
+                            return Center(
+                                child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(chatRoomColor),
+                            ));
+                          else if (contact.contactState ==
+                              ContactStates.Success) {
+                            if (contact.contactList.users == null)
+                              return NoContactsScreen(
+                                state: isConnected,
+                                isSocketConnect: sockett,
+                                refreshList: renderList,
+                                authProvider: _auth,
+                              );
+                            else
+                              return contactList(contact.contactList);
+                          } else
+                            return Container(
+                              child: Text("no contacts found"),
+                            );
+                        },
+                      )),
+                ),
+              );
+            return Container(
+              child: Text("test"),
+            );
+          },
+        ));
   }
 
   Scaffold callReceive() {
@@ -1092,7 +1124,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Calling",
+                        isRinging ? "Ringing" : "Calling",
                         style: TextStyle(
                             fontSize: 14,
                             decoration: TextDecoration.none,

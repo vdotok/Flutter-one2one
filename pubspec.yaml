@@ -30,15 +30,16 @@ dependencies:
   http: ^0.12.2
   json_annotation: ^3.1.1
   device_info: ^2.0.0
-  path_provider: ^2.0.1
+  path_provider:
   provider: ^5.0.0
   flutter_svg: 
+  audioplayers: 
   data_connection_checker: ^0.3.4
   flutter_device_type: ^0.4.0
   dart_ipify: ^1.1.1
-  vdotok_stream: ^0.0.12
-  # path: ../vdk_flutter_video/
-
+  vdotok_stream: 
+   path: ../flutter-sdk-streaming/
+  move_to_background: ^1.0.2
 
 
 dev_dependencies:
@@ -46,7 +47,7 @@ dev_dependencies:
     sdk: flutter
   build_runner:
   json_serializable:
-  flutter_launcher_icons: "^0.8.0"
+  flutter_launcher_icons: 
 
 flutter_icons:
   android: "launcher_icon"
