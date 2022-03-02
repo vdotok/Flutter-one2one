@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
 import 'package:vibration/vibration.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
+import 'package:wakelock/wakelock.dart';
 
 import 'dart:io' show File, Platform;
 
@@ -391,6 +392,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         onRemoteStream = false;
         iscalloneto1 = isonetone;
         incomingfrom = receivefrom;
+        Wakelock.toggle(enable: true);
         meidaType = type;
         switchMute = true;
         enableCamera = true;
@@ -438,6 +440,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _audioPlayer.stop();
         inCall = false;
         isRinging = false;
+        Wakelock.toggle(enable: false);
         iscallAcceptedbyuser = false;
         pressDuration = "";
         localRenderer.srcObject = null;
@@ -606,6 +609,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   _startCall(List<String> to, String mtype, String callType,
       String sessionType) async {
     setState(() {
+        Wakelock.toggle(enable: true);
       inCall = true;
       pressDuration = "";
       onRemoteStream = false;
