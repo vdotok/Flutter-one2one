@@ -34,6 +34,8 @@ PODS:
   - VdoTokStreaming (1.0.6)
   - vibration (1.7.3):
     - Flutter
+  - wakelock (0.0.1):
+    - Flutter
   - wifi_info_flutter (0.0.1):
     - Flutter
 
@@ -51,6 +53,7 @@ DEPENDENCIES:
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - vdotok_stream (from `.symlinks/plugins/vdotok_stream/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
+  - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - wifi_info_flutter (from `.symlinks/plugins/wifi_info_flutter/ios`)
 
 SPEC REPOS:
@@ -87,6 +90,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/vdotok_stream/ios"
   vibration:
     :path: ".symlinks/plugins/vibration/ios"
+  wakelock:
+    :path: ".symlinks/plugins/wakelock/ios"
   wifi_info_flutter:
     :path: ".symlinks/plugins/wifi_info_flutter/ios"
 
@@ -108,6 +113,7 @@ SPEC CHECKSUMS:
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
   VdoTokStreaming: 6a0afe455e22c1493034c07b1961924def9e5a42
   vibration: b5a33e764c3f609a975b9dca73dce20fdde627dc
+  wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   wifi_info_flutter: 55d4c2469034f5b5c38063ccefa62f708a503a2b
 
 PODFILE CHECKSUM: f7fd0ccd7314c83b184f880f7cd6ce6def6e57b1
