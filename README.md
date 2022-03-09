@@ -74,7 +74,7 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 
 1. Open <b>Terminal</b>
 2. Go to <b>Project Directory</b>
-3. Run <b>CD iOS</b>
+3. Run <b>cd ios</b>
 4. Run <b>Pod Install</b>
 
 ![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/86484384/139202518-daeb9b97-fa18-476b-bc5f-d48020131d92.jpg)
@@ -82,7 +82,7 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 * <b>To Open a Project in Xcode:</b>
 
 1. Go to your <b>Project Folder</b>
-2. Go to <b>iOS folder</b> in your project 
+2. Go to <b>ios folder</b> in your project 
 3. Double click on the <b>Runner.xcworkspace</b>
 
 ![8](https://user-images.githubusercontent.com/86484384/139203776-bf1fe5fd-2530-4d4b-b30e-199468429449.jpg)
