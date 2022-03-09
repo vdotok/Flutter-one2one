@@ -9,14 +9,15 @@ Open the below link, and select “Operating System” for the installation of F
 <br/>
 https://flutter.dev/docs/get-started/install 
 
-#### Note: 
+#### Note:
+
 Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure all tick-marks appear green, as shown in the below screenshot. 
 
 <img width="603" alt="MicrosoftTeams-image" src="https://user-images.githubusercontent.com/86484384/139054351-32baf182-20d3-476a-b73e-df1927210ffe.png">
 
 ## Repo Clone:	
 
-1. Open Github URL of VdoTok’s Flutter one2one Audio/Video Call “ https://github.com/vdotok/Flutter-one2one "
+1. Open Github URL of VdoTok’s Flutter one2one Audio/Video Call " https://github.com/vdotok/Flutter-one2one "
 2. Click on <b>Code</b> button, appearing on R.H.S
 3. A toast for <b>Clone</b> will appear, containing HTTPS, SSH, and GitHub CLI  information
 4. On HTTPS section, copy repository <b>URL</b> 
@@ -44,7 +45,7 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 
 ![2](https://user-images.githubusercontent.com/86484384/139055385-c14b148c-b056-4065-9482-249c134f5651.jpg)
 
-* This will navigate to Sign Up page, where the User is required to enter the following information: <b>First Name > Last Name > Email ID > Password </b>
+* This will navigate to Sign Up page, where the User is required to enter the following information: <b>First Name > Last Name > Email ID > Password</b>
 
 2. Select <b>Sign Up Today</b> button 
 
@@ -86,7 +87,7 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 
 ![8](https://user-images.githubusercontent.com/86484384/139203776-bf1fe5fd-2530-4d4b-b30e-199468429449.jpg)
 
-* <b>To Configure “Developer Account” after Opening a Project in Xcode:</b>
+* <b>To Configure Developer Account after Opening a Project in Xcode:</b>
 
 1. Select <b>File Folder</b> icon, appearing on top LHS in blue color 
 2. Select <b>Runner</b> of Xcode 
@@ -99,8 +100,8 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 
 * <b>To Add Apple Account:</b>
 
-1. Enter <b>Apple ID </b>
-2. Select <b>Next </b>
+1. Enter <b>Apple ID</b>
+2. Select <b>Next</b> button
 ![MicrosoftTeams-image (5)](https://user-images.githubusercontent.com/86484384/139230893-a99c0476-ea9d-4df3-bcf2-ee163bf702d7.jpg)
 
 3. Enter <b>Password</b>
@@ -122,7 +123,7 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 
 ![15](https://user-images.githubusercontent.com/86484384/139233996-d47eee74-33f8-42fc-96f2-b157da018e67.jpg)
 
-3. Select <b>Run</b> Buton
+3. Select <b>Run</b> button
 ![16](https://user-images.githubusercontent.com/86484384/139234426-e5a54b59-b050-4038-83d2-592b0dbc3343.jpg)
 
 ## Android Setup: 
@@ -137,6 +138,6 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 To connect a device, enable <b>Developer Mode</b> and <b>USB Debug</b> by following the device-specific steps given on the below link:  
 https://developer.android.com/studio/debug/dev-options 
 
-## Build Project 
+## Build Project:
 
 After connecting your phone, run the following command in <b>Project Directory -> "flutter run"</b>
