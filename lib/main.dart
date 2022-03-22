@@ -342,7 +342,7 @@ class _MyAppState extends State<MyApp> {
               primarySwatch: Colors.grey,
             ).copyWith(),
             accentColor: primaryColor,
-            primaryColor: primaryColor,
+             primaryColor: primaryColor,
             scaffoldBackgroundColor: Colors.white,
             textTheme: TextTheme(
               bodyText1: TextStyle(color: secondaryColor),

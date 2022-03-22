@@ -41,6 +41,7 @@ GlobalKey forlargView = new GlobalKey();
 GlobalKey forDialView = new GlobalKey();
 AudioPlayer _audioPlayer = AudioPlayer();
 bool isRinging = false;
+var snackBar;
 
 class Home extends StatefulWidget {
   // User user;
@@ -228,7 +229,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _auth.logout();
     };
     signalingClient.onError = (code, res) {
-      print("onError $code $res");
+      print("onError no internet connection $code $res");
       // if (isConnected == false) {
       //   setState(() {
       //     isConnected = false;
@@ -242,18 +243,27 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //   });
       // }
       if (code == 1001 || code == 1002) {
+        signalingClient.sendPing(registerRes["mctoken"]);
+        // if (isConnected && !isRegisteredAlready) {
+        //   print("internet is connected $sockett");
+        //   signalingClient.connect(project_id, _auth.completeAddress);
+        // } else {
         setState(() {
           sockett = false;
-          isConnected = false;
+
           isRegisteredAlready = false;
         });
+        // }
       } else if (code == 401) {
         print("here in 401");
         setState(() {
           sockett = false;
           isRegisteredAlready = true;
 
-          final snackBar = SnackBar(content: Text('$res'));
+          snackBar = SnackBar(
+            content: Text('$res'),
+            duration: Duration(days: 365),
+          );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         });
       } else {
@@ -382,9 +392,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       } else {}
     };
     signalingClient.onReceiveCallFromUser =
-        
         (receivefrom, type, isonetone, sessionType, callType) async {
-          
       print("incomming call from user");
       startRinging();
 
@@ -403,6 +411,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         remoteAudioFlag = true;
       });
       //here
+      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
       // _callBloc.add(CallReceiveEvent());
       _callProvider.callReceive();
     };
@@ -411,13 +420,25 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       inCall = true;
       iscallAcceptedbyuser = true;
       pressDuration = "";
-      signalingClient.onCallStatsuploads = (uploadstats) {
-        var nummm = uploadstats;
-      };
-      signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
-        print("NOT NULL  $timeStatsdownloads");
-        number = timeStatsdownloads;
-      };
+
+      _audioPlayer.stop();
+      if (isTimer == false) {
+        _time = DateTime.now();
+        _callTime = DateTime.now();
+      } else {
+        _ticker.cancel();
+        _time = _callTime;
+        isTimer = false;
+      }
+      _updateTimer();
+      _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+      // signalingClient.onCallStatsuploads = (uploadstats) {
+      //   var nummm = uploadstats;
+      // };
+      // signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
+      //   print("NOT NULL  $timeStatsdownloads");
+      //   number = timeStatsdownloads;
+      // };
       _callProvider.callStart();
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
@@ -470,8 +491,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onCallBusyCallback = () {
       print("hey i am here");
       _callProvider.initial();
-      final snackBar =
-          SnackBar(content: Text('User is busy with another call.'));
+      snackBar = SnackBar(content: Text('User is busy with another call.'));
 
 // Find the Scaffold in the widget tree and use it to show a SnackBar.
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -611,7 +631,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   _startCall(List<String> to, String mtype, String callType,
       String sessionType) async {
     setState(() {
-        Wakelock.toggle(enable: true);
+      Wakelock.toggle(enable: true);
       inCall = true;
       pressDuration = "";
       onRemoteStream = false;
@@ -695,14 +715,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         ));
     } else if (check == true) {
       rootScaffoldMessengerKey.currentState
-        ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(
           content: Text(
             '$text',
             style: TextStyle(color: color),
           ),
           backgroundColor: backgroundColor,
-          duration: Duration(seconds: 2),
+          duration: Duration(days: 365),
         ));
     }
   }
@@ -748,6 +767,35 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       remoteRenderer.srcObject = null;
     });
     if (!kIsWeb) stopRinging();
+  }
+
+  Future buildShowDialog(
+      BuildContext context, String mesg, String errorMessage) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, setState) {
+            Future.delayed(Duration(seconds: 2), () {
+              Navigator.of(context).pop(true);
+            });
+            return AlertDialog(
+                title: Center(
+                    child: Text(
+                  "${mesg}",
+                  style: TextStyle(color: counterColor),
+                )),
+                content: Text("$errorMessage"),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0)),
+                elevation: 0,
+                actions: <Widget>[
+                  Container(
+                    height: 50,
+                    width: 319,
+                  )
+                ]);
+          });
+        });
   }
 
   Widget build(BuildContext context) {
@@ -1638,33 +1686,43 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                     child: IconButton(
                                         icon:
                                             SvgPicture.asset('assets/call.svg'),
-                                        onPressed: isConnected && sockett
-                                            ? () {
-                                                print(
-                                                    "here in connected start call $isConnected");
-                                                _startCall(
-                                                    [element.ref_id],
-                                                    MediaType.audio,
-                                                    CAllType.one2one,
-                                                    SessionType.call);
-                                                setState(() {
-                                                  callTo = element.full_name;
-                                                  meidaType = MediaType.audio;
-                                                  print(
-                                                      "this is callTo $callTo");
-                                                });
-                                                print("three dot icon pressed");
-                                              }
-                                            : () {
-                                                print(
-                                                    "here in connected start call");
+                                        onPressed: !isConnected
+                                            ? (!isRegisteredAlready)
+                                                ? () {
+                                                    // buildShowDialog(
+                                                    //     context,
+                                                    //     "No Internet Connection",
+                                                    //     "Make sure your device has internet.");
+                                                  }
+                                                : () {}
+                                            : isRegisteredAlready
+                                                ? () {}
+                                                : () {
+                                                    print(
+                                                        "here in connected start call $isConnected");
+                                                    _startCall(
+                                                        [element.ref_id],
+                                                        MediaType.audio,
+                                                        CAllType.one2one,
+                                                        SessionType.call);
+                                                    setState(() {
+                                                      callTo =
+                                                          element.full_name;
+                                                      meidaType =
+                                                          MediaType.audio;
+                                                      print(
+                                                          "this is callTo $callTo");
+                                                    });
+                                                    print(
+                                                        "three dot icon pressed");
 
-                                                final snackBar = SnackBar(
-                                                    content: Text(
-                                                        'Make sure your device has internet connection'));
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(snackBar);
-                                              }),
+// if(!isRegisteredAlready)
+//                                                 {snackBar = SnackBar(
+//                                                     content: Text(
+//                                                         'Make sure your device has internet connection'));
+//                                                 ScaffoldMessenger.of(context)
+//                                                     .showSnackBar(snackBar);}
+                                                  }),
                                   ),
                                   Container(
                                     padding: EdgeInsets.only(right: 5.9),
@@ -1673,8 +1731,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                     child: IconButton(
                                         icon: SvgPicture.asset(
                                             'assets/videocallicon.svg'),
-                                        onPressed: isConnected && sockett
-                                            ? () {
+                                        onPressed: !isConnected
+                                            ? (!isRegisteredAlready)
+                                                ? () {
+                                                    // buildShowDialog(
+                                                    //     context,
+                                                    //     "No Internet Connection",
+                                                    //     "Make sure your device has internet.");
+                                                  }
+                                                : () {}
+                                            : isRegisteredAlready
+                                                ? () {}
+                                                : () {
                                                 _startCall(
                                                     [element.ref_id],
                                                     MediaType.video,
@@ -1687,13 +1755,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                                       "this is callTo $callTo");
                                                 });
                                                 print("three dot icon pressed");
-                                              }
-                                            : () {
-                                                final snackBar = SnackBar(
-                                                    content: Text(
-                                                        'Make sure your device has internet connection'));
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(snackBar);
+                                              
+                                            
                                               }),
                                   ),
                                 ],
@@ -1720,6 +1783,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     child: TextButton(
                       onPressed: () {
                         islogout = true;
+                        if (isRegisteredAlready) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          isRegisteredAlready = false;
+                        }
 
                         signalingClient.unRegister(registerRes["mcToken"]);
                         // _auth.logout();
