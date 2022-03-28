@@ -317,22 +317,23 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.internetConnectivityCallBack = (mesg) {
       if (mesg == "Connected") {
         setState(() {
+          if (inCall == true) {
+            print("fdjhfjd");
+            isTimer = true;
+          }
           isConnected = true;
           //  sockett = true;
         });
 
         showSnackbar("Internet Connected", whiteColor, Colors.green, false);
         //signalingClient.sendPing(registerRes["mcToken"]);
-
+        print("khdfjhfj $isTimer");
         if (sockett == false) {
           signalingClient.connect(project_id, _auth.completeAddress);
-          print("I am in Re Reregister");
+          print("I am in Re Reregister ");
           remoteVideoFlag = true;
           print("here in init state register");
           // signalingClient.register(_auth.getUser.toJson(), project_id);
-        }
-        if (inCall == true) {
-          isTimer = true;
         }
       } else {
         print("onError no internet connection");
@@ -364,15 +365,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       });
     };
     signalingClient.onRemoteStream = (stream, refid) async {
-      print("this is home page on remote stream ${stream.id} $refid");
+       print("khdfjhfj1 $isTimer");
+      print(
+          "this is home page on remote stream ${stream.id} $refid $inCall $isTimer");
       setState(() {
         remoteRenderer.srcObject = stream;
         remote = stream;
         print("this is remote ${stream.id}");
         if (isTimer == false) {
+          print("dhdjhdjs");
           _time = DateTime.now();
           _callTime = DateTime.now();
         } else {
+          print("djhdjdhhfd");
           _ticker.cancel();
           _time = _callTime;
           isTimer = false;
@@ -380,6 +385,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _updateTimer();
         _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
         onRemoteStream = true;
+        if (_callticker != null) {
+          _callticker.cancel();
+          count = 0;
+          iscallAcceptedbyuser = true;
+        }
         _audioPlayer.stop();
         _callProvider.callStart();
       });
@@ -391,8 +401,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       if (refID == _auth.getUser.ref_id) {
       } else {}
     };
-    signalingClient.onReceiveCallFromUser =
-        (receivefrom, type, isonetone, sessionType, callType) async {
+    signalingClient.onReceiveCallFromUser = (res) async {
       print("incomming call from user");
       startRinging();
 
@@ -400,13 +409,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         inCall = true;
         pressDuration = "";
         onRemoteStream = false;
-        iscalloneto1 = isonetone;
-        incomingfrom = receivefrom;
+        iscalloneto1 = res["call_type"] == "one_to_one" ? true : false;
+        incomingfrom = res["from"];
         Wakelock.toggle(enable: true);
-        meidaType = type;
+        meidaType = res["media_type"];
         switchMute = true;
         enableCamera = true;
-        switchSpeaker = type == MediaType.audio ? true : false;
+        switchSpeaker = res["media_type"] == MediaType.audio ? true : false;
         remoteVideoFlag = true;
         remoteAudioFlag = true;
       });
@@ -422,16 +431,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       pressDuration = "";
 
       _audioPlayer.stop();
-      if (isTimer == false) {
-        _time = DateTime.now();
-        _callTime = DateTime.now();
-      } else {
-        _ticker.cancel();
-        _time = _callTime;
-        isTimer = false;
-      }
-      _updateTimer();
-      _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+      // if (isTimer == false) {
+      //   _time = DateTime.now();
+      //   _callTime = DateTime.now();
+      // } else {
+      //   _ticker.cancel();
+      //   _time = _callTime;
+      //   isTimer = false;
+      // }
+      // _updateTimer();
+      // _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
       // signalingClient.onCallStatsuploads = (uploadstats) {
       //   var nummm = uploadstats;
       // };
@@ -1743,21 +1752,22 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                             : isRegisteredAlready
                                                 ? () {}
                                                 : () {
-                                                _startCall(
-                                                    [element.ref_id],
-                                                    MediaType.video,
-                                                    CAllType.one2one,
-                                                    SessionType.call);
-                                                setState(() {
-                                                  callTo = element.full_name;
-                                                  meidaType = MediaType.video;
-                                                  print(
-                                                      "this is callTo $callTo");
-                                                });
-                                                print("three dot icon pressed");
-                                              
-                                            
-                                              }),
+                                                    _startCall(
+                                                        [element.ref_id],
+                                                        MediaType.video,
+                                                        CAllType.one2one,
+                                                        SessionType.call);
+                                                    setState(() {
+                                                      callTo =
+                                                          element.full_name;
+                                                      meidaType =
+                                                          MediaType.video;
+                                                      print(
+                                                          "this is callTo $callTo");
+                                                    });
+                                                    print(
+                                                        "three dot icon pressed");
+                                                  }),
                                   ),
                                 ],
                               ),
