@@ -102,6 +102,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool isConnected = true;
   var registerRes;
   // bool isdev = true;
+  Map<String, dynamic> customData;
   String incomingfrom;
   // ContactBloc _contactBloc;
   // CallBloc _callBloc;
@@ -365,7 +366,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       });
     };
     signalingClient.onRemoteStream = (stream, refid) async {
-       print("khdfjhfj1 $isTimer");
+      print("khdfjhfj1 $isTimer");
       print(
           "this is home page on remote stream ${stream.id} $refid $inCall $isTimer");
       setState(() {
@@ -401,11 +402,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       if (refID == _auth.getUser.ref_id) {
       } else {}
     };
+    signalingClient.insufficientBalance = (res) {
+      print("here in insufficient balance");
+      snackBar = SnackBar(content: Text('$res'));
+
+// Find the Scaffold in the widget tree and use it to show a SnackBar.
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    };
     signalingClient.onReceiveCallFromUser = (res) async {
       print("incomming call from user");
       startRinging();
 
       setState(() {
+        
         inCall = true;
         pressDuration = "";
         onRemoteStream = false;
@@ -468,9 +477,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //here
       // _callBloc.add(CallNewEvent());
       _callProvider.initial();
+
       setState(() {
         _audioPlayer.stop();
         inCall = false;
+        isTimer = false;
         isRinging = false;
         Wakelock.toggle(enable: false);
         iscallAcceptedbyuser = false;
@@ -655,7 +666,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // print("thogh $res");
     // if (res == 1) {
     await _audioPlayer.play(file.path, isLocal: true);
+     customData = {
+        "calleName": callTo,
+        "groupName": "",
+        "groupAutoCreatedValue": ""
+      };
     signalingClient.startCallonetoone(
+      customData: customData,
         from: _auth.getUser.ref_id,
         to: to,
         mcToken: registerRes["mcToken"],

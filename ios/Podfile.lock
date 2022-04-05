@@ -5,7 +5,7 @@ PODS:
     - Flutter
   - connectivity_plus (0.0.1):
     - Flutter
-    - Reachability
+    - ReachabilitySwift
   - device_info (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -19,21 +19,21 @@ PODS:
   - MMWormhole/Core (2.0.0)
   - move_to_background (0.0.1):
     - Flutter
-  - path_provider (0.0.1):
+  - path_provider_ios (0.0.1):
     - Flutter
-  - "permission_handler (5.1.0+2)":
+  - permission_handler_apple (9.0.2):
     - Flutter
-  - Reachability (3.2)
+  - ReachabilitySwift (5.0.0)
   - replay_kit_launcher (0.0.1):
     - Flutter
-  - shared_preferences (0.0.1):
+  - shared_preferences_ios (0.0.1):
     - Flutter
   - vdotok_stream (0.0.1):
     - Flutter
     - Libyuv (= 1703)
     - MMWormhole
     - VdoTokStreaming
-  - VdoTokStreaming (1.0.6)
+  - VdoTokStreaming (1.1.2)
   - vibration (1.7.3):
     - Flutter
   - wakelock (0.0.1):
@@ -50,10 +50,10 @@ DEPENDENCIES:
   - flutter_ringtone_player (from `.symlinks/plugins/flutter_ringtone_player/ios`)
   - flutter_statusbarcolor (from `.symlinks/plugins/flutter_statusbarcolor/ios`)
   - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
-  - path_provider (from `.symlinks/plugins/path_provider/ios`)
-  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - replay_kit_launcher (from `.symlinks/plugins/replay_kit_launcher/ios`)
-  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - vdotok_stream (from `.symlinks/plugins/vdotok_stream/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
@@ -63,7 +63,7 @@ SPEC REPOS:
   trunk:
     - Libyuv
     - MMWormhole
-    - Reachability
+    - ReachabilitySwift
     - VdoTokStreaming
 
 EXTERNAL SOURCES:
@@ -83,14 +83,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_statusbarcolor/ios"
   move_to_background:
     :path: ".symlinks/plugins/move_to_background/ios"
-  path_provider:
-    :path: ".symlinks/plugins/path_provider/ios"
-  permission_handler:
-    :path: ".symlinks/plugins/permission_handler/ios"
+  path_provider_ios:
+    :path: ".symlinks/plugins/path_provider_ios/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   replay_kit_launcher:
     :path: ".symlinks/plugins/replay_kit_launcher/ios"
-  shared_preferences:
-    :path: ".symlinks/plugins/shared_preferences/ios"
+  shared_preferences_ios:
+    :path: ".symlinks/plugins/shared_preferences_ios/ios"
   vdotok_stream:
     :path: ".symlinks/plugins/vdotok_stream/ios"
   vibration:
@@ -103,7 +103,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
   battery_plus: 7851ab482c336dd101ae735dc9363f01e1223c7c
-  connectivity_plus: f5e5e0b894ec1187bfab9816d6c2f034da8d46da
+  connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
@@ -111,13 +111,13 @@ SPEC CHECKSUMS:
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
-  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
-  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
+  permission_handler_apple: d21b38e1a4b2e041c63af9568f9165e114e507a6
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   replay_kit_launcher: e2b85653d7ee455d067abc1a74c4feb8574087d4
-  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
-  VdoTokStreaming: 6a0afe455e22c1493034c07b1961924def9e5a42
+  VdoTokStreaming: 90bd2375943a54625f796913c205a138bd87ab6c
   vibration: b5a33e764c3f609a975b9dca73dce20fdde627dc
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   wifi_info_flutter: 55d4c2469034f5b5c38063ccefa62f708a503a2b
