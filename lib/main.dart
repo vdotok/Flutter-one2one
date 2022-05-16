@@ -298,14 +298,13 @@ import 'package:provider/provider.dart';
 
 import 'constant.dart';
 
-GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey;
+GlobalKey<ScaffoldMessengerState> ?rootScaffoldMessengerKey;
 
-class MyHttpOverrides extends HttpOverrides {
+ class MyHttpOverrides extends HttpOverrides{
   @override
-  HttpClient createHttpClient(SecurityContext context) {
+  HttpClient createHttpClient(SecurityContext? context){
     return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
   }
 }
 
@@ -374,8 +373,8 @@ class Test extends StatefulWidget {
 }
 
 class _TestState extends State<Test> {
-  SignalingClient signalingClient;
-  MediaStream _localStream;
+  SignalingClient? signalingClient;
+  MediaStream? _localStream;
   RTCVideoRenderer _localRenderer = new RTCVideoRenderer();
 
   @override
@@ -388,7 +387,7 @@ class _TestState extends State<Test> {
     // signalingClient.methodInvoke();
     super.initState();
 
-    signalingClient.onLocalStream = (stream) {
+    signalingClient!.onLocalStream = (stream) {
       print("this is local stream ${stream.id}");
       setState(() {
         _localRenderer.srcObject = stream;
@@ -417,7 +416,7 @@ class _TestState extends State<Test> {
             ),
             RaisedButton(
               onPressed: () {
-                signalingClient.getNumber();
+                signalingClient!.getNumber();
               },
               child: Text("Create peerConnection"),
             ),
@@ -429,7 +428,7 @@ class _TestState extends State<Test> {
             ),
             RaisedButton(
               onPressed: () {
-                signalingClient.getMedia();
+                signalingClient!.getMedia();
               },
               child: Text("getUserMedia"),
             ),

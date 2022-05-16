@@ -5,8 +5,8 @@ import '../../constant.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({
-    Key key,
-    @required this.authProvider,
+    Key? key,
+    required this.authProvider,
   }) : super(key: key);
 
   final AuthProvider authProvider;

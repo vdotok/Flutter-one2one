@@ -4,11 +4,11 @@ import '../../constant.dart';
 
 
 class SignInButtonFile extends StatefulWidget {
-  String name;
+  String? name;
   final handlePress;
-  bool _autoValidate = true;
+  bool? _autoValidate = true;
   var myController = TextEditingController();
-  SignInButtonFile({Key key, this.name, this.handlePress}) : super(key: key);
+  SignInButtonFile({Key? key, this.name, this.handlePress}) : super(key: key);
   @override
   _WidgetHeaderState createState() => _WidgetHeaderState();
 }

@@ -11,16 +11,12 @@ class NoContactsScreen extends StatelessWidget {
   final bool state;
   final bool isSocketConnect;
   NoContactsScreen(
-      {this.authProvider, this.refreshList, this.state, this.isSocketConnect});
+      {required this.authProvider, this.refreshList, required this.state, required this.isSocketConnect});
 
   @override
   Widget build(BuildContext context) {
     print("here in no chat screen");
     return
-        // Scaffold(
-        //   backgroundColor: chatRoomBackgroundColor,
-        //   appBar: CustomAppBar(),
-        //   body:
         SingleChildScrollView(
       child: RefreshIndicator(
         onRefresh: refreshList,

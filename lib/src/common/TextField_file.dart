@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '../../constant.dart';
 
 class TextFieldFile extends StatefulWidget {
-  String name;
-  bool _autoValidate = true;
-  var myController = TextEditingController();
-  TextFieldFile({Key key, this.name, this.myController}) : super(key: key);
+  String? name;
+  bool? _autoValidate = true;
+  TextEditingController? myController = TextEditingController();
+  TextFieldFile({Key? key, this.name, this.myController}) : super(key: key);
   @override
   _WidgetHeaderState createState() => _WidgetHeaderState();
 }
@@ -27,7 +27,7 @@ class _WidgetHeaderState extends State<TextFieldFile> {
       color: textfieldBackgrounColor,
       child: TextFormField(
         controller: myController,
-        validator: (value) => value.isEmpty ? "Field cannot be empty." : null,
+        validator: (value) => value!.isEmpty ? "Field cannot be empty." : null,
         decoration: new InputDecoration(
           contentPadding: EdgeInsets.only(left: 10),
           // contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),

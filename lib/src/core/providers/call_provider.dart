@@ -7,6 +7,7 @@ class CallProvider with ChangeNotifier {
 
   CallStatus get callStatus => _callStatus;
   initial() {
+    print("this call initaitestate");
     _callStatus = CallStatus.Initial;
     notifyListeners();
   }

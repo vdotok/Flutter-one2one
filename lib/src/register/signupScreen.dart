@@ -25,10 +25,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool emailvalidate = false;
   bool passwordvalidate = false;
   bool namevalidate = false;
-  Size size;
+  Size? size;
 
   handlePress() async {
-    if (_registerformkey.currentState.validate()) {
+    if (_registerformkey.currentState!.validate()) {
       AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
       bool res = await auth.register(_emailController.text,
           _nameController.text, _passwordController.text);
@@ -61,7 +61,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     ));
 
     size = MediaQuery.of(context).size;
-    print("The size is : ${size.height * 1.08}");
+    print("The size is : ${size!.height * 1.08}");
     return GestureDetector(
         onTap: () {
           FocusScopeNode currentFous = FocusScope.of(context);

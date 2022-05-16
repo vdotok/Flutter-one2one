@@ -4,10 +4,10 @@ import '../../constant.dart';
 
 
 class PasswordFieldFile extends StatefulWidget {
-  String name;
+  String? name;
   bool _autoValidate = true;
-  var myController = TextEditingController();
-  PasswordFieldFile({Key key, this.name, this.myController}) : super(key: key);
+  TextEditingController? myController = TextEditingController();
+  PasswordFieldFile({Key? key, this.name, this.myController}) : super(key: key);
   @override
   _WidgetHeaderState createState() => _WidgetHeaderState();
 }
@@ -30,7 +30,7 @@ class _WidgetHeaderState extends State<PasswordFieldFile> {
       child: TextFormField(
         controller: myController,
         validator: (value) =>
-            value.length < 8 ? "Length of Password should be atleast 8" : null,
+            value!.length < 8 ? "Length of Password should be atleast 8" : null,
         decoration: new InputDecoration(
           contentPadding: EdgeInsets.only(left: 10),
           enabledBorder: OutlineInputBorder(

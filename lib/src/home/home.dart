@@ -33,13 +33,13 @@ bool switchMute = true;
 bool switchSpeaker = true;
 RTCVideoRenderer localRenderer = new RTCVideoRenderer();
 RTCVideoRenderer remoteRenderer = new RTCVideoRenderer();
-MediaStream local;
-MediaStream remote;
+MediaStream? local;
+MediaStream? remote;
 bool islogout = false;
 GlobalKey forsmallView = new GlobalKey();
 GlobalKey forlargView = new GlobalKey();
 GlobalKey forDialView = new GlobalKey();
-AudioPlayer _audioPlayer = AudioPlayer();
+// AudioPlayer _audioPlayer = AudioPlayer();
 bool isRinging = false;
 var snackBar;
 
@@ -53,16 +53,16 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool notmatched = false;
   bool isConnect = false;
-  DateTime _time;
-  DateTime _callTime;
-  Timer _ticker;
-  Timer _callticker;
+  late DateTime _time;
+  late DateTime _callTime;
+  late Timer _ticker;
+  late Timer _callticker;
   int count = 0;
   bool iscallAcceptedbyuser = false;
   var number;
   var nummm;
-  double upstream;
-  double downstream;
+  late double upstream;
+  late double downstream;
   bool sockett = true;
   bool isSocketregis = false;
   bool isTimer = false;
@@ -96,19 +96,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   // SignalingClient signalingClient = SignalingClient.instance;
-  RTCPeerConnection _peerConnection;
-  RTCPeerConnection _answerPeerConnection;
-  MediaStream _localStream;
+  RTCPeerConnection? _peerConnection;
+  RTCPeerConnection? _answerPeerConnection;
+  MediaStream? _localStream;
   bool isConnected = true;
   var registerRes;
   // bool isdev = true;
-  Map<String, dynamic> customData;
-  String incomingfrom;
+  Map<String, dynamic>? customData;
+  late String incomingfrom;
   // ContactBloc _contactBloc;
   // CallBloc _callBloc;
   // LoginBloc _loginBloc;
-  CallProvider _callProvider;
-  AuthProvider _auth;
+  CallProvider? _callProvider;
+  late AuthProvider _auth;
   bool isRegisteredAlready = false;
   String callTo = "";
   List _filteredList = [];
@@ -186,7 +186,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   String meidaType = MediaType.video;
 
   bool remoteAudioFlag = true;
-  ContactProvider _contactProvider;
+  ContactProvider? _contactProvider;
 
   @override
   void didChangeDependencies() {
@@ -201,7 +201,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // TODO: implement initState
 
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     // checkConnectivity();
     initRenderers();
     print("initilization");
@@ -211,7 +211,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     print("this is user data auth ${_auth.getUser}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
 
-    _contactProvider.getContacts(_auth.getUser.auth_token);
+    _contactProvider!.getContacts(_auth.getUser.auth_token);
     // signalingClient.closeSocket();
     signalingClient.connect(project_id, _auth.completeAddress);
 
@@ -391,11 +391,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           count = 0;
           iscallAcceptedbyuser = true;
         }
-        _audioPlayer.stop();
-        _callProvider.callStart();
+        // _audioPlayer.stop();
+        _callProvider!.callStart();
       });
     };
-    signalingClient.onParticipantsLeft = (refID, receive) async {
+    signalingClient.onParticipantsLeft = (refID, receive, istrue) async {
       print("call callback on call left by participant");
 
       // on participants left
@@ -409,12 +409,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 // Find the Scaffold in the widget tree and use it to show a SnackBar.
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     };
-    signalingClient.onReceiveCallFromUser = (res) async {
+    signalingClient.onReceiveCallFromUser = (res, ismultisession) async {
       print("incomming call from user");
       startRinging();
 
       setState(() {
-        
         inCall = true;
         pressDuration = "";
         onRemoteStream = false;
@@ -431,7 +430,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //here
       _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
       // _callBloc.add(CallReceiveEvent());
-      _callProvider.callReceive();
+      _callProvider!.callReceive();
     };
     signalingClient.onCallAcceptedByUser = () async {
       print("this is call accepted");
@@ -439,7 +438,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       iscallAcceptedbyuser = true;
       pressDuration = "";
 
-      _audioPlayer.stop();
+      // _audioPlayer.stop();
       // if (isTimer == false) {
       //   _time = DateTime.now();
       //   _callTime = DateTime.now();
@@ -457,29 +456,45 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //   print("NOT NULL  $timeStatsdownloads");
       //   number = timeStatsdownloads;
       // };
-      _callProvider.callStart();
+      _callProvider!.callStart();
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
-      print("call decliend by other user");
+      print("call decliend by other user $inPaused");
+
       if (inPaused) {
         print("here in paused");
         signalingClient.closeSocket();
       }
-      if (Platform.isIOS) {
-        if (inInactive) {
-          print("here in paused");
-          signalingClient.closeSocket();
+      if (kIsWeb) {
+      } else {
+        if (Platform.isIOS) {
+          if (inInactive) {
+            print("here in paused");
+
+            signalingClient.closeSocket();
+          }
         }
       }
+      // if (Platform.isIOS) {
+      //   if (inInactive) {
+      //     print("here in paused");
+      //     signalingClient.closeSocket();
+      //   }
+      // }
+      // print("call end check ");
+
       if (_callticker != null) {
+        print("in Function");
+
         _callticker.cancel();
       }
-      //here
+      print("toiuidhud");
+      // here
       // _callBloc.add(CallNewEvent());
-      _callProvider.initial();
-
+      _callProvider!.initial();
+      print("this is call statussss ${_callProvider!.callStatus}");
       setState(() {
-        _audioPlayer.stop();
+        // _audioPlayer.stop();
         inCall = false;
         isTimer = false;
         isRinging = false;
@@ -501,7 +516,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       print("this is oncalldeclinebyyou");
       //here
       // _callBloc.add(CallNewEvent());
-      _callProvider.initial();
+      _callProvider!.initial();
       setState(() {
         localRenderer.srcObject = null;
         remoteRenderer.srcObject = null;
@@ -510,7 +525,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onCallBusyCallback = () {
       print("hey i am here");
-      _callProvider.initial();
+      _callProvider!.initial();
       snackBar = SnackBar(content: Text('User is busy with another call.'));
 
 // Find the Scaffold in the widget tree and use it to show a SnackBar.
@@ -525,7 +540,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //here
       // _callBloc.add(CallNewEvent());
       stopRinging();
-      _callProvider.initial();
+      _callProvider!.initial();
 
       setState(() {
         localRenderer.srcObject = null;
@@ -617,7 +632,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
 
-      _callProvider.initial();
+      _callProvider!.initial();
 
       iscallAcceptedbyuser = false;
     } else if (count == 30 && iscallAcceptedbyuser == true) {
@@ -642,7 +657,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Future<bool> _onWillPop() async {
     if (inCall) {
       MoveToBackground.moveTaskToBack();
-      //return true;
+      return true;
     } else {
       return true;
     }
@@ -659,20 +674,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       enableCamera = true;
       switchSpeaker = mtype == MediaType.audio ? true : false;
     });
-    final file = new File('${(await getTemporaryDirectory()).path}/music.mp3');
-    await file.writeAsBytes(
-        (await rootBundle.load("assets/audio.mp3")).buffer.asUint8List());
-    // int res = await _audioPlayer.earpieceOrSpeakersToggle();
+    // final file = new File('${(await getTemporaryDirectory()).path}/music.mp3');
+    // await file.writeAsBytes(
+    //     (await rootBundle.load("assets/audio.mp3")).buffer.asUint8List());
+    // // int res = await _audioPlayer.earpieceOrSpeakersToggle();
     // print("thogh $res");
     // if (res == 1) {
-    await _audioPlayer.play(file.path, isLocal: true);
-     customData = {
-        "calleName": callTo,
-        "groupName": "",
-        "groupAutoCreatedValue": ""
-      };
+    //await _audioPlayer.play(file.path, isLocal: true);
+    customData = {
+      "calleName": callTo,
+      "groupName": "",
+      "groupAutoCreatedValue": ""
+    };
     signalingClient.startCallonetoone(
-      customData: customData,
+        customData: customData,
         from: _auth.getUser.ref_id,
         to: to,
         mcToken: registerRes["mcToken"],
@@ -685,7 +700,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     print("this is switch speaker $switchSpeaker");
     _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
     print("here in start call");
-    _callProvider.callDial();
+    _callProvider!.callDial();
     // }
   }
 
@@ -703,9 +718,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   startRinging() async {
     if (Platform.isAndroid) {
-      if (await Vibration.hasVibrator()) {
-        Vibration.vibrate(pattern: vibrationList);
-      }
+      // if (await Vibration.hasVibrator()) {
+      //   Vibration.vibrate(pattern: vibrationList);
+      // }
     }
     FlutterRingtonePlayer.play(
       android: AndroidSounds.ringtone,
@@ -718,18 +733,22 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   stopRinging() {
     print("this is on rejected ");
-    // startRinging();                                           vc
-    vibrationList.clear();
-    // });
-    Vibration.cancel();
-    FlutterRingtonePlayer.stop();
+    if (kIsWeb) {
+    }
+    // startRinging();
+    else {
+      vibrationList.clear();
+      // });
+      Vibration.cancel();
+      FlutterRingtonePlayer.stop();
+    }
 
     // setState(() {
   }
 
   showSnackbar(text, Color color, Color backgroundColor, bool check) {
     if (check == false) {
-      rootScaffoldMessengerKey.currentState
+      rootScaffoldMessengerKey!.currentState!
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(
           content: Text(
@@ -740,15 +759,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           duration: Duration(seconds: 2),
         ));
     } else if (check == true) {
-      rootScaffoldMessengerKey.currentState
-        ..showSnackBar(SnackBar(
-          content: Text(
-            '$text',
-            style: TextStyle(color: color),
-          ),
-          backgroundColor: backgroundColor,
-          duration: Duration(days: 365),
-        ));
+      rootScaffoldMessengerKey?.currentState?.showSnackBar(SnackBar(
+        content: Text(
+          '$text',
+          style: TextStyle(color: color),
+        ),
+        backgroundColor: backgroundColor,
+        duration: Duration(days: 365),
+      ));
     }
   }
 
@@ -763,7 +781,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // Vibration.cancel();
     // sdpController.dispose();
     super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
   }
 
   Future<Null> refreshList() async {
@@ -775,7 +793,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   renderList() {
-    _contactProvider.getContacts(_auth.getUser.auth_token);
+    _contactProvider!.getContacts(_auth.getUser.auth_token);
   }
 
   stopCall() {
@@ -784,7 +802,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     //here
     // _callBloc.add(CallNewEvent());
-    _callProvider.initial();
+    _callProvider!.initial();
     setState(() {
       _ticker.cancel();
       inCall = false;
@@ -832,155 +850,155 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     ));
 
     return WillPopScope(
-        onWillPop: _onWillPop,
-        child: Consumer3<CallProvider, AuthProvider, ContactProvider>(
-          builder:
-              (context, callProvider, authProvider, contactProvider, child) {
-            print("this is callStatus ${callProvider.callStatus} $inCall");
-            if (callProvider.callStatus == CallStatus.CallReceive)
-              return callReceive();
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (BuildContext context) => MultiProvider(
-            //         providers: [
-            //           ChangeNotifierProvider<AuthProvider>(
-            //               create: (context) => AuthProvider()),
-            //           ChangeNotifierProvider(
-            //               create: (context) => ContactProvider()),
-            //           ChangeNotifierProvider(create: (context) => CallProvider()),
-            //         ],
-            //         child: CallReceiveScreen(
-            //           //  rendererListWithRefID:rendererListWithRefID,
-            //           mediaType: meidaType,
+      onWillPop: _onWillPop,
+      child: Consumer3<CallProvider, AuthProvider, ContactProvider>(
+        builder: (context, callProvider, authProvider, contactProvider, child) {
+          print("this is callStatus ${callProvider.callStatus} $inCall");
+          if (callProvider.callStatus == CallStatus.CallReceive)
+            return callReceive();
+          // Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //     builder: (BuildContext context) => MultiProvider(
+          //         providers: [
+          //           ChangeNotifierProvider<AuthProvider>(
+          //               create: (context) => AuthProvider()),
+          //           ChangeNotifierProvider(
+          //               create: (context) => ContactProvider()),
+          //           ChangeNotifierProvider(create: (context) => CallProvider()),
+          //         ],
+          //         child: CallReceiveScreen(
+          //           //  rendererListWithRefID:rendererListWithRefID,
+          //           mediaType: meidaType,
 
-            //           incomingfrom: incomingfrom,
-            //           callProvider: _callProvider,
-            //           registerRes: registerRes,
-            //           authProvider: authProvider,
-            //           from: authProvider.getUser.ref_id,
-            //           stopRinging: stopRinging,
-            //           authtoken: authProvider.getUser.auth_token,
-            //           contactList: contactProvider.contactList,
-            //         )),
-            //   ),
-            // );
+          //           incomingfrom: incomingfrom,
+          //           cllProvider: _callProvider,
+          //           registerRes: registerRes,
+          //           authProvider: authProvider,
+          //           from: authProvider.getUser.ref_id,
+          //           stopRinging: stopRinging,
+          //           authtoken: authProvider.getUser.auth_token,
+          //           contactList: contactProvider.contactList,
+          //         )),
+          //   ),
+          // );
 
-            if (callProvider.callStatus == CallStatus.CallStart) {
-              print("here in call provider status");
-              // if (isPushed == false) {
-              //   isPushed = true;
-              //   WidgetsBinding.instance.addPostFrameCallback((_) {
-              //     Navigator.of(context).push(
-              //       MaterialPageRoute(
-              //         builder: (BuildContext context) => MultiProvider(
-              //             providers: [
-              //               ChangeNotifierProvider<AuthProvider>(
-              //                   create: (context) => AuthProvider()),
-              //               ChangeNotifierProvider(
-              //                   create: (context) => ContactProvider()),
-              //               ChangeNotifierProvider(
-              //                   create: (context) => CallProvider()),
-              //             ],
-              //             child: CallStartScreen(
-              //               // onSpeakerCallBack: onSpeakerCallBack,
-              //               // onCameraCallBack: onCameraCallBack,
-              //               // onMicCallBack: onMicCallBack,
-              //               //  rendererListWithRefID:rendererListWithRefID,
-              //               //  onRemoteStream:onRemoteStream,
-              //               mediaType: meidaType,
-              //               localRenderer: localRenderer,
-              //               remoteRenderer: remoteRenderer,
-              //               incomingfrom: incomingfrom,
-              //               registerRes: registerRes,
-              //               stopCall: stopCall,
-              //               callTo: callTo,
-              //               // signalingClient: signalingClient,
-              //               callProvider: _callProvider,
-              //               authProvider: _auth,
-              //               contactProvider: _contactProvider,
-              //               mcToken: registerRes["mcToken"],
+          if (callProvider.callStatus == CallStatus.CallStart) {
+            print("here in call provider status");
+            // if (isPushed == false) {
+            //   isPushed = true;
+            //   WidgetsBinding.instance.addPostFrameCallback((_) {
+            //     Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (BuildContext context) => MultiProvider(
+            //             providers: [
+            //               ChangeNotifierProvider<AuthProvider>(
+            //                   create: (context) => AuthProvider()),
+            //               ChangeNotifierProvider(
+            //                   create: (context) => ContactProvider()),
+            //               ChangeNotifierProvider(
+            //                   create: (context) => CallProvider()),
+            //             ],
+            //             child: CallStartScreen(
+            //               // onSpeakerCallBack: onSpeakerCallBack,
+            //               // onCameraCallBack: onCameraCallBack,
+            //               // onMicCallBack: onMicCallBack,
+            //               //  rendererListWithRefID:rendererListWithRefID,
+            //               //  onRemoteStream:onRemoteStream,
+            //               mediaType: meidaType,
+            //               localRenderer: localRenderer,
+            //               remoteRenderer: remoteRenderer,
+            //               incomingfrom: incomingfrom,
+            //               registerRes: registerRes,
+            //               stopCall: stopCall,
+            //               callTo: callTo,
+            //               // signalingClient: signalingClient,
+            //               callProvider: _callProvider,
+            //               authProvider: _auth,
+            //               contactProvider: _contactProvider,
+            //               mcToken: registerRes["mcToken"],
 
-              //               contactList: _contactProvider.contactList,
-              //               //  popCallBAck: screenPopCallBack
-              //             )),
-              //       ),
-              //     );
-              //   });
-              // }
-              return callStart();
-            }
-            if (callProvider.callStatus == CallStatus.CallDial)
-              return callDial();
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (BuildContext context) => MultiProvider(
-            //         providers: [
-            //           ChangeNotifierProvider<AuthProvider>(
-            //               create: (context) => AuthProvider()),
-            //           ChangeNotifierProvider(
-            //               create: (context) => ContactProvider()),
-            //           ChangeNotifierProvider(create: (context) => CallProvider()),
-            //         ],
-            //         child: CallDialScreen(
-            //           //  rendererListWithRefID:rendererListWithRefID,
+            //               contactList: _contactProvider.contactList,
+            //               //  popCallBAck: screenPopCallBack
+            //             )),
+            //       ),
+            //     );
+            //   });
+            // }
+            return callStart();
+          }
+          if (callProvider.callStatus == CallStatus.CallDial)
+            return callDial();
+          // Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //     builder: (BuildContext context) => MultiProvider(
+          //         providers: [
+          //           ChangeNotifierProvider<AuthProvider>(
+          //               create: (context) => AuthProvider()),
+          //           ChangeNotifierProvider(
+          //               create: (context) => ContactProvider()),
+          //           ChangeNotifierProvider(create: (context) => CallProvider()),
+          //         ],
+          //         child: CallDialScreen(
+          //           //  rendererListWithRefID:rendererListWithRefID,
 
-            //           mediaType: meidaType,
-            //           callTo: callTo,
-            //           //  incomingfrom: incomingfrom,
-            //           callProvider: _callProvider,
-            //           registerRes: registerRes,
-            //           // authProvider: authProvider,
-            //           // stopRinging: stopRinging,
+          //           mediaType: meidaType,
+          //           callTo: callTo,
+          //           //  incomingfrom: incomingfrom,
+          //           callProvider: _callProvider,
+          //           registerRes: registerRes,
+          //           // authProvider: authProvider,
+          //           // stopRinging: stopRinging,
 
-            //           // authtoken: authProvider.getUser.auth_token,
-            //           // contactList: contactProvider.contactList,
-            //         )),
-            //   ),
-            // );
-            else if (callProvider.callStatus == CallStatus.Initial)
-              return SafeArea(
-                child: GestureDetector(
-                  onTap: () {
-                    FocusScopeNode currentFous = FocusScope.of(context);
-                    if (!currentFous.hasPrimaryFocus) {
-                      return currentFous.unfocus();
-                    }
-                  },
-                  child: Scaffold(
-                      backgroundColor: chatRoomBackgroundColor,
-                      appBar: CustomAppBar(authProvider: _auth),
-                      body: Consumer<ContactProvider>(
-                        builder: (context, contact, child) {
-                          if (contact.contactState == ContactStates.Loading)
-                            return Center(
-                                child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(chatRoomColor),
-                            ));
-                          else if (contact.contactState ==
-                              ContactStates.Success) {
-                            if (contact.contactList.users == null)
-                              return NoContactsScreen(
-                                state: isConnected,
-                                isSocketConnect: sockett,
-                                refreshList: renderList,
-                                authProvider: _auth,
-                              );
-                            else
-                              return contactList(contact.contactList);
-                          } else
-                            return Container(
-                              child: Text("no contacts found"),
+          //           // authtoken: authProvider.getUser.auth_token,
+          //           // contactList: contactProvider.contactList,
+          //         )),
+          //   ),
+          // );
+          else if (callProvider.callStatus == CallStatus.Initial)
+            return SafeArea(
+              child: GestureDetector(
+                onTap: () {
+                  FocusScopeNode currentFous = FocusScope.of(context);
+                  if (!currentFous.hasPrimaryFocus) {
+                    return currentFous.unfocus();
+                  }
+                },
+                child: Scaffold(
+                    backgroundColor: chatRoomBackgroundColor,
+                    appBar: CustomAppBar(authProvider: _auth),
+                    body: Consumer<ContactProvider>(
+                      builder: (context, contact, child) {
+                        if (contact.contactState == ContactStates.Loading)
+                          return Center(
+                              child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(chatRoomColor),
+                          ));
+                        else if (contact.contactState ==
+                            ContactStates.Success) {
+                          if (contact.contactList.users == null)
+                            return NoContactsScreen(
+                              state: isConnected,
+                              isSocketConnect: sockett,
+                              refreshList: renderList,
+                              authProvider: _auth,
                             );
-                        },
-                      )),
-                ),
-              );
-            return Container(
-              child: Text("test"),
+                          else
+                            return contactList(contact.contactList);
+                        } else
+                          return Container(
+                            child: Text("no contacts found"),
+                          );
+                      },
+                    )),
+              ),
             );
-          },
-        ));
+          return Container(
+            child: Text("test"),
+          );
+        },
+      ),
+    );
   }
 
   Scaffold callReceive() {
@@ -1057,15 +1075,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               Consumer<ContactProvider>(
                 builder: (context, contact, child) {
                   if (contact.contactState == ContactStates.Success) {
-                    int index = contact.contactList.users.indexWhere(
-                        (element) => element.ref_id == incomingfrom);
+                    int index = contact.contactList.users!.indexWhere(
+                        (element) => element!.ref_id == incomingfrom);
                     print("callto is $callTo");
                     print(
-                        "incoming ${index == -1 ? incomingfrom : contact.contactList.users[index].full_name}");
+                        "incoming ${index == -1 ? incomingfrom : contact.contactList.users![index]!.full_name}");
                     return Text(
                       index == -1
                           ? incomingfrom
-                          : contact.contactList.users[index].full_name,
+                          : contact.contactList.users![index]!.full_name,
                       style: TextStyle(
                           fontFamily: primaryFontFamily,
                           color: darkBlackColor,
@@ -1099,7 +1117,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       _auth.getUser.ref_id, registerRes["mcToken"]);
 
                   // _callBloc.add(CallNewEvent());
-                  _callProvider.initial();
+                  _callProvider!.initial();
                   //  inCall = false;
                   // signalingClient.onDeclineCall(widget.registerUser);
                   // setState(() {
@@ -1236,7 +1254,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ),
                 onTap: () {
                   signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
-                  _callProvider.initial();
+                  _callProvider!.initial();
                   // inCall = false;
                 },
               ),
@@ -1338,12 +1356,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                 builder: (context, contact, child) {
                                 if (contact.contactState ==
                                     ContactStates.Success) {
-                                  int index = contact.contactList.users
+                                  int index = contact.contactList.users!
                                       .indexWhere((element) =>
-                                          element.ref_id == incomingfrom);
+                                          element!.ref_id == incomingfrom);
                                   print("i am here-");
                                   return Text(
-                                    contact.contactList.users[index].full_name,
+                                    contact
+                                        .contactList.users![index]!.full_name,
                                     style: TextStyle(
                                         fontFamily: primaryFontFamily,
                                         color: darkBlackColor,
@@ -1582,9 +1601,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     onSearch(value) {
       print("this is here $value");
       List temp;
-      temp = state.users
+      temp = state.users!
           .where((element) =>
-              element.full_name.toLowerCase().startsWith(value.toLowerCase()))
+              element!.full_name.toLowerCase().startsWith(value.toLowerCase()))
           .toList();
       print("this is filtered list $_filteredList");
       setState(() {
@@ -1616,7 +1635,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     onSearch(value);
                   },
                   validator: (value) =>
-                      value.isEmpty ? "Field cannot be empty." : null,
+                      value!.isEmpty ? "Field cannot be empty." : null,
                   decoration: InputDecoration(
                     fillColor: refreshTextColor,
                     filled: true,
@@ -1675,11 +1694,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           cacheExtent: 9999,
                           scrollDirection: Axis.vertical,
                           itemCount: _searchController.text.isEmpty
-                              ? state.users.length
+                              ? state.users!.length
                               : _filteredList.length,
                           itemBuilder: (context, position) {
                             var element = _searchController.text.isEmpty
-                                ? state.users[position]
+                                ? state.users![position]
                                 : _filteredList[position];
 
                             return Container(

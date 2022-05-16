@@ -9,9 +9,9 @@ part of 'contactList.dart';
 ContactList _$ContactListFromJson(Map<String, dynamic> json) {
   return ContactList(
     users: (json['users'] as List)
-        ?.map((e) =>
+        .map((e) =>
             e == null ? null : Contact.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+        .toList(),
   );
 }
 
@@ -19,3 +19,4 @@ Map<String, dynamic> _$ContactListToJson(ContactList instance) =>
     <String, dynamic>{
       'users': instance.users,
     };
+    

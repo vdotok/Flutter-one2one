@@ -16,7 +16,7 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   final String error = '';
-  Size size;
+  Size? size;
 
   RegExp emailRegex = new RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
@@ -30,7 +30,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    print("The height: ${size.height}");
+    print("The height: ${size!.height}");
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 17),
@@ -74,7 +74,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   borderRadius: BorderRadius.all(Radius.circular(15)),
                   borderSide: BorderSide(color: focusedBorderColor))),
           validator: (value) {
-            if (value.isEmpty) {
+            if (value!.isEmpty) {
               print("The value:${value}");
               return "Field cannot be empty";
             }

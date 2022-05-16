@@ -4,7 +4,7 @@ import '../../constant.dart';
 
 class CustomTextButton extends StatelessWidget {
   final handlePress;
-  final String text;
+  final String? text;
 
   CustomTextButton({this.text, @required this.handlePress});
 

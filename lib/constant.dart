@@ -43,7 +43,7 @@ const contactNameColor = Color(0xff1e2f2c);
 const primaryFontFamily = "Manrope";
 const secondaryFontFamily = "Inter";
 
-Size size;
+Size? size;
 
 //taimoor
 const whiteColor = Color(0xFFFFFFFF);

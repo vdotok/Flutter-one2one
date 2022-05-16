@@ -29,17 +29,17 @@ class AuthProvider with ChangeNotifier {
   Status get loggedInStatus => _loggedInStatus;
   Status get registeredInStatus => _registeredInStatus;
 
-  User _user = new User();
+  User _user = new User(full_name: '', auth_token: '');
   User get getUser => _user;
 
-  String _completeAddress;
+  late String _completeAddress;
   String get completeAddress => _completeAddress;
 
   SharedPref _sharedPref = SharedPref();
-  String _loginErrorMsg;
+  late String _loginErrorMsg;
   String get loginErrorMsg => _loginErrorMsg;
 
-  String _registerErrorMsg;
+  late String _registerErrorMsg;
   String get registerErrorMsg => _registerErrorMsg;
 
   Future<bool> register(String email, username, password) async {
@@ -130,7 +130,7 @@ class AuthProvider with ChangeNotifier {
     SharedPref sharedPref = SharedPref();
     sharedPref.remove("authUser");
     _loggedInStatus = Status.LoggedOut;
-    _user = null;
+    _user;
     notifyListeners();
   }
 
