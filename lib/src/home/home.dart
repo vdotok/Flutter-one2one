@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
@@ -11,6 +13,7 @@ import 'package:vdotok_stream_example/noContactsScreen.dart';
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
+import 'package:vdotok_stream_example/src/home/drag.dart';
 import 'package:vibration/vibration.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:wakelock/wakelock.dart';
@@ -68,7 +71,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool isTimer = false;
   bool isResumed = true;
   bool inPaused = false;
-  //bool isPushed = false;
+
   bool isInternetConnected = false;
   void _updateTimer() {
     final duration = DateTime.now().difference(_time);
@@ -198,9 +201,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void initState() {
     print("here in home init");
+
     // TODO: implement initState
 
     super.initState();
+
     WidgetsBinding.instance.addObserver(this);
     // checkConnectivity();
     initRenderers();
@@ -842,6 +847,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         });
   }
 
+  bool _isPressed = false;
+  // bool isRadioButtonEnabble = false;
+  void _myCallback() {
+    setState(() {
+      _isPressed = true;
+      print("tap me");
+    });
+  }
+
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent, // status bar color
@@ -1126,26 +1140,38 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 },
               ),
               SizedBox(width: 64),
-              GestureDetector(
-                child: SvgPicture.asset(
-                  'assets/Accept.svg',
-                ),
-                onTap: () {
-                  print("this is pressed accept");
-                  stopRinging();
-                  signalingClient.createAnswer(incomingfrom);
-                  // setState(() {
-                  //   inCall = true;
-                  // });
+              _isPressed == false
+                  ? GestureDetector(
+                      child: SvgPicture.asset(
+                        'assets/Accept.svg',
+                      ),
+                      onTap: _isPressed == false
+                          ? () {
+                              print("this is pressed accept");
+                              stopRinging();
+                              signalingClient.createAnswer(incomingfrom);
+                              _myCallback();
 
-                  // setState(() {
-                  //   _isCalling = true;
-                  //   incomingfrom = null;
-                  // });
-                  // FlutterRingtonePlayer.stop();
-                  // Vibration.cancel();
-                },
-              ),
+                              // setState(() {
+                              //   inCall = true;
+                              // });
+
+                              // setState(() {
+                              //   _isCalling = true;
+                              //   incomingfrom = null;
+                              // });
+                              // FlutterRingtonePlayer.stop();
+                              // Vibration.cancel();
+                            }
+                          : null)
+                  : TextButton(
+                      onPressed: () {},
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.grey,
+                        color: Color.fromARGB(255, 214, 238, 3),
+                        // strokeWidth: 10,
+                      ),
+                    )
             ],
           ),
         ),
@@ -1425,6 +1451,26 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   //           ),
                   //   ],
                   //),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  // Draggable(
+                  //   childWhenDragging: Container(),
+                  //   feedback: Container(),
+                  //   child: DragTarget(
+                  //       onAccept: (Color color) {
+                  //         // caughtColor = color;
+                  //       },
+                  //       builder: (
+                  //         BuildContext context,
+                  //         List<dynamic> accepted,
+                  //         List<dynamic> rejected,
+                  //       ) =>
+                  //           Draggable(
+                  //             feedback: Container(),
+                  //             child: Container(),
+                  //           )),
+                  // ),
                 ],
               ),
             ),
@@ -1495,34 +1541,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       ))
                 : SizedBox(),
             //),
-
+///////qasim
             // /////////////// this is local stream
+
             meidaType == MediaType.video
-                ? Positioned(
-                    left: 225.0,
-                    bottom: 145.0,
-                    right: 20,
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: Container(
-                        height: 170,
-                        width: 130,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: enableCamera
-                              ? RTCVideoView(localRenderer,
-                                  key: forsmallView,
-                                  mirror: false,
-                                  objectFit: RTCVideoViewObjectFit
-                                      .RTCVideoViewObjectFitCover)
-                              : Container(),
-                        ),
-                      ),
-                    ),
-                  )
+                ? DragBox(Offset(210.0, 400.0))
                 : Container(),
 
             Container(
