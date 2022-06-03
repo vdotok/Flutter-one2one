@@ -1140,38 +1140,29 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 },
               ),
               SizedBox(width: 64),
-              _isPressed == false
-                  ? GestureDetector(
-                      child: SvgPicture.asset(
-                        'assets/Accept.svg',
-                      ),
-                      onTap: _isPressed == false
-                          ? () {
-                              print("this is pressed accept");
-                              stopRinging();
-                              signalingClient.createAnswer(incomingfrom);
-                              _myCallback();
+              GestureDetector(
+                  child: SvgPicture.asset(
+                    'assets/Accept.svg',
+                  ),
+                  onTap: _isPressed == false
+                      ? () {
+                          print("this is pressed accept");
+                          stopRinging();
+                          signalingClient.createAnswer(incomingfrom);
+                          _myCallback();
 
-                              // setState(() {
-                              //   inCall = true;
-                              // });
+                          // setState(() {
+                          //   inCall = true;
+                          // });
 
-                              // setState(() {
-                              //   _isCalling = true;
-                              //   incomingfrom = null;
-                              // });
-                              // FlutterRingtonePlayer.stop();
-                              // Vibration.cancel();
-                            }
-                          : null)
-                  : TextButton(
-                      onPressed: () {},
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.grey,
-                        color: Color.fromARGB(255, 214, 238, 3),
-                        // strokeWidth: 10,
-                      ),
-                    )
+                          // setState(() {
+                          //   _isCalling = true;
+                          //   incomingfrom = null;
+                          // });
+                          // FlutterRingtonePlayer.stop();
+                          // Vibration.cancel();
+                        }
+                      : null)
             ],
           ),
         ),
