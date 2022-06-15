@@ -349,8 +349,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         });
 
         showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
-
-        signalingClient.closeSocket();
       }
     };
 
@@ -468,15 +466,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       if (inPaused) {
         print("here in paused");
-        signalingClient.closeSocket();
       }
       if (kIsWeb) {
       } else {
         if (Platform.isIOS) {
           if (inInactive) {
             print("here in paused");
-
-            signalingClient.closeSocket();
           }
         }
       }
@@ -517,17 +512,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         isRinging = true;
       });
     };
-    signalingClient.onCallDeclineByYou = () {
-      print("this is oncalldeclinebyyou");
-      //here
-      // _callBloc.add(CallNewEvent());
-      _callProvider!.initial();
-      setState(() {
-        localRenderer.srcObject = null;
-        remoteRenderer.srcObject = null;
-      });
-      stopRinging();
-    };
+
     signalingClient.onCallBusyCallback = () {
       print("hey i am here");
       _callProvider!.initial();
@@ -535,18 +520,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
 // Find the Scaffold in the widget tree and use it to show a SnackBar.
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      setState(() {
-        localRenderer.srcObject = null;
-        remoteRenderer.srcObject = null;
-      });
-    };
-    signalingClient.onCallRejectedByUser = () {
-      print("call decliend by other user");
-      //here
-      // _callBloc.add(CallNewEvent());
-      stopRinging();
-      _callProvider!.initial();
-
       setState(() {
         localRenderer.srcObject = null;
         remoteRenderer.srcObject = null;
@@ -597,7 +570,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             print("incall true");
           } else {
             print("here in ininactive");
-            signalingClient.closeSocket();
+            // signalingClient.closeSocket();
           }
         }
         //  isResumed = false;
@@ -612,7 +585,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           print("incall true");
         } else {
           print("incall false");
-          signalingClient.closeSocket();
+          // signalingClient.closeSocket();
         }
         break;
       case AppLifecycleState.detached:
@@ -635,7 +608,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       count = 0;
 
-      signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
+      signalingClient.stopCall(registerRes["mcToken"]);
 
       _callProvider!.initial();
 
@@ -1127,7 +1100,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ),
                 onTap: () {
                   stopRinging();
-                  signalingClient.onDeclineCall(
+                  signalingClient.declineCall(
                       _auth.getUser.ref_id, registerRes["mcToken"]);
 
                   // _callBloc.add(CallNewEvent());
@@ -1139,7 +1112,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   // });
                 },
               ),
-              SizedBox(width: 64),
+              // SizedBox(width: 64),qasa
               GestureDetector(
                   child: SvgPicture.asset(
                     'assets/Accept.svg',
@@ -1270,7 +1243,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   'assets/end.svg',
                 ),
                 onTap: () {
-                  signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
+                  signalingClient.stopCall(registerRes["mcToken"]);
                   _callProvider!.initial();
                   // inCall = false;
                 },
@@ -1536,6 +1509,25 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             // /////////////// this is local stream
 
             meidaType == MediaType.video
+            
+                // ? Container(
+                //     height: 100,
+                //     width: 100,
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(10.0),
+                //     ),
+                //     child: ClipRRect(
+                //       borderRadius: BorderRadius.circular(10.0),
+                //       child: enableCamera
+                //           ? RTCVideoView(localRenderer,
+                //               key: forsmallView,
+                //               mirror: false,
+                //               objectFit: RTCVideoViewObjectFit
+                //                   .RTCVideoViewObjectFitCover)
+                //           : Container(),
+                //     ),
+                //   )
+                // : Container(),
                 ? DragBox(Offset(210.0, 400.0))
                 : Container(),
 
