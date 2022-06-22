@@ -1508,28 +1508,38 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 ///////qasim
             // /////////////// this is local stream
 
+            // !kIsWeb
+            //     ?
             meidaType == MediaType.video
-            
-                // ? Container(
-                //     height: 100,
-                //     width: 100,
-                //     decoration: BoxDecoration(
-                //       borderRadius: BorderRadius.circular(10.0),
-                //     ),
-                //     child: ClipRRect(
-                //       borderRadius: BorderRadius.circular(10.0),
-                //       child: enableCamera
-                //           ? RTCVideoView(localRenderer,
-                //               key: forsmallView,
-                //               mirror: false,
-                //               objectFit: RTCVideoViewObjectFit
-                //                   .RTCVideoViewObjectFitCover)
-                //           : Container(),
-                //     ),
-                //   )
-                // : Container(),
-                ? DragBox(Offset(210.0, 400.0))
+                ? Positioned(
+                    left: 225,
+                    bottom: 145,
+                    right: 20,
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: enableCamera
+                              ? RTCVideoView(localRenderer,
+                                  key: forsmallView,
+                                  mirror: false,
+                                  objectFit: RTCVideoViewObjectFit
+                                      .RTCVideoViewObjectFitCover)
+                              : Container(),
+                        ),
+                      ),
+                    ),
+                  )
                 : Container(),
+            // : meidaType == MediaType.video
+            //     ? DragBox(Offset(210.0, 400.0))
+            //     : Container(),
 
             Container(
               padding: EdgeInsets.only(
