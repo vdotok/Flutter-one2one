@@ -79,7 +79,7 @@ class AuthProvider with ChangeNotifier {
       "device_model": model,
       "device_os_ver": version,
       "app_version": "1.1.5",
-      "project_id":project_id
+      "project_id": project_id
     };
     final response = await callAPI(jsonData, "SignUp", null);
     print("this is response of sign up $response");
@@ -89,7 +89,7 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return false;
     } else {
-      _completeAddress  = response['media_server_map']['complete_address'];
+      _completeAddress = response['media_server_map']['complete_address'];
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
       _registeredInStatus = Status.Registered;
@@ -107,7 +107,7 @@ class AuthProvider with ChangeNotifier {
     Map<String, dynamic> jsonData = {
       "email": username,
       "password": password,
-      "project_id":project_id
+      "project_id": project_id
     };
     final response = await callAPI(jsonData, "Login", null);
     print("this is response $response");
@@ -116,7 +116,7 @@ class AuthProvider with ChangeNotifier {
       _loginErrorMsg = response['message'];
       notifyListeners();
     } else {
-      _completeAddress  = response['media_server_map']['complete_address'];
+      _completeAddress = response['media_server_map']['complete_address'];
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
@@ -225,7 +225,7 @@ class AuthProvider with ChangeNotifier {
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
     } else {
-       _completeAddress =
+      _completeAddress =
           jsonDecode(authUser)['media_server_map']['complete_address'];
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(jsonDecode(authUser));
@@ -233,8 +233,8 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  static onError(error) {
-    print("the error is $error.detail");
-    return {'status': false, 'message': 'Unsuccessful Request', 'data': error};
-  }
+  // static onError(error) {
+  //   print("the error is $error.detail");
+  //   return {'status': false, 'message': 'Unsuccessful Request', 'data': error};
+  // }
 }

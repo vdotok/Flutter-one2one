@@ -9,13 +9,14 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:move_to_background/move_to_background.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/noContactsScreen.dart';
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
 import 'package:vdotok_stream_example/src/home/drag.dart';
 import 'package:vibration/vibration.dart';
-import 'package:vdotok_stream/vdotok_stream.dart';
+import 'package:vdotok_stream/flutter_webrtc.dart';
 import 'package:wakelock/wakelock.dart';
 
 import 'dart:io' show File, Platform;
@@ -71,6 +72,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool isTimer = false;
   bool isResumed = true;
   bool inPaused = false;
+  var bottom = 20.0;
+  var right = 20.0;
 
   bool isInternetConnected = false;
   void _updateTimer() {
@@ -235,7 +238,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _auth.logout();
     };
     signalingClient.onError = (code, res) {
-      print("onError no internet connection $code $res");
+      print("onError  $code $res");
       // if (isConnected == false) {
       //   setState(() {
       //     isConnected = false;
@@ -349,6 +352,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         });
 
         showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
+        // if (Platform.isIOS) {
+        print("uyututuir");
+        signalingClient.closeSocket();
+        //}
       }
     };
 
@@ -494,7 +501,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _callProvider!.initial();
       print("this is call statussss ${_callProvider!.callStatus}");
       setState(() {
-        // _audioPlayer.stop();
+        _isPressed = false;
         inCall = false;
         isTimer = false;
         isRinging = false;
@@ -991,36 +998,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Scaffold callReceive() {
     return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
       return Stack(children: <Widget>[
-        kIsWeb
-            ? Container()
-            : meidaType == MediaType.video
-                ? Container(
-                    child: RTCVideoView(localRenderer,
-                        key: forlargView,
-                        mirror: false,
-                        objectFit:
-                            RTCVideoViewObjectFit.RTCVideoViewObjectFitCover),
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                      colors: [
-                        backgroundAudioCallDark,
-                        backgroundAudioCallLight,
-                        backgroundAudioCallLight,
-                        backgroundAudioCallLight,
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment(0.0, 0.0),
-                    )),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'assets/userIconCall.svg',
-                      ),
-                    ),
-                  ),
-        kIsWeb
+        meidaType == MediaType.video
             ? Container(
+                child: RTCVideoView(localRenderer,
+                    key: forlargView,
+                    mirror: false,
+                    objectFit:
+                        RTCVideoViewObjectFit.RTCVideoViewObjectFitContain),
+              )
+            : Container(
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
                   colors: [
@@ -1037,8 +1023,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     'assets/userIconCall.svg',
                   ),
                 ),
-              )
-            : SizedBox(),
+              ),
         Container(
           padding: EdgeInsets.only(top: 120),
           alignment: Alignment.center,
@@ -1112,6 +1097,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   // });
                 },
               ),
+              SizedBox(
+                width: 20,
+              ),
               // SizedBox(width: 64),qasa
               GestureDetector(
                   child: SvgPicture.asset(
@@ -1122,7 +1110,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           print("this is pressed accept");
                           stopRinging();
                           signalingClient.createAnswer(incomingfrom);
-                          _myCallback();
+                          setState(() {
+                            _isPressed = true;
+                            print("tap me");
+                          });
 
                           // setState(() {
                           //   inCall = true;
@@ -1156,36 +1147,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       body: OrientationBuilder(builder: (context, orientation) {
         return Stack(
           children: [
-            !kIsWeb
-                ? meidaType == MediaType.video
-                    ? Container(
-                        // color: Colors.red,
-                        //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: RTCVideoView(localRenderer,
-                            key: forDialView,
-                            mirror: false,
-                            objectFit: RTCVideoViewObjectFit
-                                .RTCVideoViewObjectFitCover))
-                    : Container(
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                          colors: [
-                            backgroundAudioCallDark,
-                            backgroundAudioCallLight,
-                            backgroundAudioCallLight,
-                            backgroundAudioCallLight,
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment(0.0, 0.0),
-                        )),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/userIconCall.svg',
-                          ),
-                        ),
-                      )
+            meidaType == MediaType.video
+                ? Container(
+                    // color: Colors.red,
+                    //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: RTCVideoView(localRenderer,
+                        key: forDialView,
+                        mirror: false,
+                        objectFit:
+                            RTCVideoViewObjectFit.RTCVideoViewObjectFitContain))
                 : Container(
                     decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -1266,9 +1238,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ? remoteVideoFlag
                     ? RTCVideoView(remoteRenderer,
                         mirror: false,
-                        objectFit: kIsWeb
-                            ? RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
-                            : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover)
+                        objectFit:
+                            // kIsWeb
+                            //  ?
+                            RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
+                        //  : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
+                        )
                     : Container(
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -1493,7 +1468,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                     ? SvgPicture.asset('assets/VolumnOn.svg')
                                     : SvgPicture.asset('assets/VolumeOff.svg'),
                                 onTap: () {
+                                  //  if  (!kIsWeb){
                                   signalingClient.switchSpeaker(switchSpeaker);
+
                                   setState(() {
                                     switchSpeaker = !switchSpeaker;
                                   });
@@ -1508,10 +1485,51 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 ///////qasim
             // /////////////// this is local stream
 
-            // !kIsWeb
-            //     ?
-            meidaType == MediaType.video
-                ? Positioned(
+            !kIsWeb
+                ?
+                // meidaType == MediaType.video
+                //     ?
+                //     // GestureDetector(
+                //     //     child:
+                //     Positioned(
+                //         // right: right,
+                //         // bottom: bottom,
+                //         left: 225,
+                //         bottom: 145,
+                //         right: 20,
+                //         child: Align(
+                //           alignment: Alignment.bottomRight,
+                //           child: Container(
+                //             height: 100,
+                //             width: 100,
+                //             decoration: BoxDecoration(
+                //               borderRadius: BorderRadius.circular(10.0),
+                //             ),
+                //             child: ClipRRect(
+                //               borderRadius: BorderRadius.circular(10.0),
+                //               child: enableCamera
+                //                   ? RTCVideoView(localRenderer,
+                //                       key: forsmallView,
+                //                       mirror: false,
+                //                       objectFit: RTCVideoViewObjectFit
+                //                           .RTCVideoViewObjectFitCover)
+                //                   : Container(),
+                //             ),
+                //           ),
+                //         ),
+                //       )
+                //     // onVerticalDragUpdate: (DragUpdateDetails dd) {
+                //     //   print(dd);
+                //     //   setState(() {
+                //     //     bottom = dd.localPosition.dy;
+                //     //     right = dd.localPosition.dx;
+                //     //   });
+                //     //})
+                //     : Container(),
+                meidaType == MediaType.video
+                    ? DragBox(initPos: Offset(210.0, 400.0))
+                    : Container()
+                : Positioned(
                     left: 225,
                     bottom: 145,
                     right: 20,
@@ -1535,11 +1553,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         ),
                       ),
                     ),
-                  )
-                : Container(),
-            // : meidaType == MediaType.video
-            //     ? DragBox(Offset(210.0, 400.0))
-            //     : Container(),
+                  ),
+
+            //Container(),
 
             Container(
               padding: EdgeInsets.only(
