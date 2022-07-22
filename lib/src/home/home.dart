@@ -209,7 +209,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     super.initState();
 
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
     // checkConnectivity();
     initRenderers();
     print("initilization");
@@ -766,7 +766,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // Vibration.cancel();
     // sdpController.dispose();
     super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
   }
 
   Future<Null> refreshList() async {
