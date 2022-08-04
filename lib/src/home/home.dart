@@ -504,6 +504,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _isPressed = false;
         inCall = false;
         isTimer = false;
+        callTo = "";
+
         isRinging = false;
         Wakelock.toggle(enable: false);
         iscallAcceptedbyuser = false;
