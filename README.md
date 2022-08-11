@@ -22,7 +22,7 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 3. A toast for <b>Clone</b> will appear, containing HTTPS, SSH, and GitHub CLI  information
 4. On HTTPS section, copy repository <b>URL</b> 
 5. Open <b>Terminal/Command Prompt</b> and go to the <b>Directory</b> where you want to clone the project
-6. <b>Paste</b> copied repository URL and press <b>Enter</b>.  
+6. Write git clone and <b>Paste</b> copied repository URL and press <b>Enter</b> 
 
 ## VS Code Installation: 
 
@@ -41,24 +41,43 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 * When a User connects with an application using SDK, the application will require a Project_ID. (A Project_ID is a string that uniquely identifies a project). 
 * To generate a Project_ID, perform the following steps: 
 
-1. Run this link -> https://userpanel.vdotok.com/ in Chrome. A Sign in screen will appear. Please click on the Sign Up link, as shown below: 
+1. Run this link -> https://vdotok.com/ in Chrome. A screen will appear. Please click on the Login link, as shown below: 
 
-![2](https://user-images.githubusercontent.com/86484384/139055385-c14b148c-b056-4065-9482-249c134f5651.jpg)
+![1](https://user-images.githubusercontent.com/87179594/184070841-f9b91f46-93df-4047-acfb-4739fd207aaa.jpg)
 
-* This will navigate to Sign Up page, where the User is required to enter the following information: <b>First Name > Last Name > Email ID > Password</b>
+* This will navigate to Login page, where the User is required to enter the following information: <b>Email > Password. </b> If User does not have any account then follow Sign up here link, as shown below </b>
 
-2. Select <b>Sign Up Today</b> button 
+![2](https://user-images.githubusercontent.com/87179594/184070980-92e4ef0e-923f-4597-a118-dd2d661a99dc.jpg) 
 
-![3](https://user-images.githubusercontent.com/86484384/139064711-bea2bf70-7f02-4655-a98c-94a40d8d712b.jpg)
+* This will navigate to Sign Up page, where the User is required to enter the following information: <b>First Name > Last Name > Email > Country > Password. </b>Select <b>Sign Up For Free</b> button </b>
 
-3. To create your first project, choose <b>Name of Project</b>
-4. Select <b>Continue</b> button
+![3](https://user-images.githubusercontent.com/87179594/184070989-e8b26d85-6e64-4ef3-b6d7-56449738236c.jpg) 
 
-![4](https://user-images.githubusercontent.com/86484384/139066181-f60b1870-b2cd-4506-9a36-cf8989c7d4df.jpg)
+* This will navigate to Verify your email address page, where the User is required to enter the code which is sent to the registered email </b>
 
-5. Copy <b>API Service URL</b> and <b>Project ID</b>
+![4](https://user-images.githubusercontent.com/87179594/184070997-3247f0e0-3f6a-42fb-90cd-2d087bb25e1e.jpg) 
 
-![5](https://user-images.githubusercontent.com/87179594/158431176-7c314d77-db7d-4fd0-91cc-2477386ee926.jpg)
+* After verifing email address ,user will navigate to Verify your Phone Number where the User is required to enter the his/her Phone number and press <b>SEND CODE</b> button </b>
+
+* Else press <b>Skip for now</b> button </b>
+
+![5](https://user-images.githubusercontent.com/87179594/184071006-9dc41271-1455-4215-99f8-14921dbe181a.jpg)
+
+* After this, User will navigate to Tell us more about yourself where the User is required to select <b>Type of Business</b> and <b>Organization name</b> and press <b>DONE</b> button </b>
+
+![6](https://user-images.githubusercontent.com/87179594/184071015-17165a2f-607a-4f9f-9dc5-1ba5fd3b935a.jpg)
+
+* After this, a screen will display in which User has to enter some details about Project: <b>Project name > Your role?</b> and press <b>TAKE ME TO THE DASHBOARD</b>
+
+![7](https://user-images.githubusercontent.com/87179594/184071023-8c9c02f9-c473-48e5-89b6-43399c26fa6f.jpg)
+
+* Now User is on Dashboard screen. Follow the link <b>API TOKENS</b>, as shown below</b>
+
+![8](https://user-images.githubusercontent.com/87179594/184071053-df6bd93e-ed00-46fe-9495-8d990a0ac5e9.jpg) 
+
+* Copy <b>Tenant Testing Server</b> and <b>Project ID</b>
+
+![9](https://user-images.githubusercontent.com/87179594/184071060-9909513b-f880-4de8-9481-6ab91ae2be95.jpg)
 
 6. Open Project in <b>VS Code</b>
 7. Go to <b>lib</b> folder > <b> src > core > config > </b> open <b>config.dart</b> file, add <b>API Service URL</b> in const URL as <b>http:// Paste Url Here Which You Copied/API/</b> and <b>Project ID</b> against project_id String in config.dart file
