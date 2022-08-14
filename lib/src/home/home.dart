@@ -43,6 +43,7 @@ bool islogout = false;
 GlobalKey forsmallView = new GlobalKey();
 GlobalKey forlargView = new GlobalKey();
 GlobalKey forDialView = new GlobalKey();
+bool noInternetCallHungUp = false;
 // AudioPlayer _audioPlayer = AudioPlayer();
 bool isRinging = false;
 var snackBar;
@@ -345,6 +346,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           // signalingClient.register(_auth.getUser.toJson(), project_id);
         }
       } else {
+         if (noInternetCallHungUp == true) {
+            print('this issussus $noInternetCallHungUp');
+            stopCall();
+          }
         print("onError no internet connection");
         setState(() {
           isConnected = false;
@@ -1597,6 +1602,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       'assets/end.svg',
                     ),
                     onTap: () {
+                      if (isConnected == false) {
+                        setState(() {
+                          noInternetCallHungUp = true;
+                        });
+
+                        _callProvider!.initial();
+                      } else {
+                        stopCall();
+                      }
                       remoteVideoFlag = true;
                       stopCall();
                       // inCall = false;

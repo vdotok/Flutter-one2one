@@ -32,8 +32,9 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 ## Project Run Steps:
 
 1. Open Project in <b>VS Code</b>
-2. Open <b>Terminal</b> and go to <b>Project Directory</b> and run <b>“flutter pub get”</b>
+2. Open <b>Terminal</b> and go to <b>Project Directory</b> and run <b>“flutter pub get”</b>. If this command runs successfully, then a success message <b>(exit code 0)</b> will display, as shown below:</b>
 
+![18](https://user-images.githubusercontent.com/87179594/184533024-3a4eb249-4ab0-41a2-b55e-27d42c66df89.jpg)
 
 ## SDK Authentication: 
 
@@ -79,12 +80,12 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 
 ![9](https://user-images.githubusercontent.com/87179594/184071060-9909513b-f880-4de8-9481-6ab91ae2be95.jpg)
 
-6. Open Project in <b>VS Code</b>
-7. Go to <b>lib</b> folder > <b> src > core > config > </b> open <b>config.dart</b> file, add <b>API Service URL</b> in const URL as <b>http:// Paste Url Here Which You Copied/API/</b> and <b>Project ID</b> against project_id String in config.dart file
+2. Open Project in <b>VS Code</b>
+3. Go to <b>lib</b> folder > <b> src > core > config > </b> open <b>config.dart</b> file, add <b>API Service URL</b> in const URL as <b>http:// Paste Url Here Which You Copied/API/</b> and <b>Project ID</b> against project_id String in config.dart file
 
 ![6](https://user-images.githubusercontent.com/87179594/158434303-53a0a655-607d-402d-bc9b-7e8dd0242b5f.jpg)
 
-8. Save <b>config.dart</b> file 
+4. Save <b>config.dart</b> file 
 
 ## iOS Setup: 
 
@@ -159,4 +160,6 @@ https://developer.android.com/studio/debug/dev-options
 
 ## Build Project:
 
-After connecting your phone, run the following command in <b>Project Directory -> "flutter run"</b>
+After connecting your phone, run the following command in <b>Project Directory -> "flutter run"</b>. If this command runs successfully, then following screen will display on mobile phone.
+
+![New Project (23)](https://user-images.githubusercontent.com/87179594/184534873-b6c1836a-89a3-4567-98ae-913ea0a97d8d.jpg)
