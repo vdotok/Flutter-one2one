@@ -221,7 +221,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _callProvider = Provider.of<CallProvider>(context, listen: false);
 
     _contactProvider!.getContacts(_auth.getUser.auth_token);
-    // signalingClient.closeSocket();
+    
     signalingClient.connect(project_id, _auth.completeAddress);
 
     //if(widget.state==true)
@@ -239,7 +239,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _auth.logout();
     };
     signalingClient.onError = (code, res) {
-      print("onError  $code $res");
+      print("onError  $code $res $isResumed");
       // if (isConnected == false) {
       //   setState(() {
       //     isConnected = false;
@@ -284,6 +284,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             // isRegisteredAlready=false;
           });
           if (isResumed) {
+            print("this is isreesumedd $isConnected $sockett $isRegisteredAlready");
             // if (_auth.loggedInStatus == Status.LoggedOut) {
             // } else {
             if (isConnected && sockett == false && !isRegisteredAlready) {
@@ -484,16 +485,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (Platform.isIOS) {
           if (inInactive) {
             print("here in paused");
+             signalingClient.closeSocket();
           }
         }
       }
-      // if (Platform.isIOS) {
-      //   if (inInactive) {
-      //     print("here in paused");
-      //     signalingClient.closeSocket();
-      //   }
-      // }
-      // print("call end check ");
+   
+      print("call end check ");
 
       if (_callticker != null) {
         print("in Function");
@@ -559,7 +556,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         inInactive = false;
         if (_auth.loggedInStatus == Status.LoggedOut) {
         } else {
-          print("this is variable for resume $sockett $isConnected");
+          print("this is variable for resume $sockett $isConnected $isResumed");
           //     //signalingClient.sendPing();
           signalingClient.sendPing(registerRes["mcToken"]);
         }
@@ -584,11 +581,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             print("incall true");
           } else {
             print("here in ininactive");
-            // signalingClient.closeSocket();
+             signalingClient.closeSocket();
           }
         }
-        //  isResumed = false;
-        //  signalingClient.closeSocket();
+      
         break;
       case AppLifecycleState.paused:
         print("app in paused");
@@ -599,7 +595,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           print("incall true");
         } else {
           print("incall false");
-          // signalingClient.closeSocket();
+          signalingClient.closeSocket();
         }
         break;
       case AppLifecycleState.detached:
