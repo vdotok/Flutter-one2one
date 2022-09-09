@@ -11,13 +11,15 @@ class NoContactsScreen extends StatelessWidget {
   final bool state;
   final bool isSocketConnect;
   NoContactsScreen(
-      {required this.authProvider, this.refreshList, required this.state, required this.isSocketConnect});
+      {required this.authProvider,
+      this.refreshList,
+      required this.state,
+      required this.isSocketConnect});
 
   @override
   Widget build(BuildContext context) {
     print("here in no chat screen");
-    return
-        SingleChildScrollView(
+    return SingleChildScrollView(
       child: RefreshIndicator(
         onRefresh: refreshList,
         child: Column(
@@ -72,7 +74,7 @@ class NoContactsScreen extends StatelessWidget {
             //               width: 3,
             //             ),
             //           ),
-            //           child: FlatButton(
+            //           child: TextButton(
             //             onPressed: () {
 
             //             },
@@ -108,7 +110,7 @@ class NoContactsScreen extends StatelessWidget {
                     ),
                   ),
                   child: Center(
-                      child: FlatButton(
+                      child: TextButton(
                     onPressed: refreshList,
                     child: Text(
                       "Refresh",
@@ -127,7 +129,7 @@ class NoContactsScreen extends StatelessWidget {
               children: [
                 SizedBox(
                     width: 105,
-                    child: FlatButton(
+                    child: TextButton(
                       onPressed: () {
                         authProvider.logout();
                         // emitter.disconnect();

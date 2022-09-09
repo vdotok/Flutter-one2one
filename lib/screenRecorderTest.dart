@@ -67,7 +67,7 @@
 //             Text('Time: $_time\n'),
 //             !recording
 //                 ? Center(
-//                     child: RaisedButton(
+//                     child: ElevatedButton(
 //                       child: Text("Record Screen"),
 //                       onPressed: () => startScreenRecord(false),
 //                     ),
@@ -75,13 +75,13 @@
 //                 : Container(),
 //             !recording
 //                 ? Center(
-//                     child: RaisedButton(
+//                     child: ElevatedButton(
 //                       child: Text("Record Screen & audio"),
 //                       onPressed: () => startScreenRecord(true),
 //                     ),
 //                   )
 //                 : Center(
-//                     child: RaisedButton(
+//                     child: ElevatedButton(
 //                       child: Text("Stop Record"),
 //                       onPressed: () => stopScreenRecord(),
 //                     ),

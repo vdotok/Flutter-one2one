@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../constant.dart';
 
-
 class ReusableButton extends StatefulWidget {
-  final  String text;
+  final String text;
   final handlePress;
 
   ReusableButton({required this.text, this.handlePress});
@@ -14,7 +13,6 @@ class ReusableButton extends StatefulWidget {
 }
 
 class _ReusableButtonState extends State<ReusableButton> {
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -23,15 +21,19 @@ class _ReusableButtonState extends State<ReusableButton> {
         height: 48,
         width: 160,
         // padding: EdgeInsets.symmetric(horizontal: 65),
-        child: RaisedButton(
+        child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+             primary: greenColor,
+             shape: new RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(5.0),
+          ),
+           ),
           // elevation: 10.0,
-          color: greenColor,
+        
           onPressed: () {
             widget.handlePress();
           },
-          shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(5.0),
-          ),
+          
 
           // child: Container(
           //   constraints: BoxConstraints(maxWidth: 400.0, minHeight: 50.0),

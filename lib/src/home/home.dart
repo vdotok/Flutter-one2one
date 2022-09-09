@@ -221,7 +221,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _callProvider = Provider.of<CallProvider>(context, listen: false);
 
     _contactProvider!.getContacts(_auth.getUser.auth_token);
-    
+
     signalingClient.connect(project_id, _auth.completeAddress);
 
     //if(widget.state==true)
@@ -238,7 +238,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.unRegisterSuccessfullyCallBack = () {
       _auth.logout();
     };
-    signalingClient.onError = (code, res) {
+    signalingClient.onError = (code, res) async {
       print("onError  $code $res $isResumed");
       // if (isConnected == false) {
       //   setState(() {
@@ -253,16 +253,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //   });
       // }
       if (code == 1001 || code == 1002) {
-        signalingClient.sendPing(registerRes["mctoken"]);
-        // if (isConnected && !isRegisteredAlready) {
-        //   print("internet is connected $sockett");
-        //   signalingClient.connect(project_id, _auth.completeAddress);
-        // } else {
+        
+      
         setState(() {
           sockett = false;
 
           isRegisteredAlready = false;
         });
+          bool connectionFlag = await signalingClient.checkInternetConnectivity();
+        if (connectionFlag) {
+          signalingClient.connect(project_id, _auth.completeAddress);
+        }
         // }
       } else if (code == 401) {
         print("here in 401");
@@ -284,10 +285,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             // isRegisteredAlready=false;
           });
           if (isResumed) {
-            print("this is isreesumedd $isConnected $sockett $isRegisteredAlready");
-            // if (_auth.loggedInStatus == Status.LoggedOut) {
-            // } else {
-            if (isConnected && sockett == false && !isRegisteredAlready) {
+            print(
+                "this is isreesumedd $isConnected $sockett $isRegisteredAlready");
+        bool connectionFlag =
+                await signalingClient.checkInternetConnectivity();
+            if (connectionFlag && sockett == false && !isRegisteredAlready) {
               print("i am in connect in 1005");
               signalingClient.connect(project_id, _auth.completeAddress);
 
@@ -344,13 +346,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           print("I am in Re Reregister ");
           remoteVideoFlag = true;
           print("here in init state register");
+          // if (noInternetCallHungUp == true) {
+          //   print('this issussus $noInternetCallHungUp');
+          //   //signalingClient.closeSession();
+          //    stopCall();
+          // }
           // signalingClient.register(_auth.getUser.toJson(), project_id);
         }
       } else {
-         if (noInternetCallHungUp == true) {
-            print('this issussus $noInternetCallHungUp');
-            stopCall();
-          }
         print("onError no internet connection");
         setState(() {
           isConnected = false;
@@ -370,6 +373,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       setState(() {
         registerRes = res;
         print("this is mc token in register ${registerRes["mcToken"]}");
+        if (noInternetCallHungUp == true) {
+          print('this issussus $noInternetCallHungUp');
+          signalingClient.closeSession(true);
+        }
       });
     };
 
@@ -485,19 +492,26 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (Platform.isIOS) {
           if (inInactive) {
             print("here in paused");
-             signalingClient.closeSocket();
+            signalingClient.closeSocket();
           }
         }
       }
-   
+
       print("call end check ");
 
+      // if (_callticker != null) {
+      //   print("in Function");
+
+      //   _callticker.cancel();
+      // }
+      print("toiuidhud");
+       if (inCall) {
       if (_callticker != null) {
         print("in Function");
 
         _callticker.cancel();
       }
-      print("toiuidhud");
+       }
       // here
       // _callBloc.add(CallNewEvent());
       _callProvider!.initial();
@@ -507,7 +521,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         inCall = false;
         isTimer = false;
         callTo = "";
-
+        count = 0;
+        iscallAcceptedbyuser = false;
         isRinging = false;
         Wakelock.toggle(enable: false);
         iscallAcceptedbyuser = false;
@@ -581,10 +596,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             print("incall true");
           } else {
             print("here in ininactive");
-             signalingClient.closeSocket();
+            signalingClient.closeSocket();
           }
         }
-      
+
         break;
       case AppLifecycleState.paused:
         print("app in paused");
@@ -786,12 +801,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   stopCall() {
     print("this is mc token in stop call home ${registerRes["mcToken"]}");
+
     signalingClient.stopCall(registerRes["mcToken"]);
 
     //here
     // _callBloc.add(CallNewEvent());
     _callProvider!.initial();
     setState(() {
+      _callticker.cancel();
       _ticker.cancel();
       inCall = false;
       pressDuration = "";
@@ -1530,7 +1547,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 //     //})
                 //     : Container(),
                 meidaType == MediaType.video
-                    ? DragBox(initPos: Offset(210.0, 400.0))
+                    ? DragBox()
                     : Container()
                 : Positioned(
                     left: 225,
@@ -1608,7 +1625,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         stopCall();
                       }
                       remoteVideoFlag = true;
-                      stopCall();
+
                       // inCall = false;
 
                       // setState(() {

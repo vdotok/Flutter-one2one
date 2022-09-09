@@ -188,7 +188,7 @@
 //             ),
 //           ),
 //         ),
-//         RaisedButton.icon(
+//         ElevatedButton.icon(
 //           onPressed: () {
 //             register();
 //           },
@@ -298,13 +298,14 @@ import 'package:provider/provider.dart';
 
 import 'constant.dart';
 
-GlobalKey<ScaffoldMessengerState> ?rootScaffoldMessengerKey;
+GlobalKey<ScaffoldMessengerState>? rootScaffoldMessengerKey;
 
- class MyHttpOverrides extends HttpOverrides{
+class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext? context){
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
 
@@ -341,7 +342,7 @@ class _MyAppState extends State<MyApp> {
               primarySwatch: Colors.grey,
             ).copyWith(),
             accentColor: primaryColor,
-             primaryColor: primaryColor,
+            primaryColor: primaryColor,
             scaffoldBackgroundColor: Colors.white,
             textTheme: TextTheme(
               bodyText1: TextStyle(color: secondaryColor),
@@ -414,31 +415,31 @@ class _TestState extends State<Test> {
                   mirror: false,
                   objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover),
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () {
                 signalingClient!.getNumber();
               },
               child: Text("Create peerConnection"),
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () {
                 //signalingClient.creteOffermannual();
               },
               child: Text("createOffer"),
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () {
                 signalingClient!.getMedia();
               },
               child: Text("getUserMedia"),
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () {
                 // signalingClient.getDisplay();
               },
               child: Text("getUserDisplayMedia"),
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () {
                 // signalingClient.getinternal();
               },

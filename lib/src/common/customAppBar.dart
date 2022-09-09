@@ -37,7 +37,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       // actions: [
       //   Padding(
       //     padding: const EdgeInsets.only(right: 3.5),
-      //     child: FlatButton(
+      //     child: TextButton(
       //       onPressed: () {
       //         authProvider.logout();
       //       },
