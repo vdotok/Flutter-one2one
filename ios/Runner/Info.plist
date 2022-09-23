@@ -8,6 +8,9 @@
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	
+<key>NSCameraUsageDescription</key>
+<string>This app needs camera access to scan QR codes</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -39,8 +42,7 @@
 	<string>Access to music</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Access to calendar</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Access to camera</string>
+	
 	<key>NSContactsUsageDescription</key>
 	<string>Access to contacts</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

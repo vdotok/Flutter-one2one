@@ -18,12 +18,17 @@ class _WidgetHeaderState extends State<LoadingButton> {
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
+    return new 
+    
+    Padding(
+      padding: EdgeInsets.symmetric(horizontal: 65),
+      child: 
+    Container(
       width: 160.0,
       height: 48.0,
       decoration: BoxDecoration(color: greenColor, borderRadius: BorderRadius.circular(5.0)),
       child: Center(child: CircularProgressIndicator( valueColor:AlwaysStoppedAnimation<Color>(Colors.white), )),
-    );
+    ));
   }
 }
 

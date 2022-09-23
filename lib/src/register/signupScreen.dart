@@ -10,6 +10,8 @@ import '../../src/core/providers/auth.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant.dart';
+import '../core/qrocde/qrcode.dart';
+import '../home/home.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -28,7 +30,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Size? size;
 
   handlePress() async {
-    if (_registerformkey.currentState!.validate()) {
+    if (_nameController.text.isNotEmpty && _emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty) {
+      if (project_id == null || tenant_api_url == null) {
+        snackBar = SnackBar(
+          content: Text("Please scan QR first"),
+          duration: Duration(seconds: 2),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        if (_registerformkey.currentState!.validate()) {
+          AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+          bool res = await auth.register(_emailController.text,
+              _nameController.text, _passwordController.text);
+          if (auth.getUser.auth_token == null) {
+            setState(() {
+              _autoValidate = true;
+            });
+          }
+          if (res) {
+            Navigator.pop(context);
+          }
+          ;
+        } else {
+          setState(() {
+            _autoValidate = true;
+          });
+        }
+      }
+    }
+    
+    else{if (_registerformkey.currentState!.validate()) {
       AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
       bool res = await auth.register(_emailController.text,
           _nameController.text, _passwordController.text);
@@ -45,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       setState(() {
         _autoValidate = true;
       });
-    }
+    }}
   }
 
   handleButton() {
@@ -99,83 +131,101 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           // CardView(text:"Sign Up to your account"),
                           //    Expanded(
                           Form(
-                           autovalidateMode: AutovalidateMode.always,
+                            autovalidateMode: AutovalidateMode.always,
                             key: _registerformkey,
 
                             child: Container(
                               width: 290,
-                              height: 510,
+                              height: 520,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    child: Column(
-                                      children: [
-                                        SizedBox(height: 32),
-                                        CustomText(
-                                            text: "Sign Up to your account"),
-                                        SizedBox(height: 34),
-                                        CustomTextField(
-                                            "Username", _nameController, true),
-
-                                        SizedBox(
-                                          height: 16,
-                                        ),
-                                        CustomTextField("Email Address",
-                                            _emailController, true),
-                                        SizedBox(
-                                          height: 16,
-                                        ),
-                                        CustomTextField("Password",
-                                            _passwordController, false),
-                                        // SizedBox(height: 82),
-
-                                        Consumer<AuthProvider>(
-                                          builder: (context, auth, child) {
-                                            if (auth.registeredInStatus ==
-                                                Status.Failure)
-                                              return Text(
-                                                auth.registerErrorMsg,
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              );
-                                            else
-                                              return Container();
-                                          },
-                                        ),
-                                      ],
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  // mainAxisAlignment:
+                                  //     MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    IconButton(
+                                      iconSize: 30,
+                                      icon: const Icon(Icons.qr_code_2_sharp),
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return QRViewExample();
+                                        }));
+                                      },
                                     ),
-                                  ),
-                                  Container(
-                                    child: Column(
-                                      children: [
-                                        Consumer<AuthProvider>(
+                                    Container(
+                                      child: Column(
+                                        children: [
+                                          SizedBox(height: 32),
+                                          CustomText(
+                                              text: "Sign Up to your account"),
+                                          SizedBox(height: 34),
+                                          CustomTextField("Username",
+                                              _nameController, true),
+
+                                          SizedBox(
+                                            height: 16,
+                                          ),
+                                          CustomTextField("Email Address",
+                                              _emailController, true),
+                                          SizedBox(
+                                            height: 16,
+                                          ),
+                                          CustomTextField("Password",
+                                              _passwordController, false),
+                                          // SizedBox(height: 82),
+
+                                          Consumer<AuthProvider>(
                                             builder: (context, auth, child) {
-                                          if (auth.registeredInStatus ==
-                                              Status.Loading)
-                                            return LoadingButton();
-                                          else
-                                            return ReusableButton(
-                                                text: "SIGN UP",
-                                                handlePress: handlePress);
-                                        }),
-
-                                        SizedBox(height: 38),
-                                        // Text("hello")
-                                        CustomTextButton(
-                                          text: "SIGN IN",
-                                          handlePress: handleButton,
-                                        ),
-                                        SizedBox(height: 36),
-                                      ],
+                                              if (auth.registeredInStatus ==
+                                                  Status.Failure)
+                                                return Text(
+                                                  auth.registerErrorMsg,
+                                                  style: TextStyle(
+                                                      color: Colors.red),
+                                                );
+                                              else
+                                                return Container();
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                    Container(
+                                      // height: 100,
+                                      child: Column(
+                                        children: [
+                                          Consumer<AuthProvider>(
+                                              builder: (context, auth, child) {
+                                            if (auth.registeredInStatus ==
+                                                Status.Loading)
+                                              return LoadingButton();
+                                            else
+                                              return ReusableButton(
+                                                  text: "SIGN UP",
+                                                  handlePress: handlePress);
+                                          }),
+
+                                          SizedBox(height: 38),
+                                          // Text("hello")
+                                          CustomTextButton(
+                                            text: "SIGN IN",
+                                            handlePress: handleButton,
+                                          ),
+                                          SizedBox(height: 36),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
 

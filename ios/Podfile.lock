@@ -21,21 +21,27 @@ PODS:
   - MMWormhole/Core (2.0.0)
   - move_to_background (0.0.1):
     - Flutter
+  - MTBBarcodeScanner (5.0.11)
   - path_provider_ios (0.0.1):
     - Flutter
   - permission_handler_apple (9.0.4):
     - Flutter
+  - qr_code_scanner (0.2.0):
+    - Flutter
+    - MTBBarcodeScanner
   - ReachabilitySwift (5.0.0)
   - replay_kit_launcher (1.0.0):
     - Flutter
   - shared_preferences_ios (0.0.1):
     - Flutter
+  - SocketRocket (0.6.0)
   - vdotok_stream (0.0.1):
     - Flutter
     - Libyuv (= 1703)
     - MMWormhole
     - VdoTokStreaming
-  - VdoTokStreaming (1.1.2)
+  - VdoTokStreaming (1.1.17):
+    - SocketRocket
   - vibration (1.7.5):
     - Flutter
   - wakelock (0.0.1):
@@ -53,6 +59,7 @@ DEPENDENCIES:
   - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - replay_kit_launcher (from `.symlinks/plugins/replay_kit_launcher/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - vdotok_stream (from `.symlinks/plugins/vdotok_stream/ios`)
@@ -63,7 +70,9 @@ SPEC REPOS:
   trunk:
     - Libyuv
     - MMWormhole
+    - MTBBarcodeScanner
     - ReachabilitySwift
+    - SocketRocket
     - VdoTokStreaming
 
 EXTERNAL SOURCES:
@@ -89,6 +98,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  qr_code_scanner:
+    :path: ".symlinks/plugins/qr_code_scanner/ios"
   replay_kit_launcher:
     :path: ".symlinks/plugins/replay_kit_launcher/ios"
   shared_preferences_ios:
@@ -106,22 +117,25 @@ SPEC CHECKSUMS:
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
-  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
   flutter_statusbarcolor: 8afb1071ed8c58be929f1e32b36c629771fd2259
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
+  MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+  qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   replay_kit_launcher: 828739da18c9785d5e9aafd4f075ea11d6b61499
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
-  vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
-  VdoTokStreaming: 90bd2375943a54625f796913c205a138bd87ab6c
+  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  vdotok_stream: f1ab0765a1dd3411fbe162d7cefdde03a59e286b
+  VdoTokStreaming: 020891c3ec5f5a9e35deed9a2e3de32a87c93afb
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
-PODFILE CHECKSUM: f7fd0ccd7314c83b184f880f7cd6ce6def6e57b1
+PODFILE CHECKSUM: 748423c4e64af7d08e7dd8bb6f066cd921ed452b
 
 COCOAPODS: 1.10.1

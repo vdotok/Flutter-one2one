@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../src/common/logo.dart';
 import '../../src/common/custombutton.dart';
 import '../../src/common/customtext.dart';
@@ -10,6 +11,8 @@ import '../../src/core/providers/auth.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant.dart';
+import '../core/qrocde/qrcode.dart';
+import '../home/home.dart';
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -21,24 +24,61 @@ class _SignInScreenState extends State<SignInScreen> {
   final _passwordController = TextEditingController();
   final GlobalKey<FormState> _loginformkey = GlobalKey<FormState>();
   bool _autoValidate = false;
+  @override
+  void initState() {
+    super.initState();
+    print("here in niitititiit");
+  }
 
   handlePress() async {
-    if (_loginformkey.currentState!.validate()) {
-      AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
-      await auth.login(_emailController.text, _passwordController.text);
+    if (_emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty) {
+      if (project_id == null || tenant_api_url == null) {
+        snackBar = SnackBar(
+          content: Text("Please scan QR first"),
+          duration: Duration(seconds: 2),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      else{
+         if (_loginformkey.currentState!.validate()) {
+        print("this isssssss");
+        AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+        await auth.login(_emailController.text, _passwordController.text);
 
-      if (auth.getUser.auth_token == null) {
+        if (auth.getUser.auth_token == null) {
+          setState(() {
+            _autoValidate = true;
+          });
+        }
+
+        // _loginBloc
+        //     .add(LoginEvent(_emailController.text, _passwordController.text));
+      } else {
         setState(() {
           _autoValidate = true;
         });
       }
-
-      // _loginBloc
-      //     .add(LoginEvent(_emailController.text, _passwordController.text));
+      }
     } else {
-      setState(() {
-        _autoValidate = true;
-      });
+      if (_loginformkey.currentState!.validate()) {
+        print("this isssssss");
+        AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+        await auth.login(_emailController.text, _passwordController.text);
+
+        if (auth.getUser.auth_token == null) {
+          setState(() {
+            _autoValidate = true;
+          });
+        }
+
+        // _loginBloc
+        //     .add(LoginEvent(_emailController.text, _passwordController.text));
+      } else {
+        setState(() {
+          _autoValidate = true;
+        });
+      }
     }
   }
 
@@ -101,7 +141,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     //    Expanded(
                     Form(
                       key: _loginformkey,
-                     autovalidateMode: AutovalidateMode.always,
+                      autovalidateMode: AutovalidateMode.always,
                       child: Container(
                         width: 290,
                         height: 510,
@@ -110,8 +150,19 @@ class _SignInScreenState extends State<SignInScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            IconButton(
+                              iconSize: 30,
+                              icon: const Icon(Icons.qr_code_2_sharp),
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (context) {
+                                  return QRViewExample();
+                                }));
+                              },
+                            ),
                             Container(
                               child: Column(
                                 children: [
@@ -145,6 +196,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                   ),
                                 ],
                               ),
+                            ),
+                            SizedBox(
+                              height: 50,
                             ),
                             Container(
                               child: Column(

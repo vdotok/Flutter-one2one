@@ -14,6 +14,7 @@ import 'package:vdotok_stream_example/noContactsScreen.dart';
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
+import 'package:vdotok_stream_example/src/core/qrocde/qrcode.dart';
 import 'package:vdotok_stream_example/src/home/drag.dart';
 import 'package:vibration/vibration.dart';
 import 'package:vdotok_stream/flutter_webrtc.dart';
@@ -219,10 +220,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
     print("this is user data auth ${_auth.getUser}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
-
+    project_id = _auth.projectId;
+    tenant_api_url = _auth.tenantUrl;
     _contactProvider!.getContacts(_auth.getUser.auth_token);
 
-    signalingClient.connect(project_id, _auth.completeAddress);
+    signalingClient.connect(_auth.projectId, _auth.completeAddress);
 
     //if(widget.state==true)
     signalingClient.onConnect = (res) {
@@ -231,12 +233,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         sockett = true;
       });
       print("here in init state register0");
-      signalingClient.register(_auth.getUser.toJson(), project_id);
+      signalingClient.register(_auth.getUser.toJson(), _auth.projectId);
       // signalingClient.register(user);
     };
 
     signalingClient.unRegisterSuccessfullyCallBack = () {
       _auth.logout();
+     // setState(() {
+        project_id = null;
+        tenant_api_url = null;
+     // });
     };
     signalingClient.onError = (code, res) async {
       print("onError  $code $res $isResumed");
@@ -253,16 +259,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //   });
       // }
       if (code == 1001 || code == 1002) {
-        
-      
         setState(() {
           sockett = false;
 
           isRegisteredAlready = false;
         });
-          bool connectionFlag = await signalingClient.checkInternetConnectivity();
+        bool connectionFlag = await signalingClient.checkInternetConnectivity();
         if (connectionFlag) {
-          signalingClient.connect(project_id, _auth.completeAddress);
+          signalingClient.connect(_auth.projectId, _auth.completeAddress);
         }
         // }
       } else if (code == 401) {
@@ -287,11 +291,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           if (isResumed) {
             print(
                 "this is isreesumedd $isConnected $sockett $isRegisteredAlready");
-        bool connectionFlag =
+            bool connectionFlag =
                 await signalingClient.checkInternetConnectivity();
             if (connectionFlag && sockett == false && !isRegisteredAlready) {
               print("i am in connect in 1005");
-              signalingClient.connect(project_id, _auth.completeAddress);
+              signalingClient.connect(_auth.projectId, _auth.completeAddress);
 
               // signalingClient.register(_auth.getUser.toJson(), project_id);
 
@@ -342,7 +346,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         //signalingClient.sendPing(registerRes["mcToken"]);
         print("khdfjhfj $isTimer");
         if (sockett == false) {
-          signalingClient.connect(project_id, _auth.completeAddress);
+          signalingClient.connect(_auth.projectId, _auth.completeAddress);
           print("I am in Re Reregister ");
           remoteVideoFlag = true;
           print("here in init state register");
@@ -423,7 +427,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       // on participants left
       if (refID == _auth.getUser.ref_id) {
-      } else {}
+      } else {
+        print("this issss");
+      }
     };
     signalingClient.insufficientBalance = (res) {
       print("here in insufficient balance");
@@ -505,13 +511,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //   _callticker.cancel();
       // }
       print("toiuidhud");
-       if (inCall) {
-      if (_callticker != null) {
-        print("in Function");
+      if (inCall) {
+        if (_callticker != null) {
+          print("in Function");
 
-        _callticker.cancel();
+          _callticker.cancel();
+        }
       }
-       }
       // here
       // _callBloc.add(CallNewEvent());
       _callProvider!.initial();
@@ -777,9 +783,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   dispose() {
     // localRenderer.dispose();
     // remoteRenderer.dispose();
-    if (_ticker != null) {
-      _ticker.cancel();
-    }
+    // if (_ticker != null) {
+    //   _ticker.cancel();
+    // }
     // FlutterRingtonePlayer.stop();
     // Vibration.cancel();
     // sdpController.dispose();
@@ -999,10 +1005,77 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             );
                           else
                             return contactList(contact.contactList);
-                        } else
-                          return Container(
-                            child: Text("no contacts found"),
+                        } else {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            //crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Center(
+                                child: Container(
+                                  child: Text(
+                                    "No Contacts Found",
+                                    style: TextStyle(
+                                      color: chatRoomColor,
+                                      fontSize: 20,
+                                      fontFamily: primaryFontFamily,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  // crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      child: TextButton(
+                                        onPressed: () {
+                                          islogout = true;
+                                          if (isRegisteredAlready) {
+                                            ScaffoldMessenger.of(context)
+                                                .hideCurrentSnackBar();
+                                            isRegisteredAlready = false;
+                                          }
+
+                                          signalingClient.unRegister(
+                                              registerRes["mcToken"]);
+
+                                          // _auth.logout();
+                                        },
+                                        child: Text(
+                                          "LOG OUT",
+                                        ),
+                                        style: TextButton.styleFrom(
+                                          textStyle: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 14.0,
+                                              fontFamily: primaryFontFamily,
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: 0.90),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 10,
+                                      width: 10,
+                                      decoration: BoxDecoration(
+                                          color: isConnected && sockett == true
+                                              ? Colors.green
+                                              : Colors.red,
+                                          shape: BoxShape.circle),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                  padding: const EdgeInsets.only(bottom: 60),
+                                  child: Text(_auth.getUser.full_name))
+                            ],
                           );
+                        }
                       },
                     )),
               ),

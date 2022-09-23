@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../../../src/core/models/contactList.dart';
 import '../../../src/core/services/server.dart';
 
-enum ContactStates { Loading, Success }
+enum ContactStates { Loading, Success, NoUser }
 
 class ContactProvider with ChangeNotifier {
   late ContactList _contactList;
@@ -23,10 +23,15 @@ class ContactProvider with ChangeNotifier {
       "start_row": 0
     };
     final response = await callAPI(jsonData, "AllUsers", authToken);
-    final json = {"users": response["users"]};
-    _contactList = ContactList.fromJson(json);
-    print("this is list $_contactList");
-    _contactStates = ContactStates.Success;
-    notifyListeners();
+    if (response["status"] == 200) {
+      final json = {"users": response["users"]};
+      _contactList = ContactList.fromJson(json);
+      print("this is list $_contactList");
+      _contactStates = ContactStates.Success;
+      notifyListeners();
+    } else if(response["status"]==400){
+      _contactStates = ContactStates.NoUser;
+      notifyListeners();
+    }
   }
 }
