@@ -231,7 +231,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         sockett = true;
       });
       print("here in init state register0");
-      signalingClient.register(_auth.getUser.toJson(), project_id);
+      signalingClient.register(_auth.getUser.toJson(), project_id,
+          _auth.StungIP, int.parse(_auth.StungPort));
       // signalingClient.register(user);
     };
 
@@ -253,14 +254,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //   });
       // }
       if (code == 1001 || code == 1002) {
-        
-      
         setState(() {
           sockett = false;
 
           isRegisteredAlready = false;
         });
-          bool connectionFlag = await signalingClient.checkInternetConnectivity();
+        bool connectionFlag = await signalingClient.checkInternetConnectivity();
         if (connectionFlag) {
           signalingClient.connect(project_id, _auth.completeAddress);
         }
@@ -287,7 +286,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           if (isResumed) {
             print(
                 "this is isreesumedd $isConnected $sockett $isRegisteredAlready");
-        bool connectionFlag =
+            bool connectionFlag =
                 await signalingClient.checkInternetConnectivity();
             if (connectionFlag && sockett == false && !isRegisteredAlready) {
               print("i am in connect in 1005");
@@ -505,13 +504,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //   _callticker.cancel();
       // }
       print("toiuidhud");
-       if (inCall) {
-      if (_callticker != null) {
-        print("in Function");
+      if (inCall) {
+        if (_callticker != null) {
+          print("in Function");
 
-        _callticker.cancel();
+          _callticker.cancel();
+        }
       }
-       }
       // here
       // _callBloc.add(CallNewEvent());
       _callProvider!.initial();

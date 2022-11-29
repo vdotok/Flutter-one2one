@@ -50,6 +50,14 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _emailController.text = "tkkhan";
+    _passwordController.text = "12345678";
+  }
+
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent, // status bar color
@@ -101,7 +109,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     //    Expanded(
                     Form(
                       key: _loginformkey,
-                     autovalidateMode: AutovalidateMode.always,
+                      autovalidateMode: AutovalidateMode.always,
                       child: Container(
                         width: 290,
                         height: 510,

@@ -4,7 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
-  battery_plus_windows
+  battery_plus
   connectivity_plus_windows
   permission_handler_windows
 )

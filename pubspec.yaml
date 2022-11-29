@@ -40,7 +40,8 @@ dependencies:
   replay_kit_launcher: ^1.0.0
   web_socket_channel: ^2.2.0
   draggable_widget: ^2.0.0
-  vdotok_stream: ^0.0.16
+  vdotok_stream:
+    path: ../vdotok_stream
   move_to_background: ^1.0.2
   wakelock: ^0.5.6
 

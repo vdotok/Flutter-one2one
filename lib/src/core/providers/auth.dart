@@ -34,6 +34,10 @@ class AuthProvider with ChangeNotifier {
 
   late String _completeAddress;
   String get completeAddress => _completeAddress;
+  late String _stungIP;
+  String get StungIP => _stungIP;
+  late String _stungPort;
+  String get StungPort => _stungPort;
 
   SharedPref _sharedPref = SharedPref();
   late String _loginErrorMsg;
@@ -90,6 +94,8 @@ class AuthProvider with ChangeNotifier {
       return false;
     } else {
       _completeAddress = response['media_server_map']['complete_address'];
+      _stungIP = response['stun_server_map']['host'];
+      _stungPort = response['stun_server_map']['port'];
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
       _registeredInStatus = Status.Registered;
@@ -117,6 +123,8 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
     } else {
       _completeAddress = response['media_server_map']['complete_address'];
+      _stungIP = response['stun_server_map']['host'];
+      _stungPort = response['stun_server_map']['port'];
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
@@ -220,13 +228,16 @@ class AuthProvider with ChangeNotifier {
 
   isUserLogedIn() async {
     final authUser = await _sharedPref.read("authUser");
-    print("this is authUser $authUser");
+    // print(
+    //     "this is authUser $authUser  ${jsonDecode(authUser)['stun_server_map']['host']}");
     if (authUser == null) {
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
     } else {
       _completeAddress =
           jsonDecode(authUser)['media_server_map']['complete_address'];
+      _stungIP = jsonDecode(authUser)['stun_server_map']['host'];
+      _stungPort = jsonDecode(authUser)['stun_server_map']['port'];
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(jsonDecode(authUser));
       notifyListeners();

@@ -10,26 +10,16 @@
             "type": "dart"
         },
         {
-            "name": "Android1",
+            "name": "Flutter-one2one (profile mode)",
             "request": "launch",
             "type": "dart",
-            "deviceId": "RFCMA02LXPN"
+            "flutterMode": "profile"
         },
         {
-            "name": "Android2",
+            "name": "Flutter-one2one (release mode)",
             "request": "launch",
             "type": "dart",
-            "deviceId": "emulator-5554"
-        }
-    ],
-    "compounds": [
-        {
-            "name": "All Devices",
-            "configurations": [
-                "Android1",
-                "Android2",
-                "Android3"
-            ],
+            "flutterMode": "release"
         }
     ]
 }
