@@ -1,8 +1,13 @@
 PODS:
+  - _NIODataStructures (2.40.0)
   - audioplayers_darwin (0.0.1):
     - Flutter
   - battery_plus (1.0.0):
     - Flutter
+  - CNIOAtomics (2.40.0)
+  - CNIODarwin (2.40.0)
+  - CNIOLinux (2.40.0)
+  - CNIOWindows (2.40.0)
   - connectivity_plus (0.0.1):
     - Flutter
     - ReachabilitySwift
@@ -31,13 +36,44 @@ PODS:
   - shared_preferences_ios (0.0.1):
     - Flutter
   - SocketRocket (0.6.0)
+  - SwiftNIO (2.40.0):
+    - _NIODataStructures (= 2.40.0)
+    - CNIOAtomics (= 2.40.0)
+    - CNIODarwin (= 2.40.0)
+    - CNIOLinux (= 2.40.0)
+    - CNIOWindows (= 2.40.0)
+    - SwiftNIOConcurrencyHelpers (= 2.40.0)
+    - SwiftNIOCore (= 2.40.0)
+    - SwiftNIOEmbedded (= 2.40.0)
+    - SwiftNIOPosix (= 2.40.0)
+  - SwiftNIOConcurrencyHelpers (2.40.0):
+    - CNIOAtomics (= 2.40.0)
+  - SwiftNIOCore (2.40.0):
+    - CNIOAtomics (= 2.40.0)
+    - CNIOLinux (= 2.40.0)
+    - SwiftNIOConcurrencyHelpers (= 2.40.0)
+  - SwiftNIOEmbedded (2.40.0):
+    - _NIODataStructures (= 2.40.0)
+    - CNIOAtomics (= 2.40.0)
+    - CNIOLinux (= 2.40.0)
+    - SwiftNIOConcurrencyHelpers (= 2.40.0)
+    - SwiftNIOCore (= 2.40.0)
+  - SwiftNIOPosix (2.40.0):
+    - _NIODataStructures (= 2.40.0)
+    - CNIOAtomics (= 2.40.0)
+    - CNIODarwin (= 2.40.0)
+    - CNIOLinux (= 2.40.0)
+    - CNIOWindows (= 2.40.0)
+    - SwiftNIOConcurrencyHelpers (= 2.40.0)
+    - SwiftNIOCore (= 2.40.0)
   - vdotok_stream (0.0.1):
     - Flutter
     - Libyuv (= 1703)
     - MMWormhole
     - VdoTokStreaming
-  - VdoTokStreaming (1.1.17):
+  - VdoTokStreaming (1.1.21):
     - SocketRocket
+    - SwiftNIO
   - vibration (1.7.5):
     - Flutter
   - wakelock (0.0.1):
@@ -63,10 +99,20 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - _NIODataStructures
+    - CNIOAtomics
+    - CNIODarwin
+    - CNIOLinux
+    - CNIOWindows
     - Libyuv
     - MMWormhole
     - ReachabilitySwift
     - SocketRocket
+    - SwiftNIO
+    - SwiftNIOConcurrencyHelpers
+    - SwiftNIOCore
+    - SwiftNIOEmbedded
+    - SwiftNIOPosix
     - VdoTokStreaming
 
 EXTERNAL SOURCES:
@@ -104,8 +150,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock/ios"
 
 SPEC CHECKSUMS:
+  _NIODataStructures: 3d45d8e70a1d17a15b1dc59d102c63dbc0525ffd
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
   battery_plus: 7851ab482c336dd101ae735dc9363f01e1223c7c
+  CNIOAtomics: 8edf08644e5e6fa0f021c239be9e8beb1cd9ef18
+  CNIODarwin: 93850990d29f2626b05306c6c9309f9be0d74c2f
+  CNIOLinux: 62e3505f50de558c393dc2f273dde71dcce518da
+  CNIOWindows: 3047f2d8165848a3936a0a755fee27c6b5ee479b
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
@@ -121,8 +172,13 @@ SPEC CHECKSUMS:
   replay_kit_launcher: 828739da18c9785d5e9aafd4f075ea11d6b61499
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  SwiftNIO: 829958aab300642625091f82fc2f49cb7cf4ef24
+  SwiftNIOConcurrencyHelpers: 697370136789b1074e4535eaae75cbd7f900370e
+  SwiftNIOCore: 473fdfe746534d7aa25766916459eeaf6f92ef49
+  SwiftNIOEmbedded: ffcb5147db67d9686c8366b7f8427b36132f2c8a
+  SwiftNIOPosix: b49af4bdbecaadfadd5c93dfe28594d6722b75e4
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
-  VdoTokStreaming: 020891c3ec5f5a9e35deed9a2e3de32a87c93afb
+  VdoTokStreaming: dc11eb208bca863e0e0f2de34e85c56de1a10fa0
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
