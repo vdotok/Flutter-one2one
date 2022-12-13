@@ -131,11 +131,11 @@ SPEC CHECKSUMS:
   replay_kit_launcher: 828739da18c9785d5e9aafd4f075ea11d6b61499
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  vdotok_stream: f1ab0765a1dd3411fbe162d7cefdde03a59e286b
+  vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
   VdoTokStreaming: 020891c3ec5f5a9e35deed9a2e3de32a87c93afb
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
-PODFILE CHECKSUM: 748423c4e64af7d08e7dd8bb6f066cd921ed452b
+PODFILE CHECKSUM: dd3a4d28c528e36e2905ee1599e1a41676ca43ae
 
 COCOAPODS: 1.11.3

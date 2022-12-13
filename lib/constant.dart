@@ -33,6 +33,7 @@ const personStatusColor = Color(0xffa39abb);
 const listdividerColor = Color(0xffB2CDC8);
 const counterColor = Color(0xfff76c6c);
 const personOfflineColor = Color(0xffF76C6C);
+const selectcontactColor = Color(0xff190354);
 
 //New Chat Screen Color//
 const searchTextColor = Color(0xffB2CDC8);

@@ -41,6 +41,7 @@ RTCVideoRenderer remoteRenderer = new RTCVideoRenderer();
 MediaStream? local;
 MediaStream? remote;
 bool islogout = false;
+bool isConnectedtoCall = false;
 GlobalKey forsmallView = new GlobalKey();
 GlobalKey forlargView = new GlobalKey();
 GlobalKey forDialView = new GlobalKey();
@@ -213,7 +214,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     WidgetsBinding.instance?.addObserver(this);
     // checkConnectivity();
-    initRenderers();
+   initRenderers();
     print("initilization");
 
     _auth = Provider.of<AuthProvider>(context, listen: false);
@@ -239,10 +240,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     signalingClient.unRegisterSuccessfullyCallBack = () {
       _auth.logout();
-     // setState(() {
-        project_id = null;
-        tenant_api_url = null;
-     // });
+      // setState(() {
+      project_id = null;
+      tenant_api_url = null;
+      // });
     };
     signalingClient.onError = (code, res) async {
       print("onError  $code $res $isResumed");
@@ -265,6 +266,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           isRegisteredAlready = false;
         });
         bool connectionFlag = await signalingClient.checkInternetConnectivity();
+        print("this is connection flaggg $connectionFlag");
         if (connectionFlag) {
           signalingClient.connect(_auth.projectId, _auth.completeAddress);
         }
@@ -289,10 +291,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             // isRegisteredAlready=false;
           });
           if (isResumed) {
-            print(
-                "this is isreesumedd $isConnected $sockett $isRegisteredAlready");
             bool connectionFlag =
                 await signalingClient.checkInternetConnectivity();
+            print(
+                "this is isreesumedd $isConnected $sockett $isRegisteredAlready $connectionFlag");
             if (connectionFlag && sockett == false && !isRegisteredAlready) {
               print("i am in connect in 1005");
               signalingClient.connect(_auth.projectId, _auth.completeAddress);
@@ -334,7 +336,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.internetConnectivityCallBack = (mesg) {
       if (mesg == "Connected") {
         setState(() {
-          if (inCall == true) {
+          if (isConnectedtoCall == true) {
             print("fdjhfjd");
             isTimer = true;
           }
@@ -385,6 +387,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
 
     signalingClient.onLocalStream = (stream) {
+      // localRenderer.initialize().then((value) {
+
+      // });
       print("this is local stream id ${stream.id}");
       setState(() {
         localRenderer.srcObject = stream;
@@ -392,7 +397,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("this is local $local");
       });
     };
-    signalingClient.onRemoteStream = (stream, refid) async {
+    signalingClient.onRemoteStream = (stream, String refid) async {
       print("khdfjhfj1 $isTimer");
       print(
           "this is home page on remote stream ${stream.id} $refid $inCall $isTimer");
@@ -400,6 +405,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         remoteRenderer.srcObject = stream;
         remote = stream;
         print("this is remote ${stream.id}");
+        if (isConnectedtoCall) {
+          isTimer = true;
+        }
         if (isTimer == false) {
           print("dhdjhdjs");
           _time = DateTime.now();
@@ -412,6 +420,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         }
         _updateTimer();
         _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+        isConnectedtoCall = true;
         onRemoteStream = true;
         if (_callticker != null) {
           _callticker.cancel();
@@ -431,6 +440,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("this issss");
       }
     };
+
     signalingClient.insufficientBalance = (res) {
       print("here in insufficient balance");
       snackBar = SnackBar(content: Text('$res'));
@@ -467,24 +477,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       iscallAcceptedbyuser = true;
       pressDuration = "";
 
-      // _audioPlayer.stop();
-      // if (isTimer == false) {
-      //   _time = DateTime.now();
-      //   _callTime = DateTime.now();
-      // } else {
-      //   _ticker.cancel();
-      //   _time = _callTime;
-      //   isTimer = false;
-      // }
-      // _updateTimer();
-      // _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
-      // signalingClient.onCallStatsuploads = (uploadstats) {
-      //   var nummm = uploadstats;
-      // };
-      // signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
-      //   print("NOT NULL  $timeStatsdownloads");
-      //   number = timeStatsdownloads;
-      // };
+     
       _callProvider!.callStart();
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
@@ -526,6 +519,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _isPressed = false;
         inCall = false;
         isTimer = false;
+        isConnectedtoCall = false;
         callTo = "";
         count = 0;
         iscallAcceptedbyuser = false;
@@ -533,7 +527,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         Wakelock.toggle(enable: false);
         iscallAcceptedbyuser = false;
         pressDuration = "";
+        
+        //localRenderer.srcObject!.dispose();
         localRenderer.srcObject = null;
+        //remoteRenderer.srcObject!.dispose();
         remoteRenderer.srcObject = null;
         // Navigator.pop(context);
       });
@@ -816,7 +813,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     setState(() {
       _callticker.cancel();
       _ticker.cancel();
-      inCall = false;
+
       pressDuration = "";
       localRenderer.srcObject = null;
       remoteRenderer.srcObject = null;
@@ -1023,6 +1020,38 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   ),
                                 ),
                               ),
+                              Container(
+            width: 196,
+            height: 56,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: refreshButtonColor,
+            ),
+            child: Container(
+                width: 196,
+                height: 56,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                    color: selectcontactColor,
+                    width: 3,
+                  ),
+                ),
+                child: Center(
+                    child: TextButton(
+                  onPressed: refreshList,
+                  child: Text(
+                    "Refresh",
+                    style: TextStyle(
+                        fontSize: 14.0,
+                        fontFamily: primaryFontFamily,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w700,
+                        color: refreshTextColor,
+                        letterSpacing: 0.90),
+                  ),
+                ))),
+          ),
                               Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Row(
@@ -1095,9 +1124,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             ? Container(
                 child: RTCVideoView(localRenderer,
                     key: forlargView,
-                    mirror: false,
+                    mirror: true,
                     objectFit:
-                        RTCVideoViewObjectFit.RTCVideoViewObjectFitContain),
+                        RTCVideoViewObjectFit.RTCVideoViewObjectFitCover),
               )
             : Container(
                 decoration: BoxDecoration(
@@ -1248,9 +1277,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     height: MediaQuery.of(context).size.height,
                     child: RTCVideoView(localRenderer,
                         key: forDialView,
-                        mirror: false,
+                           mirror: true,
                         objectFit:
-                            RTCVideoViewObjectFit.RTCVideoViewObjectFitContain))
+                            RTCVideoViewObjectFit.RTCVideoViewObjectFitCover))
                 : Container(
                     decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -1330,11 +1359,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             meidaType == MediaType.video
                 ? remoteVideoFlag
                     ? RTCVideoView(remoteRenderer,
-                        mirror: false,
+                           mirror: true,
                         objectFit:
                             // kIsWeb
                             //  ?
-                            RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
+                            RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
+                        //RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
                         //  : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
                         )
                     : Container(
@@ -1418,9 +1448,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                       .indexWhere((element) =>
                                           element!.ref_id == incomingfrom);
                                   print("i am here-");
+
                                   return Text(
-                                    contact
-                                        .contactList.users![index]!.full_name,
+                                    index == -1
+                                        ? incomingfrom
+                                        : contact.contactList.users![index]!
+                                            .full_name,
                                     style: TextStyle(
                                         fontFamily: primaryFontFamily,
                                         color: darkBlackColor,
@@ -1639,7 +1672,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           child: enableCamera
                               ? RTCVideoView(localRenderer,
                                   key: forsmallView,
-                                  mirror: false,
+                                  mirror: true,
                                   objectFit: RTCVideoViewObjectFit
                                       .RTCVideoViewObjectFitCover)
                               : Container(),
