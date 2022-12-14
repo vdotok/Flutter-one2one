@@ -259,10 +259,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
           isRegisteredAlready = false;
         });
-        bool connectionFlag = await signalingClient.checkInternetConnectivity();
-        if (connectionFlag) {
-          signalingClient.connect(project_id, _auth.completeAddress);
-        }
+        // bool connectionFlag = await signalingClient.checkInternetConnectivity();
+        // if (connectionFlag) {
+        //   signalingClient.connect(project_id, _auth.completeAddress);
+        // }
         // }
       } else if (code == 401) {
         print("here in 401");
