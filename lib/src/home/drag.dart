@@ -2,13 +2,14 @@ import 'package:draggable_widget/draggable_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
-import 'package:vdotok_stream/core/interface/enums.dart';
-import 'package:vdotok_stream/flutter_webrtc.dart';
+import 'package:vdotok_stream/vdotok_stream.dart';
 
 import '../../constant.dart';
 import 'home.dart';
 
 class DragBox extends StatefulWidget {
+  Map<String, bool> localAudioVideoStates;
+  DragBox({required this.localAudioVideoStates});
   @override
   DragBoxState createState() => DragBoxState();
 }
@@ -32,7 +33,7 @@ class DragBoxState extends State<DragBox> {
       child: Container(
         height: 150,
         width: 100,
-        child: enableCamera
+        child: widget.localAudioVideoStates["CameraState"]!
             ? RTCVideoView(localRenderer,
                 key: forsmallView,
                 mirror: false,

@@ -62,9 +62,10 @@
 <!--            android:enabled="true"-->
 <!--            android:exported="true"-->
 <!--            android:foregroundServiceType="mediaProjection" />-->
-       <service
-           android:name=".AudioCaptureService"
-           android:foregroundServiceType="mediaProjection"/>
+       <service android:name="com.vdotok_stream.vdotok_stream.FlutterForegroundService"
+            android:foregroundServiceType="mediaProjection"
+            android:enabled="true"
+            android:exported="false"/>
 
        <meta-data android:name="flutterEmbedding" android:value="2" />
     </application>

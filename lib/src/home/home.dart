@@ -1,14 +1,12 @@
 // ignore_for_file: unused_field
 
 import 'dart:async';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:move_to_background/move_to_background.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/noContactsScreen.dart';
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
@@ -16,7 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
 import 'package:vdotok_stream_example/src/home/drag.dart';
 import 'package:vibration/vibration.dart';
-import 'package:vdotok_stream/flutter_webrtc.dart';
+import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:wakelock/wakelock.dart';
 
 import 'dart:io' show File, Platform;
@@ -32,9 +30,17 @@ String pressDuration = "";
 bool remoteVideoFlag = true;
 bool isDeviceConnected = false;
 SignalingClient signalingClient = SignalingClient.instance..checkConnectivity();
-bool enableCamera = true;
-bool switchMute = true;
-bool switchSpeaker = true;
+// bool enableCamera = true;
+// bool switchMute = true;
+// bool switchSpeaker = true;
+
+Map<String, bool> _localAudioVideoStates = {
+  "MuteState": false,
+  "SpeakerState": false,
+  "CameraState": false,
+  "ScreenShareState": false
+};
+
 RTCVideoRenderer localRenderer = new RTCVideoRenderer();
 RTCVideoRenderer remoteRenderer = new RTCVideoRenderer();
 MediaStream? local;
@@ -47,6 +53,7 @@ bool noInternetCallHungUp = false;
 // AudioPlayer _audioPlayer = AudioPlayer();
 bool isRinging = false;
 var snackBar;
+Session? _session;
 
 class Home extends StatefulWidget {
   // User user;
@@ -60,7 +67,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool isConnect = false;
   late DateTime _time;
   late DateTime _callTime;
-  late Timer _ticker;
+  //  Timer _ticker;
   late Timer _callticker;
   int count = 0;
   bool iscallAcceptedbyuser = false;
@@ -110,7 +117,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   var registerRes;
   // bool isdev = true;
   Map<String, dynamic>? customData;
-  late String incomingfrom;
+  // late String incomingfrom;
   // ContactBloc _contactBloc;
   // CallBloc _callBloc;
   // LoginBloc _loginBloc;
@@ -190,7 +197,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     500,
     1000
   ];
-  String meidaType = MediaType.video;
+  String mediaType = MediaType.video;
 
   bool remoteAudioFlag = true;
   ContactProvider? _contactProvider;
@@ -231,101 +238,91 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         sockett = true;
       });
       print("here in init state register0");
-      signalingClient.register(_auth.getUser.toJson(), project_id,
-          _auth.StungIP, int.parse(_auth.StungPort));
+      signalingClient.register(
+          _auth.getUser.ref_id.toString(),
+          _auth.getUser.authorization_token.toString(),
+          project_id,
+          _auth.StungIP,
+          int.parse(_auth.StungPort));
       // signalingClient.register(user);
     };
 
     signalingClient.unRegisterSuccessfullyCallBack = () {
       _auth.logout();
     };
-    signalingClient.onError = (code, res) async {
-      print("onError  $code $res $isResumed");
-      // if (isConnected == false) {
-      //   setState(() {
-      //     isConnected = false;
-      //     //sockett = false;
-      //   });
-      // }
-      // else{
-      //   setState(() {
-      //     isConnected = true;
-      //     //sockett = false;
-      //   });
-      // }
-      if (code == 1001 || code == 1002) {
-        setState(() {
-          sockett = false;
+    signalingClient.onLocalAudioVideoStates =
+        (Map<String, bool> localAudioVideoStates) {
+      setState(() {
+        _localAudioVideoStates = localAudioVideoStates;
+      });
+    };
+    signalingClient.onError = (code, reason) async {
+      print("this is socket error $code $reason");
 
-          isRegisteredAlready = false;
-        });
-        // bool connectionFlag = await signalingClient.checkInternetConnectivity();
-        // if (connectionFlag) {
-        //   signalingClient.connect(project_id, _auth.completeAddress);
-        // }
-        // }
-      } else if (code == 401) {
-        print("here in 401");
-        setState(() {
-          sockett = false;
-          isRegisteredAlready = true;
+      setState(() {
+        sockett = false;
+      });
 
-          snackBar = SnackBar(
-            content: Text('$res'),
-            duration: Duration(days: 365),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        });
+      //if (code == 1002) {
+
+      if (_auth.loggedInStatus == Status.LoggedOut) {
       } else {
-        if (_auth.loggedInStatus == Status.LoggedOut) {
-        } else {
-          setState(() {
-            sockett = false;
-            // isRegisteredAlready=false;
-          });
-          if (isResumed) {
-            print(
-                "this is isreesumedd $isConnected $sockett $isRegisteredAlready");
-            bool connectionFlag =
-                await signalingClient.checkInternetConnectivity();
-            if (connectionFlag && sockett == false && !isRegisteredAlready) {
-              print("i am in connect in 1005");
-              signalingClient.connect(project_id, _auth.completeAddress);
+        if (isResumed) {
+          bool status = await signalingClient.getInternetStatus();
 
-              // signalingClient.register(_auth.getUser.toJson(), project_id);
+          print("this is internet status $status");
 
-              // sockett = true;
-            } else {
-              //  sockett = false;
-            }
-            //}
-          } else {}
+          if (sockett == false && status == true) {
+            print("here in onerrorrrrrr ");
+
+            // signalingClient.connect(project_id, _auth.completeAddress);
+          } else {
+            print("else condition");
+          }
         }
       }
-      // print(
-      //     "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
-      // if (code == 1001 || code == 1002) {
-      //   setState(() {
-      //     sockett = false;
-      //     isConnected = false;
-      //     print("disconnected socket");
-      //   });
-      // } else {
-      //   setState(() {
-      //     sockett = false;
-      //   });
 
-      //   if (_auth.loggedInStatus == Status.LoggedOut) {
-      //   } else {
-      //     if (isConnected == true && sockett == false) {
-      //       print("here in");
-      //       signalingClient.connect(project_id, _auth.completeAddress);
-      //       print("i am in connect in 1005");
-      //       signalingClient.register(_auth.getUser.toJson(), project_id);
-      //     }
-      //   }
+      // } else {
+
+      // if (_auth.loggedInStatus == Status.LoggedOut) {
+
+      // } else {
+
+      //   if (isResumed) {
+
+      // bool status = await signalingClient.getInternetStatus();
+
+      // print("this is internet status $status");
+
+      // if (status) {
+
+      //   signalingClient.connect(project_id, _auth.completeAddress);
+
+      // } else {
+
+      //   print("nothinggggg");
+
       // }
+
+      //}
+
+      // }
+
+      // }
+
+//         bool status =await signalingClient.getInternetStatus();
+
+//         print("this is internet status $status");
+
+// if(status)
+
+//      {
+
+      //   signalingClient.connect("115G1WZI", "wss://vtk1.vdotok.dev:8443/call");
+
+      //}
     };
+
     signalingClient.internetConnectivityCallBack = (mesg) {
       if (mesg == "Connected") {
         setState(() {
@@ -374,7 +371,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("this is mc token in register ${registerRes["mcToken"]}");
         if (noInternetCallHungUp == true) {
           print('this issussus $noInternetCallHungUp');
-          signalingClient.closeSession(true);
+          //3
+          // signalingClient.closeSession(true);
         }
       });
     };
@@ -387,238 +385,346 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("this is local $local");
       });
     };
-    signalingClient.onRemoteStream = (stream, refid) async {
-      print("khdfjhfj1 $isTimer");
-      print(
-          "this is home page on remote stream ${stream.id} $refid $inCall $isTimer");
+    signalingClient.onAddRemoteStream = (session, stream) async {
+      print("this is remote stream $session");
+      remoteRenderer.srcObject = stream;
       setState(() {
-        remoteRenderer.srcObject = stream;
-        remote = stream;
-        print("this is remote ${stream.id}");
-        if (isTimer == false) {
-          print("dhdjhdjs");
-          _time = DateTime.now();
-          _callTime = DateTime.now();
-        } else {
-          print("djhdjdhhfd");
-          _ticker.cancel();
-          _time = _callTime;
-          isTimer = false;
-        }
-        _updateTimer();
-        _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
-        onRemoteStream = true;
-        if (_callticker != null) {
-          _callticker.cancel();
-          count = 0;
-          iscallAcceptedbyuser = true;
-        }
-        // _audioPlayer.stop();
-        _callProvider!.callStart();
+        mediaType = session.mediaType!;
       });
-    };
-    signalingClient.onParticipantsLeft = (refID, receive, istrue) async {
-      print("call callback on call left by participant");
 
-      // on participants left
-      if (refID == _auth.getUser.ref_id) {
-      } else {}
+      // print(
+      //     "this is home page on remote stream ${stream.id} $refid $inCall $isTimer");
+      // setState(() {
+      //   remoteRenderer.srcObject = stream;
+      //   remote = stream;
+      //   print("this is remote ${stream.id}");
+      //   if (isTimer == false) {
+      //     print("dhdjhdjs");
+      //     _time = DateTime.now();
+      //     _callTime = DateTime.now();
+      //   } else {
+      //     print("djhdjdhhfd");
+      //     _ticker.cancel();
+      //     _time = _callTime;
+      //     isTimer = false;
+      //   }
+      //   _updateTimer();
+      //   _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+      //   onRemoteStream = true;
+      //   if (_callticker != null) {
+      //     _callticker.cancel();
+      //     count = 0;
+      //     iscallAcceptedbyuser = true;
+      //   }
+      //   // _audioPlayer.stop();
+      //   _callProvider!.callStart();
+      // });
     };
-    signalingClient.insufficientBalance = (res) {
-      print("here in insufficient balance");
-      snackBar = SnackBar(content: Text('$res'));
 
-// Find the Scaffold in the widget tree and use it to show a SnackBar.
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    };
-    signalingClient.onReceiveCallFromUser = (res, ismultisession) async {
-      print("incomming call from user");
-      startRinging();
+    signalingClient.onCallStateChange =
+        (Session session, CallState state) async {
+      print("this is call State $state");
 
-      setState(() {
-        inCall = true;
-        pressDuration = "";
-        onRemoteStream = false;
-        iscalloneto1 = res["call_type"] == "one_to_one" ? true : false;
-        incomingfrom = res["from"];
-        Wakelock.toggle(enable: true);
-        meidaType = res["media_type"];
-        switchMute = true;
-        enableCamera = true;
-        switchSpeaker = res["media_type"] == MediaType.audio ? true : false;
-        remoteVideoFlag = true;
-        remoteAudioFlag = true;
-      });
-      //here
-      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
-      // _callBloc.add(CallReceiveEvent());
-      _callProvider!.callReceive();
-    };
-    signalingClient.onCallAcceptedByUser = () async {
-      print("this is call accepted");
-      inCall = true;
-      iscallAcceptedbyuser = true;
-      pressDuration = "";
+      switch (state) {
+        case CallState.CallStateNew:
+          setState(() {
+            _session = session;
+            mediaType = session.mediaType!;
+          });
 
-      // _audioPlayer.stop();
-      // if (isTimer == false) {
-      //   _time = DateTime.now();
-      //   _callTime = DateTime.now();
-      // } else {
-      //   _ticker.cancel();
-      //   _time = _callTime;
-      //   isTimer = false;
-      // }
-      // _updateTimer();
-      // _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
-      // signalingClient.onCallStatsuploads = (uploadstats) {
-      //   var nummm = uploadstats;
-      // };
-      // signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
-      //   print("NOT NULL  $timeStatsdownloads");
-      //   number = timeStatsdownloads;
-      // };
-      _callProvider!.callStart();
-    };
-    signalingClient.onCallHungUpByUser = (isLocal) {
-      print("call decliend by other user $inPaused");
-
-      if (inPaused) {
-        print("here in paused");
-      }
-      if (kIsWeb) {
-      } else {
-        if (Platform.isIOS) {
-          if (inInactive) {
-            print("here in paused");
-            signalingClient.closeSocket();
+          break;
+        case CallState.CallStateRinging:
+          {
+            _callProvider!.callReceive();
           }
-        }
+          break;
+        case CallState.CallStateBye:
+          {
+            _callProvider!.initial();
+            setState(() {
+              localRenderer.srcObject = null;
+              remoteRenderer.srcObject = null;
+              _session = null;
+            });
+          }
+          break;
+        case CallState.CallStateInvite:
+          _callProvider!.callDial();
+          break;
+        case CallState.CallStateConnected:
+          _callProvider!.callStart();
+          break;
       }
-
-      print("call end check ");
-
-      // if (_callticker != null) {
-      //   print("in Function");
-
-      //   _callticker.cancel();
-      // }
-      print("toiuidhud");
-      if (inCall) {
-        if (_callticker != null) {
-          print("in Function");
-
-          _callticker.cancel();
-        }
-      }
-      // here
-      // _callBloc.add(CallNewEvent());
-      _callProvider!.initial();
-      print("this is call statussss ${_callProvider!.callStatus}");
-      setState(() {
-        _isPressed = false;
-        inCall = false;
-        isTimer = false;
-        callTo = "";
-        count = 0;
-        iscallAcceptedbyuser = false;
-        isRinging = false;
-        Wakelock.toggle(enable: false);
-        iscallAcceptedbyuser = false;
-        pressDuration = "";
-        localRenderer.srcObject = null;
-        remoteRenderer.srcObject = null;
-        // Navigator.pop(context);
-      });
-      stopRinging();
     };
-    signalingClient.onTargetAlerting = () {
-      setState(() {
-        isRinging = true;
-      });
-    };
+    //4
+//     signalingClient.onParticipantsLeft = (refID, receive, istrue) async {
+//       print("call callback on call left by participant");
 
-    signalingClient.onCallBusyCallback = () {
-      print("hey i am here");
-      _callProvider!.initial();
-      snackBar = SnackBar(content: Text('User is busy with another call.'));
+//       // on participants left
+//       if (refID == _auth.getUser.ref_id) {
+//       } else {}
+//     };
+//     signalingClient.insufficientBalance = (res) {
+//       print("here in insufficient balance");
+//       snackBar = SnackBar(content: Text('$res'));
 
-// Find the Scaffold in the widget tree and use it to show a SnackBar.
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      setState(() {
-        localRenderer.srcObject = null;
-        remoteRenderer.srcObject = null;
-      });
-    };
+// // Find the Scaffold in the widget tree and use it to show a SnackBar.
+//       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+//     };
+//     signalingClient.onReceiveCallFromUser = (res, ismultisession) async {
+//       print("incomming call from user");
+//       startRinging();
 
-    signalingClient.onAudioVideoStateInfo = (audioFlag, videoFlag, refID) {
-      setState(() {
-        remoteVideoFlag = videoFlag == 0 ? false : true;
-        remoteAudioFlag = audioFlag == 0 ? false : true;
-      });
-    };
+//       setState(() {
+//         inCall = true;
+//         pressDuration = "";
+//         onRemoteStream = false;
+//         iscalloneto1 = res["call_type"] == "one_to_one" ? true : false;
+//         incomingfrom = res["from"];
+//         Wakelock.toggle(enable: true);
+//         mediaType = res["media_type"];
+//         switchMute = true;
+//         enableCamera = true;
+//         switchSpeaker = res["media_type"] == MediaType.audio ? true : false;
+//         remoteVideoFlag = true;
+//         remoteAudioFlag = true;
+//       });
+//       //here
+//       _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+//       // _callBloc.add(CallReceiveEvent());
+//       _callProvider!.callReceive();
+//     };
+//     signalingClient.onCallAcceptedByUser = () async {
+//       print("this is call accepted");
+//       inCall = true;
+//       iscallAcceptedbyuser = true;
+//       pressDuration = "";
+
+//       // _audioPlayer.stop();
+//       // if (isTimer == false) {
+//       //   _time = DateTime.now();
+//       //   _callTime = DateTime.now();
+//       // } else {
+//       //   _ticker.cancel();
+//       //   _time = _callTime;
+//       //   isTimer = false;
+//       // }
+//       // _updateTimer();
+//       // _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+//       // signalingClient.onCallStatsuploads = (uploadstats) {
+//       //   var nummm = uploadstats;
+//       // };
+//       // signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
+//       //   print("NOT NULL  $timeStatsdownloads");
+//       //   number = timeStatsdownloads;
+//       // };
+//       _callProvider!.callStart();
+//     };
+//     signalingClient.onCallHungUpByUser = (isLocal) {
+//       print("call decliend by other user $inPaused");
+
+//       if (inPaused) {
+//         print("here in paused");
+//       }
+//       if (kIsWeb) {
+//       } else {
+//         if (Platform.isIOS) {
+//           if (inInactive) {
+//             print("here in paused");
+//             signalingClient.closeSocket();
+//           }
+//         }
+//       }
+
+//       print("call end check ");
+
+//       // if (_callticker != null) {
+//       //   print("in Function");
+
+//       //   _callticker.cancel();
+//       // }
+//       print("toiuidhud");
+//       if (inCall) {
+//         if (_callticker != null) {
+//           print("in Function");
+
+//           _callticker.cancel();
+//         }
+//       }
+//       // here
+//       // _callBloc.add(CallNewEvent());
+//       _callProvider!.initial();
+//       print("this is call statussss ${_callProvider!.callStatus}");
+//       setState(() {
+//         _isPressed = false;
+//         inCall = false;
+//         isTimer = false;
+//         callTo = "";
+//         count = 0;
+//         iscallAcceptedbyuser = false;
+//         isRinging = false;
+//         Wakelock.toggle(enable: false);
+//         iscallAcceptedbyuser = false;
+//         pressDuration = "";
+//         localRenderer.srcObject = null;
+//         remoteRenderer.srcObject = null;
+//         // Navigator.pop(context);
+//       });
+//       stopRinging();
+//     };
+//     signalingClient.onTargetAlerting = () {
+//       setState(() {
+//         isRinging = true;
+//       });
+//     };
+
+//     signalingClient.onCallBusyCallback = () {
+//       print("hey i am here");
+//       _callProvider!.initial();
+//       snackBar = SnackBar(content: Text('User is busy with another call.'));
+
+// // Find the Scaffold in the widget tree and use it to show a SnackBar.
+//       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+//       setState(() {
+//         localRenderer.srcObject = null;
+//         remoteRenderer.srcObject = null;
+//       });
+//     };
+
+//     signalingClient.onAudioVideoStateInfo = (audioFlag, videoFlag, refID) {
+//       setState(() {
+//         remoteVideoFlag = videoFlag == 0 ? false : true;
+//         remoteAudioFlag = audioFlag == 0 ? false : true;
+//       });
+//     };
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("this is changeapplifecyclestate");
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    print("this is changeapplifecyclestate $state");
+
     switch (state) {
       case AppLifecycleState.resumed:
         print("app in resumed");
+
         isResumed = true;
         inPaused = false;
         inInactive = false;
+
         if (_auth.loggedInStatus == Status.LoggedOut) {
+          print("this is auth ");
         } else {
-          print("this is variable for resume $sockett $isConnected $isResumed");
-          //     //signalingClient.sendPing();
-          signalingClient.sendPing(registerRes["mcToken"]);
-        }
-        //   if (_auth.loggedInStatus == Status.LoggedOut) {
-        //   } else {
-        //     //signalingClient.sendPing();
+          try {
+            bool status = await signalingClient.getInternetStatus();
 
-        // print("here in resume");
-        //       signalingClient.connect(project_id, _auth.completeAddress);
-        //       signalingClient.register(_auth.getUser.toJson(), project_id);
+            print("sttatttusss $status");
 
-        //   }
+            if (sockett == false && status == true) {
+              signalingClient.connect(project_id, _auth.completeAddress);
+            }
 
-        break;
-      case AppLifecycleState.inactive:
-        print("app in inactive");
-        inInactive = true;
-        isResumed = false;
-        inPaused = false;
-        if (Platform.isIOS) {
-          if (inCall == true) {
-            print("incall true");
-          } else {
-            print("here in ininactive");
-            signalingClient.closeSocket();
+            // signalingClient.sendPing(registerResponse["mcToken"]);
+
+          } catch (e) {
+            print("this is send ping catch error in demo app $e");
           }
         }
 
         break;
+
+      case AppLifecycleState.inactive:
+        {
+          print("app in inactive");
+
+          inInactive = true;
+
+          isResumed = false;
+
+          inPaused = false;
+        }
+
+        break;
+
       case AppLifecycleState.paused:
         print("app in paused");
+
         inPaused = true;
+
         isResumed = false;
+
         inInactive = false;
-        if (inCall == true) {
-          print("incall true");
-        } else {
-          print("incall false");
-          signalingClient.closeSocket();
-        }
+
+        //   signalingClient.closeSocket();
+
         break;
+
       case AppLifecycleState.detached:
         print("app in detached");
+
         break;
     }
-    // super.didChangeAppLifecycleState(state);
-    // _isInForeground = state == AppLifecycleState.resumed;
   }
+
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   print("this is changeapplifecyclestate");
+  //   switch (state) {
+  //     case AppLifecycleState.resumed:
+  //       print("app in resumed");
+  //       isResumed = true;
+  //       inPaused = false;
+  //       inInactive = false;
+  //       if (_auth.loggedInStatus == Status.LoggedOut) {
+  //       } else {
+  //         print("this is variable for resume $sockett $isConnected $isResumed");
+  //         //     //signalingClient.sendPing();
+  //         signalingClient.sendPing(registerRes["mcToken"]);
+  //       }
+  //       //   if (_auth.loggedInStatus == Status.LoggedOut) {
+  //       //   } else {
+  //       //     //signalingClient.sendPing();
+
+  //       // print("here in resume");
+  //       //       signalingClient.connect(project_id, _auth.completeAddress);
+  //       //       signalingClient.register(_auth.getUser.toJson(), project_id);
+
+  //       //   }
+
+  //       break;
+  //     case AppLifecycleState.inactive:
+  //       print("app in inactive");
+  //       inInactive = true;
+  //       isResumed = false;
+  //       inPaused = false;
+  //       if (Platform.isIOS) {
+  //         if (inCall == true) {
+  //           print("incall true");
+  //         } else {
+  //           print("here in ininactive");
+  //           signalingClient.closeSocket();
+  //         }
+  //       }
+
+  //       break;
+  //     case AppLifecycleState.paused:
+  //       print("app in paused");
+  //       inPaused = true;
+  //       isResumed = false;
+  //       inInactive = false;
+  //       if (inCall == true) {
+  //         print("incall true");
+  //       } else {
+  //         print("incall false");
+  //         signalingClient.closeSocket();
+  //       }
+  //       break;
+  //     case AppLifecycleState.detached:
+  //       print("app in detached");
+  //       break;
+  //   }
+  //   // super.didChangeAppLifecycleState(state);
+  //   // _isInForeground = state == AppLifecycleState.resumed;
+  // }
 
   _callcheck() {
     print("i am here in call chck function $count");
@@ -631,8 +737,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _callticker.cancel();
 
       count = 0;
-
-      signalingClient.stopCall(registerRes["mcToken"]);
+//5
+      // signalingClient.stopCall(registerRes["mcToken"]);
 
       _callProvider!.initial();
 
@@ -672,9 +778,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       inCall = true;
       pressDuration = "";
       onRemoteStream = false;
-      switchMute = true;
-      enableCamera = true;
-      switchSpeaker = mtype == MediaType.audio ? true : false;
+      // switchMute = true;
+      // enableCamera = true;
+      // switchSpeaker = mtype == MediaType.audio ? true : false;
     });
     // final file = new File('${(await getTemporaryDirectory()).path}/music.mp3');
     // await file.writeAsBytes(
@@ -692,17 +798,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         customData: customData,
         from: _auth.getUser.ref_id,
         to: to,
-        mcToken: registerRes["mcToken"],
-        meidaType: mtype,
+        mediaType: mtype,
         callType: callType,
         sessionType: sessionType);
     // if (_localStream != null) {
     //here
     // _callBloc.add(CallDialEvent());
-    print("this is switch speaker $switchSpeaker");
-    _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+    // print("this is switch speaker $switchSpeaker");
+    // _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
     print("here in start call");
-    _callProvider!.callDial();
+    // _callProvider!.callDial();
     // }
   }
 
@@ -776,9 +881,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   dispose() {
     // localRenderer.dispose();
     // remoteRenderer.dispose();
-    if (_ticker != null) {
-      _ticker.cancel();
-    }
+    // if (_ticker != null) {
+    //   _ticker.cancel();
+    // }
     // FlutterRingtonePlayer.stop();
     // Vibration.cancel();
     // sdpController.dispose();
@@ -798,24 +903,59 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider!.getContacts(_auth.getUser.auth_token);
   }
 
-  stopCall() {
-    print("this is mc token in stop call home ${registerRes["mcToken"]}");
-
-    signalingClient.stopCall(registerRes["mcToken"]);
-
-    //here
-    // _callBloc.add(CallNewEvent());
-    _callProvider!.initial();
-    setState(() {
-      _callticker.cancel();
-      _ticker.cancel();
-      inCall = false;
-      pressDuration = "";
-      localRenderer.srcObject = null;
-      remoteRenderer.srcObject = null;
-    });
-    if (!kIsWeb) stopRinging();
+  _accept() {
+    if (_session != null) {
+      signalingClient.accept(_session!.sid);
+    }
+    _callProvider!.callStart();
   }
+
+  _reject() {
+    if (_session != null) {
+      signalingClient.reject(_session!.sid);
+    }
+  }
+
+  _hangUp() {
+    if (_session != null) {
+      signalingClient.bye(_session!.sid);
+    }
+  }
+
+  _muteMic() {
+    signalingClient.muteMic(!_localAudioVideoStates["MuteState"]!);
+  }
+
+  _switchCamera() {
+    signalingClient.switchCamera();
+  }
+
+  _switchSpeaker() {
+    signalingClient.switchSpeaker(!_localAudioVideoStates["SpeakerState"]!);
+  }
+
+  _enableCamera() {
+    signalingClient.enableCamera(!_localAudioVideoStates["CameraState"]!);
+  }
+
+//   stopCall() {
+//     print("this is mc token in stop call home ${registerRes["mcToken"]}");
+// //6
+//     // signalingClient.stopCall(registerRes["mcToken"]);
+
+//     //here
+//     // _callBloc.add(CallNewEvent());
+//     _callProvider!.initial();
+//     setState(() {
+//       _callticker.cancel();
+//       _ticker.cancel();
+//       inCall = false;
+//       pressDuration = "";
+//       localRenderer.srcObject = null;
+//       remoteRenderer.srcObject = null;
+//     });
+//     if (!kIsWeb) stopRinging();
+//   }
 
   Future buildShowDialog(
       BuildContext context, String mesg, String errorMessage) {
@@ -881,7 +1021,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           //         ],
           //         child: CallReceiveScreen(
           //           //  rendererListWithRefID:rendererListWithRefID,
-          //           mediaType: meidaType,
+          //           mediaType: mediaType,
 
           //           incomingfrom: incomingfrom,
           //           cllProvider: _callProvider,
@@ -917,7 +1057,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             //               // onMicCallBack: onMicCallBack,
             //               //  rendererListWithRefID:rendererListWithRefID,
             //               //  onRemoteStream:onRemoteStream,
-            //               mediaType: meidaType,
+            //               mediaType: mediaType,
             //               localRenderer: localRenderer,
             //               remoteRenderer: remoteRenderer,
             //               incomingfrom: incomingfrom,
@@ -954,7 +1094,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           //         child: CallDialScreen(
           //           //  rendererListWithRefID:rendererListWithRefID,
 
-          //           mediaType: meidaType,
+          //           mediaType: mediaType,
           //           callTo: callTo,
           //           //  incomingfrom: incomingfrom,
           //           callProvider: _callProvider,
@@ -1017,32 +1157,33 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Scaffold callReceive() {
     return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
       return Stack(children: <Widget>[
-        meidaType == MediaType.video
-            ? Container(
-                child: RTCVideoView(localRenderer,
-                    key: forlargView,
-                    mirror: false,
-                    objectFit:
-                        RTCVideoViewObjectFit.RTCVideoViewObjectFitContain),
-              )
-            : Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                  colors: [
-                    backgroundAudioCallDark,
-                    backgroundAudioCallLight,
-                    backgroundAudioCallLight,
-                    backgroundAudioCallLight,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment(0.0, 0.0),
-                )),
-                child: Center(
-                  child: SvgPicture.asset(
-                    'assets/userIconCall.svg',
-                  ),
-                ),
-              ),
+        // mediaType == MediaType.video
+        //     ? Container(
+        //         child: RTCVideoView(localRenderer,
+        //             key: forlargView,
+        //             mirror: false,
+        //             objectFit:
+        //                 RTCVideoViewObjectFit.RTCVideoViewObjectFitContain),
+        //       )
+        //     :
+        Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            colors: [
+              backgroundAudioCallDark,
+              backgroundAudioCallLight,
+              backgroundAudioCallLight,
+              backgroundAudioCallLight,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment(0.0, 0.0),
+          )),
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/userIconCall.svg',
+            ),
+          ),
+        ),
         Container(
           padding: EdgeInsets.only(top: 120),
           alignment: Alignment.center,
@@ -1067,13 +1208,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 builder: (context, contact, child) {
                   if (contact.contactState == ContactStates.Success) {
                     int index = contact.contactList.users!.indexWhere(
-                        (element) => element!.ref_id == incomingfrom);
+                        (element) => element!.ref_id == _session!.to[0]);
                     print("callto is $callTo");
                     print(
-                        "incoming ${index == -1 ? incomingfrom : contact.contactList.users![index]!.full_name}");
+                        "incoming ${index == -1 ? _session!.to : contact.contactList.users![index]!.full_name}");
                     return Text(
                       index == -1
-                          ? incomingfrom
+                          ? _session!.to.toString()
                           : contact.contactList.users![index]!.full_name,
                       style: TextStyle(
                           fontFamily: primaryFontFamily,
@@ -1104,11 +1245,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ),
                 onTap: () {
                   stopRinging();
-                  signalingClient.declineCall(
-                      _auth.getUser.ref_id, registerRes["mcToken"]);
+                  _reject();
+                  //6
+                  // signalingClient.declineCall(
+                  //     _auth.getUser.ref_id, registerRes["mcToken"]);
 
                   // _callBloc.add(CallNewEvent());
-                  _callProvider!.initial();
+                  // _callProvider!.initial();
                   //  inCall = false;
                   // signalingClient.onDeclineCall(widget.registerUser);
                   // setState(() {
@@ -1124,28 +1267,30 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   child: SvgPicture.asset(
                     'assets/Accept.svg',
                   ),
-                  onTap: _isPressed == false
-                      ? () {
-                          print("this is pressed accept");
-                          stopRinging();
-                          signalingClient.createAnswer(incomingfrom);
-                          setState(() {
-                            _isPressed = true;
-                            print("tap me");
-                          });
+                  onTap:
+                      // _isPressed == false
+                      //     ?
+                      () {
+                    print("this is pressed accept");
+                    stopRinging();
+                    _accept();
 
-                          // setState(() {
-                          //   inCall = true;
-                          // });
+                    setState(() {
+                      _isPressed = true;
+                      print("tap me");
+                    });
 
-                          // setState(() {
-                          //   _isCalling = true;
-                          //   incomingfrom = null;
-                          // });
-                          // FlutterRingtonePlayer.stop();
-                          // Vibration.cancel();
-                        }
-                      : null)
+                    // setState(() {
+                    //   inCall = true;
+                    // });
+
+                    // setState(() {
+                    //   _isCalling = true;
+                    //   incomingfrom = null;
+                    // });
+                    // FlutterRingtonePlayer.stop();
+                    // Vibration.cancel();
+                  })
             ],
           ),
         ),
@@ -1166,35 +1311,36 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       body: OrientationBuilder(builder: (context, orientation) {
         return Stack(
           children: [
-            meidaType == MediaType.video
-                ? Container(
-                    // color: Colors.red,
-                    //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: RTCVideoView(localRenderer,
-                        key: forDialView,
-                        mirror: false,
-                        objectFit:
-                            RTCVideoViewObjectFit.RTCVideoViewObjectFitContain))
-                : Container(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                      colors: [
-                        backgroundAudioCallDark,
-                        backgroundAudioCallLight,
-                        backgroundAudioCallLight,
-                        backgroundAudioCallLight,
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment(0.0, 0.0),
-                    )),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'assets/userIconCall.svg',
-                      ),
-                    ),
-                  ),
+            // mediaType == MediaType.video
+            //     ? Container(
+            //         // color: Colors.red,
+            //         //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+            //         width: MediaQuery.of(context).size.width,
+            //         height: MediaQuery.of(context).size.height,
+            //         child: RTCVideoView(localRenderer,
+            //             key: forDialView,
+            //             mirror: false,
+            //             objectFit:
+            //                 RTCVideoViewObjectFit.RTCVideoViewObjectFitContain))
+            //     :
+            Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                colors: [
+                  backgroundAudioCallDark,
+                  backgroundAudioCallLight,
+                  backgroundAudioCallLight,
+                  backgroundAudioCallLight,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment(0.0, 0.0),
+              )),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/userIconCall.svg',
+                ),
+              ),
+            ),
             Container(
                 padding: EdgeInsets.only(top: 120),
                 alignment: Alignment.center,
@@ -1234,7 +1380,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   'assets/end.svg',
                 ),
                 onTap: () {
-                  signalingClient.stopCall(registerRes["mcToken"]);
+                  _hangUp();
                   _callProvider!.initial();
                   // inCall = false;
                 },
@@ -1248,12 +1394,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   Scaffold callStart() {
     //  inCall = true;
-    print("this is media type $meidaType $remoteVideoFlag $localRenderer");
+    print("this is media type $mediaType $remoteVideoFlag $localRenderer");
     return Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Container(
           child: Stack(children: <Widget>[
-            meidaType == MediaType.video
+            mediaType == MediaType.video
                 ? remoteVideoFlag
                     ? RTCVideoView(remoteRenderer,
                         mirror: false,
@@ -1316,7 +1462,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    (meidaType == MediaType.video)
+                    (mediaType == MediaType.video)
                         ? 'You are video calling with'
                         : 'You are audio calling with',
                     style: TextStyle(
@@ -1335,41 +1481,41 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        (callTo == "")
-                            ? Consumer<ContactProvider>(
-                                builder: (context, contact, child) {
-                                if (contact.contactState ==
-                                    ContactStates.Success) {
-                                  int index = contact.contactList.users!
-                                      .indexWhere((element) =>
-                                          element!.ref_id == incomingfrom);
-                                  print("i am here-");
-                                  return Text(
-                                    contact
-                                        .contactList.users![index]!.full_name,
-                                    style: TextStyle(
-                                        fontFamily: primaryFontFamily,
-                                        color: darkBlackColor,
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w700,
-                                        fontStyle: FontStyle.normal,
-                                        fontSize: 24),
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              })
-                            : Text(
-                                callTo,
-                                style: TextStyle(
-                                    fontFamily: primaryFontFamily,
-                                    // background: Paint()..color = yellowColor,
-                                    color: darkBlackColor,
-                                    decoration: TextDecoration.none,
-                                    fontWeight: FontWeight.w700,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 24),
-                              ),
+                        // (callTo == "")
+                        // ?
+                        Consumer<ContactProvider>(
+                            builder: (context, contact, child) {
+                          if (contact.contactState == ContactStates.Success) {
+                            int index = contact.contactList.users!.indexWhere(
+                                (element) =>
+                                    element!.ref_id == _session!.to[0]);
+                            print("i am here-");
+                            return Text(
+                              contact.contactList.users![index]!.full_name,
+                              style: TextStyle(
+                                  fontFamily: primaryFontFamily,
+                                  color: darkBlackColor,
+                                  decoration: TextDecoration.none,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 24),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                        // : Text(
+                        //     _session!.to.toString(),
+                        //     style: TextStyle(
+                        //         fontFamily: primaryFontFamily,
+                        //         // background: Paint()..color = yellowColor,
+                        //         color: darkBlackColor,
+                        //         decoration: TextDecoration.none,
+                        //         fontWeight: FontWeight.w700,
+                        //         fontStyle: FontStyle.normal,
+                        //         fontSize: 24),
+                        //   ),
+
                         Text(
                           pressDuration,
                           style: TextStyle(
@@ -1433,7 +1579,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               ),
             ),
             !kIsWeb
-                ? meidaType == MediaType.video
+                ? mediaType == MediaType.video
                     ? Container(
                         child: Align(
                           alignment: Alignment.topRight,
@@ -1447,27 +1593,26 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                     'assets/switch_camera.svg',
                                   ),
                                   onTap: () {
-                                    signalingClient.switchCamera();
+                                    _switchCamera();
                                   },
                                 ),
                               ),
 
-                              Container(
-                                padding: const EdgeInsets.only(right: 20),
-                                child: GestureDetector(
-                                  child: !switchSpeaker
-                                      ? SvgPicture.asset('assets/VolumnOn.svg')
-                                      : SvgPicture.asset(
-                                          'assets/VolumeOff.svg'),
-                                  onTap: () {
-                                    signalingClient
-                                        .switchSpeaker(switchSpeaker);
-                                    setState(() {
-                                      switchSpeaker = !switchSpeaker;
-                                    });
-                                  },
-                                ),
-                              ),
+                              // Container(
+                              //   padding: const EdgeInsets.only(right: 20),
+                              //   child: GestureDetector(
+                              //     child: _localAudioVideoStates["SpeakerState"]!
+                              //         ? SvgPicture.asset('assets/VolumnOn.svg')
+                              //         : SvgPicture.asset(
+                              //             'assets/VolumeOff.svg'),
+                              //     onTap: () {
+                              //       _switchSpeaker();
+                              //       // setState(() {
+                              //       //   switchSpeaker = !switchSpeaker;
+                              //       // });
+                              //     },
+                              //   ),
+                              // ),
                               // ),
                             ],
                           ),
@@ -1483,16 +1628,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                               padding: const EdgeInsets.fromLTRB(
                                   0.0, 120.33, 20, 27),
                               child: GestureDetector(
-                                child: !switchSpeaker
+                                child: _localAudioVideoStates["SpeakerState"]!
                                     ? SvgPicture.asset('assets/VolumnOn.svg')
                                     : SvgPicture.asset('assets/VolumeOff.svg'),
                                 onTap: () {
                                   //  if  (!kIsWeb){
-                                  signalingClient.switchSpeaker(switchSpeaker);
 
-                                  setState(() {
-                                    switchSpeaker = !switchSpeaker;
-                                  });
+                                  _switchSpeaker();
+
+                                  // setState(() {
+                                  //   switchSpeaker = !switchSpeaker;
+                                  // });
                                 },
                               ),
                             ),
@@ -1506,7 +1652,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
             !kIsWeb
                 ?
-                // meidaType == MediaType.video
+                // mediaType == MediaType.video
                 //     ?
                 //     // GestureDetector(
                 //     //     child:
@@ -1545,8 +1691,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 //     //   });
                 //     //})
                 //     : Container(),
-                meidaType == MediaType.video
-                    ? DragBox()
+                mediaType == MediaType.video
+                    ? DragBox(
+                        localAudioVideoStates: _localAudioVideoStates,
+                      )
                     : Container()
                 : Positioned(
                     left: 225,
@@ -1562,7 +1710,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
-                          child: enableCamera
+                          child: _localAudioVideoStates["CameraState"]!
                               ? RTCVideoView(localRenderer,
                                   key: forsmallView,
                                   mirror: false,
@@ -1584,22 +1732,23 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  meidaType == MediaType.video
+                  mediaType == MediaType.video
                       ? Row(
                           children: [
                             GestureDetector(
-                              child: !enableCamera
-                                  ? SvgPicture.asset('assets/video_off.svg')
-                                  : SvgPicture.asset('assets/video.svg'),
+                              child: _localAudioVideoStates["CameraState"]!
+                                  ? SvgPicture.asset('assets/video.svg')
+                                  : SvgPicture.asset('assets/video_off.svg'),
                               onTap: () {
-                                setState(() {
-                                  enableCamera = !enableCamera;
-                                });
-                                signalingClient.audioVideoState(
-                                    audioFlag: switchMute ? 1 : 0,
-                                    videoFlag: enableCamera ? 1 : 0,
-                                    mcToken: registerRes["mcToken"]);
-                                signalingClient.enableCamera(enableCamera);
+                                // setState(() {
+                                //   enableCamera = !enableCamera;
+                                // });
+
+                                // signalingClient.audioVideoState(
+                                //     audioFlag: switchMute ? 1 : 0,
+                                //     videoFlag: enableCamera ? 1 : 0,
+                                //     mcToken: registerRes["mcToken"]);
+                                _enableCamera();
                               },
                             ),
                             SizedBox(
@@ -1621,7 +1770,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
                         _callProvider!.initial();
                       } else {
-                        stopCall();
+                        _hangUp();
                       }
                       remoteVideoFlag = true;
 
@@ -1637,17 +1786,35 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
                   SizedBox(width: 20),
                   GestureDetector(
-                    child: !switchMute
-                        ? SvgPicture.asset('assets/mute_microphone.svg')
-                        : SvgPicture.asset('assets/microphone.svg'),
+                    child: _localAudioVideoStates["MuteState"]!
+                        ? SvgPicture.asset('assets/microphone.svg')
+                        : SvgPicture.asset('assets/mute_microphone.svg'),
                     onTap: () {
-                      final bool enabled = signalingClient.muteMic();
-                      print("this is enabled $enabled");
-                      setState(() {
-                        switchMute = enabled;
-                      });
+                      _muteMic();
+                      // print("this is enabled $enabled");
+                      // setState(() {
+                      //   switchMute = enabled;
+                      // });
                     },
                   ),
+                  // SizedBox(width: 20),
+                  // Platform.isAndroid
+                  //     ? GestureDetector(
+                  //         child: Icon(
+                  //           Icons.switch_camera,
+                  //           color: Colors.red,
+                  //           size: 30,
+                  //         ),
+                  //         onTap: () {
+                  //           signalingClient.switchToScreenSharing();
+                  //           // _muteMic();
+                  //           // print("this is enabled $enabled");
+                  //           // setState(() {
+                  //           //   switchMute = enabled;
+                  //           // });
+                  //         },
+                  //       )
+                  //     : SizedBox()
                 ],
               ),
             )
@@ -1813,7 +1980,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                                     setState(() {
                                                       callTo =
                                                           element.full_name;
-                                                      meidaType =
+                                                      mediaType =
                                                           MediaType.audio;
                                                       print(
                                                           "this is callTo $callTo");
@@ -1856,7 +2023,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                                     setState(() {
                                                       callTo =
                                                           element.full_name;
-                                                      meidaType =
+                                                      mediaType =
                                                           MediaType.video;
                                                       print(
                                                           "this is callTo $callTo");
@@ -1894,8 +2061,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           isRegisteredAlready = false;
                         }
 
-                        signalingClient.unRegister(registerRes["mcToken"]);
-                        // _auth.logout();
+                        signalingClient.unRegister();
                       },
                       child: Text(
                         "LOG OUT",

@@ -2,8 +2,6 @@ PODS:
   - _NIODataStructures (2.40.0)
   - audioplayers_darwin (0.0.1):
     - Flutter
-  - battery_plus (1.0.0):
-    - Flutter
   - CNIOAtomics (2.40.0)
   - CNIODarwin (2.40.0)
   - CNIOLinux (2.40.0)
@@ -21,9 +19,6 @@ PODS:
   - flutter_statusbarcolor (0.0.1):
     - Flutter
   - Libyuv (1703)
-  - MMWormhole (2.0.0):
-    - MMWormhole/Core (= 2.0.0)
-  - MMWormhole/Core (2.0.0)
   - move_to_background (0.0.1):
     - Flutter
   - path_provider_ios (0.0.1):
@@ -33,8 +28,9 @@ PODS:
   - ReachabilitySwift (5.0.0)
   - replay_kit_launcher (1.0.0):
     - Flutter
-  - shared_preferences_ios (0.0.1):
+  - shared_preferences_foundation (0.0.1):
     - Flutter
+    - FlutterMacOS
   - SocketRocket (0.6.0)
   - SwiftNIO (2.40.0):
     - _NIODataStructures (= 2.40.0)
@@ -66,10 +62,9 @@ PODS:
     - CNIOWindows (= 2.40.0)
     - SwiftNIOConcurrencyHelpers (= 2.40.0)
     - SwiftNIOCore (= 2.40.0)
-  - vdotok_stream (0.0.1):
+  - vdotok_stream (0.9.17):
     - Flutter
     - Libyuv (= 1703)
-    - MMWormhole
     - VdoTokStreaming
   - VdoTokStreaming (1.1.21):
     - SocketRocket
@@ -81,7 +76,6 @@ PODS:
 
 DEPENDENCIES:
   - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
-  - battery_plus (from `.symlinks/plugins/battery_plus/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
@@ -92,7 +86,7 @@ DEPENDENCIES:
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - replay_kit_launcher (from `.symlinks/plugins/replay_kit_launcher/ios`)
-  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
   - vdotok_stream (from `.symlinks/plugins/vdotok_stream/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
@@ -105,7 +99,6 @@ SPEC REPOS:
     - CNIOLinux
     - CNIOWindows
     - Libyuv
-    - MMWormhole
     - ReachabilitySwift
     - SocketRocket
     - SwiftNIO
@@ -118,8 +111,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   audioplayers_darwin:
     :path: ".symlinks/plugins/audioplayers_darwin/ios"
-  battery_plus:
-    :path: ".symlinks/plugins/battery_plus/ios"
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   device_info:
@@ -140,8 +131,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   replay_kit_launcher:
     :path: ".symlinks/plugins/replay_kit_launcher/ios"
-  shared_preferences_ios:
-    :path: ".symlinks/plugins/shared_preferences_ios/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/ios"
   vdotok_stream:
     :path: ".symlinks/plugins/vdotok_stream/ios"
   vibration:
@@ -152,7 +143,6 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   _NIODataStructures: 3d45d8e70a1d17a15b1dc59d102c63dbc0525ffd
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
-  battery_plus: 7851ab482c336dd101ae735dc9363f01e1223c7c
   CNIOAtomics: 8edf08644e5e6fa0f021c239be9e8beb1cd9ef18
   CNIODarwin: 93850990d29f2626b05306c6c9309f9be0d74c2f
   CNIOLinux: 62e3505f50de558c393dc2f273dde71dcce518da
@@ -164,24 +154,23 @@ SPEC CHECKSUMS:
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
   flutter_statusbarcolor: 8afb1071ed8c58be929f1e32b36c629771fd2259
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
-  MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   replay_kit_launcher: 828739da18c9785d5e9aafd4f075ea11d6b61499
-  shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
+  shared_preferences_foundation: 297b3ebca31b34ec92be11acd7fb0ba932c822ca
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   SwiftNIO: 829958aab300642625091f82fc2f49cb7cf4ef24
   SwiftNIOConcurrencyHelpers: 697370136789b1074e4535eaae75cbd7f900370e
   SwiftNIOCore: 473fdfe746534d7aa25766916459eeaf6f92ef49
   SwiftNIOEmbedded: ffcb5147db67d9686c8366b7f8427b36132f2c8a
   SwiftNIOPosix: b49af4bdbecaadfadd5c93dfe28594d6722b75e4
-  vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
+  vdotok_stream: ff6c2aa5f7b9ac1c3009e6285930a31b3660d03c
   VdoTokStreaming: dc11eb208bca863e0e0f2de34e85c56de1a10fa0
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
-PODFILE CHECKSUM: f7fd0ccd7314c83b184f880f7cd6ce6def6e57b1
+PODFILE CHECKSUM: ed442cd102052918aa8501454971c30ce2132e17
 
 COCOAPODS: 1.11.3

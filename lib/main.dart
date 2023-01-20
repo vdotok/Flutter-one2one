@@ -394,6 +394,7 @@ class _TestState extends State<Test> {
         _localRenderer.srcObject = stream;
       });
     };
+    signalingClient!.onLocalAudioVideoStates = (d) {};
     // signalingClient.getPermissions();
   }
 
@@ -417,7 +418,7 @@ class _TestState extends State<Test> {
             ),
             ElevatedButton(
               onPressed: () {
-                signalingClient!.getNumber();
+                // signalingClient!.getNumber();
               },
               child: Text("Create peerConnection"),
             ),
@@ -429,19 +430,34 @@ class _TestState extends State<Test> {
             ),
             ElevatedButton(
               onPressed: () {
-                signalingClient!.getMedia();
+                signalingClient!.createStream("video", false);
               },
               child: Text("getUserMedia"),
             ),
             ElevatedButton(
-              onPressed: () {
-                // signalingClient.getDisplay();
+              onPressed: () async {
+                // MediaStream screenStream = await navigator.mediaDevices
+                //     .getDisplayMedia(<String, dynamic>{
+                //   'audio': false,
+                //   'video': true,
+                // });
+
+                // if (screenStream != null)
+                //   signalingClient?.switchToScreenSharing(screenStream);
+                // MediaStream screenStream =
+                //     await signalingClient!.createStream("video", true);
+                // if (screenStream != null)
+                signalingClient?.switchToScreenSharing();
               },
               child: Text("getUserDisplayMedia"),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // signalingClient.getinternal();
+                MediaStream screenStream = await navigator.mediaDevices
+                    .getUserMedia({"video": true, "audio": true});
+                // if (screenStream != null)
+                //   signalingClient?.switchToCamera(screenStream);
               },
               child: Text("getInternalAudio"),
             )
