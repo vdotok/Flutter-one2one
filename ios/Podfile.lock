@@ -15,6 +15,9 @@ PODS:
     - Flutter
   - flutter_statusbarcolor (0.0.1):
     - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
   - Libyuv (1703)
   - MMWormhole (2.0.0):
     - MMWormhole/Core (= 2.0.0)
@@ -35,6 +38,7 @@ PODS:
   - shared_preferences_ios (0.0.1):
     - Flutter
   - SocketRocket (0.6.0)
+  - Toast (4.0.0)
   - vdotok_stream (0.0.1):
     - Flutter
     - Libyuv (= 1703)
@@ -56,6 +60,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_ringtone_player (from `.symlinks/plugins/flutter_ringtone_player/ios`)
   - flutter_statusbarcolor (from `.symlinks/plugins/flutter_statusbarcolor/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -73,6 +78,7 @@ SPEC REPOS:
     - MTBBarcodeScanner
     - ReachabilitySwift
     - SocketRocket
+    - Toast
     - VdoTokStreaming
 
 EXTERNAL SOURCES:
@@ -92,6 +98,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_ringtone_player/ios"
   flutter_statusbarcolor:
     :path: ".symlinks/plugins/flutter_statusbarcolor/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
   move_to_background:
     :path: ".symlinks/plugins/move_to_background/ios"
   path_provider_ios:
@@ -120,6 +128,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
   flutter_statusbarcolor: 8afb1071ed8c58be929f1e32b36c629771fd2259
+  fluttertoast: eb263d302cc92e04176c053d2385237e9f43fad0
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
@@ -131,6 +140,7 @@ SPEC CHECKSUMS:
   replay_kit_launcher: 828739da18c9785d5e9aafd4f075ea11d6b61499
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
   VdoTokStreaming: 020891c3ec5f5a9e35deed9a2e3de32a87c93afb
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
