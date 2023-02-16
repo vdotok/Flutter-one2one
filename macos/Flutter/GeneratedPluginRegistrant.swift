@@ -8,7 +8,7 @@ import Foundation
 import audioplayers_darwin
 import connectivity_plus
 import device_info_plus
-import path_provider_macos
+import path_provider_foundation
 import shared_preferences_foundation
 import wakelock_macos
 

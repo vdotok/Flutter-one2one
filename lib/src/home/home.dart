@@ -267,19 +267,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       if (_auth.loggedInStatus == Status.LoggedOut) {
       } else {
-        if (isResumed) {
-          bool status = await signalingClient.getInternetStatus();
+        // if (isResumed) {
+        bool status = await signalingClient.getInternetStatus();
 
-          print("this is internet status $status");
+        print("this is internet status $status");
 
-          if (sockett == false && status == true) {
-            print("here in onerrorrrrrr ");
+        if (sockett == false && status == true) {
+          print("here in onerrorrrrrr ");
 
-            // signalingClient.connect(project_id, _auth.completeAddress);
-          } else {
-            print("else condition");
-          }
+          signalingClient.connect(project_id, _auth.completeAddress);
+        } else {
+          print("else condition");
         }
+        // }
       }
 
       // } else {
@@ -338,7 +338,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         //signalingClient.sendPing(registerRes["mcToken"]);
         print("khdfjhfj $isTimer");
         if (sockett == false) {
-          signalingClient.connect(project_id, _auth.completeAddress);
+          // signalingClient.connect(project_id, _auth.completeAddress);
           print("I am in Re Reregister ");
           remoteVideoFlag = true;
           print("here in init state register");
@@ -620,11 +620,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             print("sttatttusss $status");
 
             if (sockett == false && status == true) {
-              signalingClient.connect(project_id, _auth.completeAddress);
+              // signalingClient.connect(project_id, _auth.completeAddress);
             }
 
             // signalingClient.sendPing(registerResponse["mcToken"]);
-
           } catch (e) {
             print("this is send ping catch error in demo app $e");
           }
