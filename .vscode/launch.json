@@ -10,16 +10,22 @@
             "type": "dart"
         },
         {
-            "name": "Flutter-one2one (profile mode)",
+            "name": "sam",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "deviceId": "27d48e753d217ece"
         },
         {
-            "name": "Flutter-one2one (release mode)",
+            "name": "goog",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "deviceId": "95GAY0UWGP"
+        },
+    ],
+    "compounds": [
+        {
+            "name": "All Devices",
+            "configurations": ["sam", "goog"],
         }
     ]
 }

@@ -14,7 +14,6 @@ import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
 import 'package:vdotok_stream_example/src/home/drag.dart';
 import 'package:vibration/vibration.dart';
-import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:wakelock/wakelock.dart';
 
 import 'dart:io' show File, Platform;
@@ -29,7 +28,7 @@ import '../core/providers/contact_provider.dart';
 String pressDuration = "";
 bool remoteVideoFlag = true;
 bool isDeviceConnected = false;
-SignalingClient signalingClient = SignalingClient.instance..checkConnectivity();
+SignalingClient signalingClient = SignalingClient.instance;
 // bool enableCamera = true;
 // bool switchMute = true;
 // bool switchSpeaker = true;
@@ -422,14 +421,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
 
     signalingClient.onCallStateChange =
-        (Session session, CallState state) async {
+        (Session? session, CallState state) async {
       print("this is call State $state");
 
       switch (state) {
         case CallState.CallStateNew:
           setState(() {
             _session = session;
-            mediaType = session.mediaType!;
+            mediaType = session!.mediaType!;
           });
 
           break;
