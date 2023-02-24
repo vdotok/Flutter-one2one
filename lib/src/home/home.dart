@@ -226,8 +226,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     print("this is user data auth ${_auth.getUser}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
 
-    _contactProvider!.getContacts(_auth.getUser.auth_token);
-
     signalingClient.connect(project_id, _auth.completeAddress);
 
     //if(widget.state==true)
@@ -374,6 +372,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           // signalingClient.closeSession(true);
         }
       });
+      _contactProvider!.getContacts(_auth.getUser.auth_token);
     };
 
     signalingClient.onLocalStream = (stream) {
