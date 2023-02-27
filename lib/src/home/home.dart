@@ -226,7 +226,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     print("this is user data auth ${_auth.getUser}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
 
-    signalingClient.connect(project_id, _auth.completeAddress);
+    signalingClient.connect(
+        project_id,
+        _auth.completeAddress,
+        _auth.getUser.ref_id.toString(),
+        _auth.getUser.authorization_token.toString(),
+        _auth.StungIP,
+        int.parse(_auth.StungPort));
 
     //if(widget.state==true)
     signalingClient.onConnect = (res) {
@@ -235,12 +241,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         sockett = true;
       });
       print("here in init state register0");
-      signalingClient.register(
-          _auth.getUser.ref_id.toString(),
-          _auth.getUser.authorization_token.toString(),
-          project_id,
-          _auth.StungIP,
-          int.parse(_auth.StungPort));
+      // signalingClient.register();
       // signalingClient.register(user);
     };
 
@@ -272,7 +273,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (sockett == false && status == true) {
           print("here in onerrorrrrrr ");
 
-          signalingClient.connect(project_id, _auth.completeAddress);
+          signalingClient.connect(
+              project_id,
+              _auth.completeAddress,
+              _auth.getUser.ref_id.toString(),
+              _auth.getUser.authorization_token.toString(),
+              _auth.StungIP,
+              int.parse(_auth.StungPort));
         } else {
           print("else condition");
         }
