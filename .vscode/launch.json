@@ -10,22 +10,22 @@
             "type": "dart"
         },
         {
-            "name": "sam",
+            "name": "one",
             "request": "launch",
             "type": "dart",
-            "deviceId": "27d48e753d217ece"
+            "deviceId": "5fe48433"
         },
         {
-            "name": "goog",
+            "name": "oppo",
             "request": "launch",
             "type": "dart",
-            "deviceId": "95GAY0UWGP"
+            "deviceId": "5b111dcc"
         },
     ],
     "compounds": [
         {
             "name": "All Devices",
-            "configurations": ["sam", "goog"],
+            "configurations": ["oppo", "one"],
         }
     ]
 }
