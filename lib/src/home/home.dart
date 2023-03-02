@@ -254,6 +254,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _localAudioVideoStates = localAudioVideoStates;
       });
     };
+    signalingClient.onInfoCallback = (msg) {
+      Fluttertoast.showToast(msg: msg);
+      // openAppSettings();
+    };
     signalingClient.onError = (code, reason) async {
       print("this is socket error $code $reason");
 
@@ -337,16 +341,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           isConnected = true;
           //  sockett = true;
         });
-         Fluttertoast.showToast(
-          msg: "Internet Connected.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 14.0);
+        Fluttertoast.showToast(
+            msg: "Internet Connected.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 14.0);
 
-      //  showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+        //  showSnackbar("Internet Connected", whiteColor, Colors.green, false);
         //signalingClient.sendPing(registerRes["mcToken"]);
         print("khdfjhfj $isTimer");
         if (sockett == false) {
@@ -367,15 +371,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           isConnected = false;
           sockett = false;
         });
- Fluttertoast.showToast(
-          msg: "No Internet Connection.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 14.0);
-       // showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
+        Fluttertoast.showToast(
+            msg: "No Internet Connection.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 14.0);
+        // showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
         // if (Platform.isIOS) {
         print("uyututuir");
         signalingClient.closeSocket();
@@ -422,7 +426,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           backgroundColor: Colors.black,
           textColor: Colors.white,
           fontSize: 14.0);
-    
     };
     signalingClient.onCallStateChange =
         (Session? session, CallState state) async {

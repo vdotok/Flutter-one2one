@@ -41,6 +41,7 @@ dependencies:
   web_socket_channel: ^2.2.0
   draggable_widget: ^2.0.0
   fluttertoast: ^8.2.1
+  permission_handler:
   # flutter_webrtc:
   #   path: ./flutter_webrtc-0.9.23
   vdotok_stream:
