@@ -8,6 +8,7 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:move_to_background/move_to_background.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/noContactsScreen.dart';
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
@@ -30,6 +31,7 @@ String pressDuration = "";
 bool remoteVideoFlag = true;
 bool isDeviceConnected = false;
 SignalingClient signalingClient = SignalingClient.instance;
+
 // bool enableCamera = true;
 // bool switchMute = true;
 // bool switchSpeaker = true;
@@ -52,10 +54,12 @@ Map<String, RTCVideoRenderer> renderObj = {};
 // AudioPlayer _audioPlayer = AudioPlayer();
 bool isRinging = false;
 var snackBar;
+  
 Session? _session;
 
 class Home extends StatefulWidget {
   // User user;
+
   // Home({this.user});
   @override
   _HomeState createState() => _HomeState();
@@ -64,6 +68,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool notmatched = false;
   bool isConnect = false;
+
   late DateTime _time;
   late DateTime _callTime;
 
@@ -256,11 +261,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onInfoCallback = (msg) {
       Fluttertoast.showToast(msg: msg);
-      // openAppSettings();
+       openAppSettings();
     };
     signalingClient.onError = (code, reason) async {
       print("this is socket error $code $reason");
-
+if (!mounted) {
+  return;
+}
       setState(() {
         sockett = false;
       });
@@ -1927,7 +1934,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           isRegisteredAlready = false;
                         }
-
+ 
                         signalingClient.unRegister();
                       },
                       child: Text(

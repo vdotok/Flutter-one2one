@@ -18,6 +18,9 @@ PODS:
     - Flutter
   - flutter_statusbarcolor (0.0.1):
     - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
   - Libyuv (1703)
   - move_to_background (0.0.1):
     - Flutter
@@ -63,6 +66,7 @@ PODS:
     - CNIOWindows (= 2.40.0)
     - SwiftNIOConcurrencyHelpers (= 2.40.0)
     - SwiftNIOCore (= 2.40.0)
+  - Toast (4.0.0)
   - vdotok_stream (0.9.17):
     - Flutter
     - Libyuv (= 1703)
@@ -83,6 +87,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_ringtone_player (from `.symlinks/plugins/flutter_ringtone_player/ios`)
   - flutter_statusbarcolor (from `.symlinks/plugins/flutter_statusbarcolor/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -107,6 +112,7 @@ SPEC REPOS:
     - SwiftNIOCore
     - SwiftNIOEmbedded
     - SwiftNIOPosix
+    - Toast
     - VdoTokStreaming
 
 EXTERNAL SOURCES:
@@ -124,6 +130,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_ringtone_player/ios"
   flutter_statusbarcolor:
     :path: ".symlinks/plugins/flutter_statusbarcolor/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
   move_to_background:
     :path: ".symlinks/plugins/move_to_background/ios"
   path_provider_foundation:
@@ -154,6 +162,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
   flutter_statusbarcolor: 8afb1071ed8c58be929f1e32b36c629771fd2259
+  fluttertoast: eb263d302cc92e04176c053d2385237e9f43fad0
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
   path_provider_foundation: 37748e03f12783f9de2cb2c4eadfaa25fe6d4852
@@ -167,11 +176,12 @@ SPEC CHECKSUMS:
   SwiftNIOCore: 473fdfe746534d7aa25766916459eeaf6f92ef49
   SwiftNIOEmbedded: ffcb5147db67d9686c8366b7f8427b36132f2c8a
   SwiftNIOPosix: b49af4bdbecaadfadd5c93dfe28594d6722b75e4
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   vdotok_stream: ff6c2aa5f7b9ac1c3009e6285930a31b3660d03c
   VdoTokStreaming: dc11eb208bca863e0e0f2de34e85c56de1a10fa0
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
-PODFILE CHECKSUM: ed442cd102052918aa8501454971c30ce2132e17
+PODFILE CHECKSUM: 46f70921c7068d006a80245aeb37c1f4c61798a1
 
 COCOAPODS: 1.11.3
