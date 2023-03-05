@@ -30,7 +30,6 @@ import '../core/providers/contact_provider.dart';
 String pressDuration = "";
 bool remoteVideoFlag = true;
 bool isDeviceConnected = false;
-SignalingClient signalingClient = SignalingClient.instance;
 
 // bool enableCamera = true;
 // bool switchMute = true;
@@ -54,7 +53,7 @@ Map<String, RTCVideoRenderer> renderObj = {};
 // AudioPlayer _audioPlayer = AudioPlayer();
 bool isRinging = false;
 var snackBar;
-  
+
 Session? _session;
 
 class Home extends StatefulWidget {
@@ -88,6 +87,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool inPaused = false;
   var bottom = 20.0;
   var right = 20.0;
+  SignalingClient signalingClient = SignalingClient.instance;
 
   bool isInternetConnected = false;
   void _getTimer() {
@@ -261,13 +261,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onInfoCallback = (msg) {
       Fluttertoast.showToast(msg: msg);
-       openAppSettings();
+      openAppSettings();
     };
     signalingClient.onError = (code, reason) async {
       print("this is socket error $code $reason");
-if (!mounted) {
-  return;
-}
+      if (!mounted) {
+        return;
+      }
       setState(() {
         sockett = false;
       });
@@ -405,7 +405,9 @@ if (!mounted) {
           // signalingClient.closeSession(true);
         }
       });
-      _contactProvider!.getContacts(_auth.getUser.auth_token);
+      if (_contactProvider!.contactState != ContactStates.Success) {
+        _contactProvider!.getContacts(_auth.getUser.auth_token);
+      }
     };
 
     signalingClient.onLocalStream = (stream) async {
@@ -1934,7 +1936,7 @@ if (!mounted) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           isRegisteredAlready = false;
                         }
- 
+
                         signalingClient.unRegister();
                       },
                       child: Text(

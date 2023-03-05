@@ -69,8 +69,6 @@ class WebSocketConnection {
   }
 
   Future<dynamic> _connectForSelfSignedCert(url) async {
-    print("this is exception $url");
-
     try {
       dynamic channel = await SocketManager.instance.connect(url);
       return channel;
