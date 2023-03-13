@@ -54,7 +54,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late DateTime _time;
   late DateTime _callTime;
   late Timer _ticker;
-  late Timer _callticker;
+ Timer? _callticker;
   int count = 0;
   bool iscallAcceptedbyuser = false;
   var number;
@@ -373,7 +373,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         isConnectedtoCall = true;
         onRemoteStream = true;
         if (_callticker != null) {
-          _callticker.cancel();
+          _callticker!.cancel();
           count = 0;
           iscallAcceptedbyuser = true;
         }
@@ -416,10 +416,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         remoteVideoFlag = true;
         remoteAudioFlag = true;
       });
-      //here
-      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
-      // _callBloc.add(CallReceiveEvent());
+     
       _callProvider!.callReceive();
+       if (_callticker != null) {
+        _callticker!.cancel();
+        _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+      } else {
+        _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+      }
     };
     signalingClient.onCallAcceptedByUser = () async {
       print("this is call accepted");
@@ -458,7 +462,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (_callticker != null) {
           print("in Functionfgfdgfhgf");
 
-          _callticker.cancel();
+          _callticker!.cancel();
         }
       }
       // here
@@ -504,7 +508,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (_callticker != null) {
           print("in Functionfgfdgfhgf");
 
-          _callticker.cancel();
+          _callticker!.cancel();
         }
       }
       _callProvider!.initial();
@@ -624,7 +628,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     if (count == 30 && iscallAcceptedbyuser == false) {
       print("I am here in stopcall if");
 
-      _callticker.cancel();
+      _callticker!.cancel();
 
       count = 0;
 
@@ -634,7 +638,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       iscallAcceptedbyuser = false;
     } else if (count == 30 && iscallAcceptedbyuser == true) {
-      _callticker.cancel();
+      _callticker!.cancel();
 
       count = 0;
 
@@ -642,7 +646,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       iscallAcceptedbyuser = false;
     } else if (iscallAcceptedbyuser == true) {
-      _callticker.cancel();
+      _callticker!.cancel();
 
       print("I am here in emptyyyyyyyyyy stopcall call accept true");
 
@@ -696,7 +700,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     //here
     // _callBloc.add(CallDialEvent());
     print("this is switch speaker $switchSpeaker");
-    _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+  if (_callticker != null) {
+      _callticker!.cancel();
+      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+    } else {
+      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+    }
     print("here in start call");
     // _callProvider!.callDial();
     // }
@@ -810,7 +819,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // _callBloc.add(CallNewEvent());
     _callProvider!.initial();
     setState(() {
-      _callticker.cancel();
+      _callticker!.cancel();
       _ticker.cancel();
 
       pressDuration = "";
