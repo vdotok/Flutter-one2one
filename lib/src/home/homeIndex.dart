@@ -15,26 +15,10 @@ class _HomeIndexState extends State<HomeIndex> {
    @override
   void initState() {
     super.initState();
-     _getPermissions();
+   //  _getPermissions();
   }
-   Future<bool> _getPermissions() async {
-    PermissionStatus cameraStatus;
-    PermissionStatus audioStatus;
-
    
-      cameraStatus = await Permission.camera.request();
-      audioStatus = await Permission.microphone.request();
-      print(
-          "this is camera dn microphone permission $cameraStatus $audioStatus");
-      if (cameraStatus.isPermanentlyDenied || audioStatus.isPermanentlyDenied) {
-        openAppSettings();
-      }
-      if (cameraStatus.isGranted && audioStatus.isGranted) {
-        return true;
-      } else
-       { return false;}
-    
-  }
+  
   @override
   Widget build(BuildContext context) {
  

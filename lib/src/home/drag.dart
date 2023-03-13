@@ -33,7 +33,7 @@ class DragBoxState extends State<DragBox> {
         height: 150,
         width: 100,
         child: enableCamera
-            ? RTCVideoView(localRenderer,
+            ? RTCVideoView(renderObj["local"]!,
                 key: forsmallView,
                 mirror: true,
                 objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover)

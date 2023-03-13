@@ -10,16 +10,16 @@
             "type": "dart"
         },
         {
-            "name": "Android1",
+            "name": "oppo",
             "request": "launch",
             "type": "dart",
-            "deviceId": "RFCMA02LXPN"
+            "deviceId": "5b111dcc"
         },
         {
-            "name": "Android2",
+            "name": "oneplus",
             "request": "launch",
             "type": "dart",
-            "deviceId": "emulator-5554"
+            "deviceId": "5fe48433"
         }
     ],
     "compounds": [
