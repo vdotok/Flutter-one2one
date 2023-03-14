@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'src/core/providers/auth.dart';
 import 'src/home/homeIndex.dart';
 import 'src/login/SignInScreen.dart';
+import 'src/routing/routes.dart';
 import 'src/splash/splash.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +59,7 @@ class _MyAppState extends State<MyApp> {
               bodyText1: TextStyle(color: secondaryColor),
               bodyText2: TextStyle(color: secondaryColor), //Text
             )),
-        // onGenerateRoute: Routers.generateRoute,
+        onGenerateRoute: Routers.generateRoute,
         home: Consumer<AuthProvider>(
           builder: (context, auth, child) {
             if (auth.loggedInStatus == Status.Authenticating)
