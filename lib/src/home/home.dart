@@ -1194,17 +1194,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   'assets/end.svg',
                 ),
                 onTap: () {
-                  //  stopRinging();
+             
                   signalingClient.declineCall(
                       _auth.getUser.ref_id, registerRes["mcToken"]);
 
-                  // _callBloc.add(CallNewEvent());
-                  _callProvider!.initial();
-                  //  inCall = false;
-                  // signalingClient.onDeclineCall(widget.registerUser);
-                  // setState(() {
-                  //   _isCalling = false;
-                  // });
+                
                 },
               ),
               SizedBox(
@@ -1327,7 +1321,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ),
                 onTap: () {
                   signalingClient.stopCall(registerRes["mcToken"]);
-                  _callProvider!.initial();
+                
                   // inCall = false;
                 },
               ),
@@ -1634,21 +1628,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           noInternetCallHungUp = true;
                         });
 
-                        _callProvider!.initial();
+                     
                       } else {
                         stopCall();
                       }
                       remoteVideoFlag = true;
 
-                      // inCall = false;
-
-                      // setState(() {
-                      //   _isCalling = false;
-                      // });
+                    
+                    
                     },
                   ),
 
-                  // SvgPicture.asset('assets/images/end.svg'),
+              
 
                   SizedBox(width: 20),
                   GestureDetector(
