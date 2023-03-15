@@ -284,13 +284,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (sockett == false && status == true) {
           print("here in onerrorrrrrr ");
 
-          signalingClient.connect(
-              project_id,
-              _auth.completeAddress,
-              _auth.getUser.ref_id.toString(),
-              _auth.getUser.authorization_token.toString(),
-              _auth.StungIP,
-              int.parse(_auth.StungPort));
+          // signalingClient.connect(
+          //     project_id,
+          //     _auth.completeAddress,
+          //     _auth.getUser.ref_id.toString(),
+          //     _auth.getUser.authorization_token.toString(),
+          //     _auth.StungIP,
+          //     int.parse(_auth.StungPort));
         } else {
           print("else condition");
         }
