@@ -1258,7 +1258,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ),
                 onTap: () {
                   _hangUp();
-                  _callProvider!.initial();
+                  // _callProvider!.initial();
                   // inCall = false;
                 },
               ),
