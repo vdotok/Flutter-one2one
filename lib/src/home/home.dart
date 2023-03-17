@@ -418,11 +418,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         renderObj["local"]!.srcObject = stream;
       });
     };
-    signalingClient.onAddRemoteStream = (session, stream) async {
-      renderObj["remote"] = await initRenderers(new RTCVideoRenderer());
+    signalingClient.onAddRemoteStream = (session) async {
       setState(() {
         mediaType = session.mediaType!;
-        renderObj["remote"]!.srcObject = stream;
+        renderObj["remote"] = session.remoteRenderer;
+        // renderObj["remote"]!.srcObject = stream;
       });
     };
     signalingClient.onCallBusy = () {
