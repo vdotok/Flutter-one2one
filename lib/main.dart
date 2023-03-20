@@ -390,10 +390,10 @@ class _TestState extends State<Test> {
     super.initState();
 
     signalingClient!.onLocalStream = (stream) {
-      print("this is local stream ${stream.id}");
-      setState(() {
-        _localRenderer.srcObject = stream;
-      });
+      ;
+      // setState(() {
+      //   _localRenderer.srcObject = stream;
+      // });
     };
     signalingClient!.onLocalAudioVideoStates = (d) {};
     // signalingClient.getPermissions();

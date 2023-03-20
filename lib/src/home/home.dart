@@ -411,12 +411,22 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
 
     signalingClient.onLocalStream = (stream) async {
+      // if (renderObj["local"] != null) {
+      //   renderObj["local"]!.dispose();
+      //   renderObj["local"] = await initRenderers(new RTCVideoRenderer());
+
+      //   print("this is local stream id ${stream.id}");
+      //   setState(() {
+      //     renderObj["local"]!.srcObject = stream;
+      //   });
+      // } else {
       renderObj["local"] = await initRenderers(new RTCVideoRenderer());
 
       print("this is local stream id ${stream.id}");
       setState(() {
         renderObj["local"]!.srcObject = stream;
       });
+      // }
     };
     signalingClient.onAddRemoteStream = (session) async {
       setState(() {
@@ -1587,11 +1597,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: _localAudioVideoStates["CameraState"]!
-                              ? RTCVideoView(renderObj["local"]!,
-                                  key: forsmallView,
-                                  mirror: false,
-                                  objectFit: RTCVideoViewObjectFit
-                                      .RTCVideoViewObjectFitCover)
+                              ? renderObj["local"]?.srcObject == null
+                                  ? Container()
+                                  : RTCVideoView(renderObj["local"]!,
+                                      key: forsmallView,
+                                      mirror: false,
+                                      objectFit: RTCVideoViewObjectFit
+                                          .RTCVideoViewObjectFitCover)
                               : Container(),
                         ),
                       ),
