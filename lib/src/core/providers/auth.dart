@@ -87,6 +87,7 @@ class AuthProvider with ChangeNotifier {
       "app_version": "1.1.5",
       "project_id": projectid
     };
+    print("json data of signup  $jsonData");
     final response = await callAPI(jsonData, "SignUp", null);
     print("this is response of sign up $response");
     if (response['status'] != 200) {
@@ -96,8 +97,10 @@ class AuthProvider with ChangeNotifier {
       return false;
     } else {
       _completeAddress = response['media_server_map']['complete_address'];
-      _projectId = project_id;
-      _tenantUrl = tenant_api_url;
+      _projectId = projectid;
+      //project_id;
+      _tenantUrl = URL;
+      //tenant_api_url;
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
       sharedPref.save("project_id", project_id);
@@ -127,8 +130,10 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
     } else {
       _completeAddress = response['media_server_map']['complete_address'];
-      _projectId = project_id;
-      _tenantUrl = tenant_api_url;
+       _projectId = projectid;
+      //project_id;
+      _tenantUrl = URL;
+      //tenant_api_url;
 
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();

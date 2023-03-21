@@ -32,13 +32,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   handlePress() async {
     if (_nameController.text.isNotEmpty && _emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty) {
-      if (project_id == null || tenant_api_url == null) {
-        snackBar = SnackBar(
-          content: Text("Please scan QR first"),
-          duration: Duration(seconds: 2),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else {
+      // if (project_id == null || tenant_api_url == null) {
+      //   snackBar = SnackBar(
+      //     content: Text("Please scan QR first"),
+      //     duration: Duration(seconds: 2),
+      //   );
+      //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // } else {
         if (_registerformkey.currentState!.validate()) {
           AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
           bool res = await auth.register(_emailController.text,
@@ -57,7 +57,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             _autoValidate = true;
           });
         }
-      }
+      //}
     }
     
     else{if (_registerformkey.currentState!.validate()) {
@@ -151,11 +151,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       iconSize: 30,
                                       icon: const Icon(Icons.qr_code_2_sharp),
                                       onPressed: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return QRViewExample();
-                                        }));
+                                        // Navigator.of(context).push(
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) {
+                                        //   return QRViewExample();
+                                        // }));
                                       },
                                     ),
                                     Container(

@@ -42,42 +42,6 @@ class _QRViewExampleState extends State<QRViewExample> {
       body: Column(
         children: <Widget>[
           Expanded(flex: 4, child: _buildQrView(context)),
-          // Expanded(
-          //     flex: 1,
-          //     child: FittedBox(
-          //         fit: BoxFit.contain,
-          //         child: Column(
-          //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //             children: <Widget>[
-          //               if (result != null)
-          //                 Text(
-          //                     'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code!}')
-          //               else
-          //                 const Text('Scan a code'),
-          //             ])))
-          // //         Container(
-          //           margin: const EdgeInsets.all(8),
-          //           child: ElevatedButton(
-          //               onPressed: () async {
-          //                 await controller?.flipCamera();
-          //                 setState(() {});
-          //               },
-          //               child: FutureBuilder(
-          //                 future: controller?.getCameraInfo(),
-          //                 builder: (context, snapshot) {
-          //                   if (snapshot.data != null) {
-          //                     return Text(
-          //                         'Camera facing ${describeEnum(snapshot.data!)}');
-          //                   } else {
-          //                     return const Text('loading');
-          //                   }
-          //                 },
-          //               )),
-          //         )
-          //       ],
-          //     ),
-          //   ),
-          // )
         ],
       ),
     );
@@ -119,9 +83,8 @@ class _QRViewExampleState extends State<QRViewExample> {
         // if (result!.code != null) {
         if (result!.code!.contains("project_id") == false ||
             result!.code!.contains("tenant_api_url") == false) {
-         
-       if (!snackBarShowed) {
- print("hereee in ifffff");
+          if (!snackBarShowed) {
+            print("hereee in ifffff");
             snackBar = SnackBar(
               content: Text(
                 "Please scan valid QR.",
@@ -135,13 +98,11 @@ class _QRViewExampleState extends State<QRViewExample> {
           //  controller.pauseCamera();
           // controller.dispose();
         } else {
-          if(snackBarShowed){
-               
-                                            ScaffoldMessenger.of(context)
-                                                .hideCurrentSnackBar();
-                                            snackBarShowed = false;
-                                          }
-          
+          if (snackBarShowed) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            snackBarShowed = false;
+          }
+
           Map<String, dynamic> map = json.decode(result!.code!);
           project_id = map["project_id"].toString();
           tenant_api_url = map["tenant_api_url"].toString();
