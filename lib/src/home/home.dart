@@ -390,6 +390,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       switch (state) {
         case CallState.CallStateNew:
+          break;
+        case CallState.CallSession:
           setState(() {
             _session = session;
             mediaType = session!.mediaType!;
