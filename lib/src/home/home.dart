@@ -259,83 +259,21 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _localAudioVideoStates = localAudioVideoStates;
       });
     };
-    signalingClient.onInfoCallback = (msg) {
+    signalingClient.onInfoCallback = (type, msg) {
       Fluttertoast.showToast(msg: msg);
-      openAppSettings();
+      if (type == "AllowPermissions") {
+        openAppSettings();
+      }
     };
     signalingClient.onError = (code, reason) async {
       print("this is socket error $code $reason");
+
       if (!mounted) {
         return;
       }
       setState(() {
         sockett = false;
       });
-
-      //if (code == 1002) {
-
-      if (_auth.loggedInStatus == Status.LoggedOut) {
-      } else {
-        // if (isResumed) {
-        bool status = await signalingClient.getInternetStatus();
-
-        print("this is internet status $status");
-
-        if (sockett == false && status == true) {
-          print("here in onerrorrrrrr ");
-
-          // signalingClient.connect(
-          //     project_id,
-          //     _auth.completeAddress,
-          //     _auth.getUser.ref_id.toString(),
-          //     _auth.getUser.authorization_token.toString(),
-          //     _auth.StungIP,
-          //     int.parse(_auth.StungPort));
-        } else {
-          print("else condition");
-        }
-        // }
-      }
-
-      // } else {
-
-      // if (_auth.loggedInStatus == Status.LoggedOut) {
-
-      // } else {
-
-      //   if (isResumed) {
-
-      // bool status = await signalingClient.getInternetStatus();
-
-      // print("this is internet status $status");
-
-      // if (status) {
-
-      //   signalingClient.connect(project_id, _auth.completeAddress);
-
-      // } else {
-
-      //   print("nothinggggg");
-
-      // }
-
-      //}
-
-      // }
-
-      // }
-
-//         bool status =await signalingClient.getInternetStatus();
-
-//         print("this is internet status $status");
-
-// if(status)
-
-//      {
-
-      //   signalingClient.connect("115G1WZI", "wss://vtk1.vdotok.dev:8443/call");
-
-      //}
     };
 
     signalingClient.internetConnectivityCallBack = (mesg) {
@@ -787,6 +725,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   renderList() {
+    if (!sockett) {
+      signalingClient.reConnectSocketConnectTimer();
+    }
     _contactProvider!.getContacts(_auth.getUser.auth_token);
   }
 
