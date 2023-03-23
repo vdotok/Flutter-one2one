@@ -495,67 +495,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     }
   }
 
-  // @override
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   print("this is changeapplifecyclestate");
-  //   switch (state) {
-  //     case AppLifecycleState.resumed:
-  //       print("app in resumed");
-  //       isResumed = true;
-  //       inPaused = false;
-  //       inInactive = false;
-  //       if (_auth.loggedInStatus == Status.LoggedOut) {
-  //       } else {
-  //         print("this is variable for resume $sockett $isConnected $isResumed");
-  //         //     //signalingClient.sendPing();
-  //         signalingClient.sendPing(registerRes["mcToken"]);
-  //       }
-  //       //   if (_auth.loggedInStatus == Status.LoggedOut) {
-  //       //   } else {
-  //       //     //signalingClient.sendPing();
-
-  //       // print("here in resume");
-  //       //       signalingClient.connect(project_id, _auth.completeAddress);
-  //       //       signalingClient.register(_auth.getUser.toJson(), project_id);
-
-  //       //   }
-
-  //       break;
-  //     case AppLifecycleState.inactive:
-  //       print("app in inactive");
-  //       inInactive = true;
-  //       isResumed = false;
-  //       inPaused = false;
-  //       if (Platform.isIOS) {
-  //         if (inCall == true) {
-  //           print("incall true");
-  //         } else {
-  //           print("here in ininactive");
-  //           signalingClient.closeSocket();
-  //         }
-  //       }
-
-  //       break;
-  //     case AppLifecycleState.paused:
-  //       print("app in paused");
-  //       inPaused = true;
-  //       isResumed = false;
-  //       inInactive = false;
-  //       if (inCall == true) {
-  //         print("incall true");
-  //       } else {
-  //         print("incall false");
-  //         signalingClient.closeSocket();
-  //       }
-  //       break;
-  //     case AppLifecycleState.detached:
-  //       print("app in detached");
-  //       break;
-  //   }
-  //   // super.didChangeAppLifecycleState(state);
-  //   // _isInForeground = state == AppLifecycleState.resumed;
-  // }
-
   _callcheck() {
     print("i am here in call chck function $count");
 
