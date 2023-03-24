@@ -36,10 +36,11 @@ bool isDeviceConnected = false;
 // bool switchSpeaker = true;
 
 Map<String, bool> _localAudioVideoStates = {
-  "MuteState": false,
+  "UnMuteState": false,
   "SpeakerState": false,
   "CameraState": false,
-  "ScreenShareState": false
+  "ScreenShareState": false,
+  "isBackCamera": false
 };
 
 MediaStream? local;
@@ -420,13 +421,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           _callProvider!.callDial();
           break;
         case CallState.CallStateConnected:
-          _time = DateTime.now();
-          print(
-              "this is current time......... $_time......this is calll start time");
-          _ticker = Timer.periodic(Duration(seconds: 1), (_) => _getTimer());
-          print("ticker is $_ticker");
+          {
+            _callticker.cancel();
+            _time = DateTime.now();
+            print(
+                "this is current time......... $_time......this is calll start time");
+            _ticker = Timer.periodic(Duration(seconds: 1), (_) => _getTimer());
+            print("ticker is $_ticker");
 
-          _callProvider!.callStart();
+            _callProvider!.callStart();
+          }
+
           break;
       }
     };
@@ -498,39 +503,41 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _callcheck() {
-    print("i am here in call chck function $count");
+    _hangUp();
 
-    count = count + 1;
+//     print("i am here in call chck function $count");
 
-    if (count == 30 && iscallAcceptedbyuser == false) {
-      print("I am here in stopcall if");
+//     count = count + 1;
 
-      _callticker.cancel();
+//     if (count == 30 && iscallAcceptedbyuser == false) {
+//       print("I am here in stopcall if");
 
-      count = 0;
-//5
-      // signalingClient.stopCall(registerRes["mcToken"]);
+//       _callticker.cancel();
 
-      _callProvider!.initial();
+//       count = 0;
+// //5
+//       // signalingClient.stopCall(registerRes["mcToken"]);
 
-      iscallAcceptedbyuser = false;
-    } else if (count == 30 && iscallAcceptedbyuser == true) {
-      _callticker.cancel();
+//       _callProvider!.initial();
 
-      count = 0;
+//       iscallAcceptedbyuser = false;
+//     } else if (count == 30 && iscallAcceptedbyuser == true) {
+//       _callticker.cancel();
 
-      print("I am here in stopcall call accept true");
+//       count = 0;
 
-      iscallAcceptedbyuser = false;
-    } else if (iscallAcceptedbyuser == true) {
-      _callticker.cancel();
+//       print("I am here in stopcall call accept true");
 
-      print("I am here in emptyyyyyyyyyy stopcall call accept true");
+//       iscallAcceptedbyuser = false;
+//     } else if (iscallAcceptedbyuser == true) {
+//       _callticker.cancel();
 
-      count = 0;
+//       print("I am here in emptyyyyyyyyyy stopcall call accept true");
 
-      iscallAcceptedbyuser = false;
-    } else {}
+//       count = 0;
+
+//       iscallAcceptedbyuser = false;
+//     } else {}
   }
 
   Future<bool> _onWillPop() async {
@@ -576,7 +583,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     //here
     // _callBloc.add(CallDialEvent());
     // print("this is switch speaker $switchSpeaker");
-    // _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+    _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
     print("here in start call");
     // _callProvider!.callDial();
     // }
@@ -686,17 +693,24 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _hangUp() {
+    if (_callticker.isActive) {
+      _callticker.cancel();
+    }
     if (_session != null) {
       signalingClient.bye(_session!.sid);
     }
   }
 
   _muteMic() {
-    signalingClient.muteMic(!_localAudioVideoStates["MuteState"]!);
+    signalingClient.muteMic(!_localAudioVideoStates["UnMuteState"]!);
   }
 
   _switchCamera() {
-    signalingClient.switchCamera();
+    if (_localAudioVideoStates["CameraState"] == true) {
+      signalingClient.switchCamera(!_localAudioVideoStates["isBackCamera"]!);
+    } else {
+      Fluttertoast.showToast(msg: "First enable camera");
+    }
   }
 
   _switchSpeaker() {
@@ -1556,7 +1570,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
                   SizedBox(width: 20),
                   GestureDetector(
-                    child: _localAudioVideoStates["MuteState"]!
+                    child: _localAudioVideoStates["UnMuteState"]!
                         ? SvgPicture.asset('assets/microphone.svg')
                         : SvgPicture.asset('assets/mute_microphone.svg'),
                     onTap: () {
