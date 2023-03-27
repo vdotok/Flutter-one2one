@@ -73,7 +73,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late DateTime _callTime;
 
   Timer? _ticker;
-  late Timer _callticker;
+  Timer? _callticker;
   int count = 0;
   bool iscallAcceptedbyuser = false;
 
@@ -422,7 +422,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateConnected:
           {
-            _callticker.cancel();
+            _callticker?.cancel();
             _time = DateTime.now();
             print(
                 "this is current time......... $_time......this is calll start time");
@@ -693,8 +693,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _hangUp() {
-    if (_callticker.isActive) {
-      _callticker.cancel();
+    if (_callticker?.isActive == true) {
+      _callticker?.cancel();
     }
     if (_session != null) {
       signalingClient.bye(_session!.sid);
