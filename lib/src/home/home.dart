@@ -1091,87 +1091,89 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     print(
         "ths is width ${MediaQuery.of(context).size.height}, ${MediaQuery.of(context).size.width}");
     return Scaffold(
-      body: OrientationBuilder(builder: (context, orientation) {
-        return Stack(
-          children: [
-            // mediaType == MediaType.video
-            //     ? Container(
-            //         // color: Colors.red,
-            //         //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-            //         width: MediaQuery.of(context).size.width,
-            //         height: MediaQuery.of(context).size.height,
-            //         child: RTCVideoView(localRenderer,
-            //             key: forDialView,
-            //             mirror: false,
-            //             objectFit:
-            //                 RTCVideoViewObjectFit.RTCVideoViewObjectFitContain))
-            //     :
-            Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                colors: [
-                  backgroundAudioCallDark,
-                  backgroundAudioCallLight,
-                  backgroundAudioCallLight,
-                  backgroundAudioCallLight,
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment(0.0, 0.0),
-              )),
-              child: Center(
-                child: SvgPicture.asset(
-                  'assets/userIconCall.svg',
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          return Stack(
+            children: [
+              // mediaType == MediaType.video
+              //     ? Container(
+              //         // color: Colors.red,
+              //         //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+              //         width: MediaQuery.of(context).size.width,
+              //         height: MediaQuery.of(context).size.height,
+              //         child: RTCVideoView(localRenderer,
+              //             key: forDialView,
+              //             mirror: false,
+              //             objectFit:
+              //                 RTCVideoViewObjectFit.RTCVideoViewObjectFitContain))
+              //     :
+              Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                  colors: [
+                    backgroundAudioCallDark,
+                    backgroundAudioCallLight,
+                    backgroundAudioCallLight,
+                    backgroundAudioCallLight,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment(0.0, 0.0),
+                )),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/userIconCall.svg',
+                  ),
                 ),
               ),
-            ),
-            Container(
-                padding: EdgeInsets.only(top: 120),
-                alignment: Alignment.center,
-                child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        isRinging ? "Ringing" : "Calling",
-                        style: TextStyle(
-                            fontSize: 14,
-                            decoration: TextDecoration.none,
-                            fontFamily: secondaryFontFamily,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                            color: darkBlackColor),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        callTo,
-                        style: TextStyle(
-                            fontFamily: primaryFontFamily,
-                            color: darkBlackColor,
-                            decoration: TextDecoration.none,
-                            fontWeight: FontWeight.w700,
-                            fontStyle: FontStyle.normal,
-                            fontSize: 24),
-                      )
-                    ])),
-            Container(
-              padding: EdgeInsets.only(bottom: 56),
-              alignment: Alignment.bottomCenter,
-              child: GestureDetector(
-                child: SvgPicture.asset(
-                  'assets/end.svg',
+              Container(
+                  padding: EdgeInsets.only(top: 120),
+                  alignment: Alignment.center,
+                  child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          isRinging ? "Ringing" : "Calling",
+                          style: TextStyle(
+                              fontSize: 14,
+                              decoration: TextDecoration.none,
+                              fontFamily: secondaryFontFamily,
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
+                              color: darkBlackColor),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          callTo,
+                          style: TextStyle(
+                              fontFamily: primaryFontFamily,
+                              color: darkBlackColor,
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 24),
+                        )
+                      ])),
+              Container(
+                padding: EdgeInsets.only(bottom: 56),
+                alignment: Alignment.bottomCenter,
+                child: GestureDetector(
+                  child: SvgPicture.asset(
+                    'assets/end.svg',
+                  ),
+                  onTap: () {
+                    _hangUp();
+                    // _callProvider!.initial();
+                    // inCall = false;
+                  },
                 ),
-                onTap: () {
-                  _hangUp();
-                  // _callProvider!.initial();
-                  // inCall = false;
-                },
               ),
-            ),
-          ],
-        );
-      }),
+            ],
+          );
+        },
+      ),
     );
   }
 
