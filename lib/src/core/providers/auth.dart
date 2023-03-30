@@ -103,8 +103,8 @@ class AuthProvider with ChangeNotifier {
       //tenant_api_url;
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
-      sharedPref.save("project_id", project_id);
-      sharedPref.save("tenant_url", tenant_api_url);
+      // sharedPref.save("project_id", project_id);
+      // sharedPref.save("tenant_url", tenant_api_url);
       _registeredInStatus = Status.Registered;
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(response);
@@ -138,8 +138,8 @@ class AuthProvider with ChangeNotifier {
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
-      sharedPref.save("project_id", project_id);
-      sharedPref.save("tenant_url", tenant_api_url);
+      // sharedPref.save("project_id", project_id);
+      // sharedPref.save("tenant_url", tenant_api_url);
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(response);
       notifyListeners();
