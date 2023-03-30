@@ -360,8 +360,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           _time = _callTime;
           isTimer = false;
         }
-        _updateTimer();
-        _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+      
         isConnectedtoCall = true;
         onRemoteStream = true;
         if (_callticker != null) {
@@ -372,6 +371,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
         _callProvider!.callStart();
       });
+        _updateTimer();
+        _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
     };
     signalingClient.onParticipantsLeft = (refID, receive, istrue) async {
       print("call callback on call left by participant");
@@ -412,9 +413,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _callProvider!.callReceive();
       if (_callticker != null) {
         _callticker!.cancel();
-        _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+        _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       } else {
-        _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+        _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       }
     };
     signalingClient.onCallAcceptedByUser = () async {
@@ -632,39 +633,40 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _callcheck() {
-    print("i am here in call chck function $count");
-
-    count = count + 1;
-
-    if (count == 30 && iscallAcceptedbyuser == false) {
-      print("I am here in stopcall if");
-
-      _callticker!.cancel();
-
-      count = 0;
-
       signalingClient.stopCall(registerRes["mcToken"]);
+    // print("i am here in call chck function $count");
 
-      _callProvider!.initial();
+    // count = count + 1;
 
-      iscallAcceptedbyuser = false;
-    } else if (count == 30 && iscallAcceptedbyuser == true) {
-      _callticker!.cancel();
+    // if (count == 30 && iscallAcceptedbyuser == false) {
+    //   print("I am here in stopcall if");
 
-      count = 0;
+    //   _callticker!.cancel();
 
-      print("I am here in stopcall call accept true");
+    //   count = 0;
 
-      iscallAcceptedbyuser = false;
-    } else if (iscallAcceptedbyuser == true) {
-      _callticker!.cancel();
+    //   signalingClient.stopCall(registerRes["mcToken"]);
 
-      print("I am here in emptyyyyyyyyyy stopcall call accept true");
+    //   _callProvider!.initial();
 
-      count = 0;
+    //   iscallAcceptedbyuser = false;
+    // } else if (count == 30 && iscallAcceptedbyuser == true) {
+    //   _callticker!.cancel();
 
-      iscallAcceptedbyuser = false;
-    } else {}
+    //   count = 0;
+
+    //   print("I am here in stopcall call accept true");
+
+    //   iscallAcceptedbyuser = false;
+    // } else if (iscallAcceptedbyuser == true) {
+    //   _callticker!.cancel();
+
+    //   print("I am here in emptyyyyyyyyyy stopcall call accept true");
+
+    //   count = 0;
+
+    //   iscallAcceptedbyuser = false;
+    // } else {}
   }
 
   Future<bool> _onWillPop() async {
@@ -713,9 +715,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     print("this is switch speaker $switchSpeaker");
     if (_callticker != null) {
       _callticker!.cancel();
-      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+      _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
     } else {
-      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+      _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
     }
     print("here in start call");
     // _callProvider!.callDial();
