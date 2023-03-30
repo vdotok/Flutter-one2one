@@ -1485,7 +1485,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                             SvgPicture.asset('assets/call.svg'),
                                         onPressed: !isConnected
                                             ? () {}
-                                            : () {
+                                            : 
+                                             _isPressed?(){}:
+                                            () {
                                                 print(
                                                     "here in connected start call $isConnected");
                                                 _startCall(
