@@ -17,6 +17,7 @@ import 'package:wakelock/wakelock.dart';
 import 'dart:io' show File, Platform;
 import '../../constant.dart';
 import '../../main.dart';
+import '../core/config/config.dart';
 import '../core/models/contactList.dart';
 import '../core/providers/auth.dart';
 import '../core/providers/call_provider.dart';
@@ -214,7 +215,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider!.getContacts(_auth.getUser.auth_token);
 
     signalingClient.connect(
-        _auth.projectId,
+      projectid,
         _auth.completeAddress,
         _auth.getUser.authorization_token.toString(),
         _auth.getUser.ref_id.toString());
@@ -321,10 +322,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     signalingClient.onRegister = (res) {
       print("onregister  $res");
-      setState(() {
+     setState(() {
         registerRes = res;
         print("this is mc token in register ${registerRes["mcToken"]}");
-      });
+     });
     };
 
     signalingClient.onLocalStream = (stream) async {
@@ -360,8 +361,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           _time = _callTime;
           isTimer = false;
         }
-        _updateTimer();
-        _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+       
         isConnectedtoCall = true;
         onRemoteStream = true;
         if (_callticker != null) {
@@ -372,6 +372,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
         _callProvider!.callStart();
       });
+       _updateTimer();
+      _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
     };
     signalingClient.onParticipantsLeft = (refID, receive, istrue) async {
       print("call callback on call left by participant");
@@ -398,13 +400,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         inCall = true;
         pressDuration = "";
         onRemoteStream = false;
-        iscalloneto1 = res["call_type"] == "one_to_one" ? true : false;
+        iscalloneto1 = res["callType"] == "one_to_one" ? true : false;
         incomingfrom = res["from"];
         Wakelock.toggle(enable: true);
-        meidaType = res["media_type"];
+        meidaType = res["mediaType"];
         switchMute = true;
         enableCamera = true;
-        switchSpeaker = res["media_type"] == MediaType.audio ? true : false;
+        switchSpeaker = res["mediaType"] == MediaType.audio ? true : false;
         remoteVideoFlag = true;
         remoteAudioFlag = true;
       });
@@ -412,9 +414,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _callProvider!.callReceive();
       if (_callticker != null) {
         _callticker!.cancel();
-        _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+        _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       } else {
-        _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+        _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       }
     };
     signalingClient.onCallAcceptedByUser = () async {
@@ -465,7 +467,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         
         renderObj["local"]?.dispose();
         renderObj["remote"]?.dispose();
-            print("here innnnnnn");
+        print("here innnnnnn");
         renderObj.clear();
         _isPressed = false;
         inCall = false;
@@ -632,39 +634,40 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _callcheck() {
-    print("i am here in call chck function $count");
+   signalingClient.stopCall(registerRes["mcToken"]);
+    // print("i am here in call chck function $count");
 
-    count = count + 1;
+    // count = count + 1;
 
-    if (count == 30 && iscallAcceptedbyuser == false) {
-      print("I am here in stopcall if");
+    // if (count == 30 && iscallAcceptedbyuser == false) {
+    //   print("I am here in stopcall if");
 
-      _callticker!.cancel();
+    //   _callticker!.cancel();
 
-      count = 0;
+    //   count = 0;
 
-      signalingClient.stopCall(registerRes["mcToken"]);
+    //   signalingClient.stopCall(registerRes["mcToken"]);
 
-      _callProvider!.initial();
+    //   _callProvider!.initial();
 
-      iscallAcceptedbyuser = false;
-    } else if (count == 30 && iscallAcceptedbyuser == true) {
-      _callticker!.cancel();
+    //   iscallAcceptedbyuser = false;
+    // } else if (count == 30 && iscallAcceptedbyuser == true) {
+    //   _callticker!.cancel();
 
-      count = 0;
+    //   count = 0;
 
-      print("I am here in stopcall call accept true");
+    //   print("I am here in stopcall call accept true");
 
-      iscallAcceptedbyuser = false;
-    } else if (iscallAcceptedbyuser == true) {
-      _callticker!.cancel();
+    //   iscallAcceptedbyuser = false;
+    // } else if (iscallAcceptedbyuser == true) {
+    //   _callticker!.cancel();
 
-      print("I am here in emptyyyyyyyyyy stopcall call accept true");
+    //   print("I am here in emptyyyyyyyyyy stopcall call accept true");
 
-      count = 0;
+    //   count = 0;
 
-      iscallAcceptedbyuser = false;
-    } else {}
+    //   iscallAcceptedbyuser = false;
+    // } else {}
   }
 
   Future<bool> _onWillPop() async {
@@ -713,9 +716,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     print("this is switch speaker $switchSpeaker");
     if (_callticker != null) {
       _callticker!.cancel();
-      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+      _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
     } else {
-      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+      _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
     }
     print("here in start call");
     // _callProvider!.callDial();
@@ -838,13 +841,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   bool _isPressed = false;
-  // bool isRadioButtonEnabble = false;
-  void _myCallback() {
-    setState(() {
-      _isPressed = true;
-      print("tap me");
-    });
-  }
+
 
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
