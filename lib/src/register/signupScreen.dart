@@ -147,17 +147,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   //     MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    IconButton(
-                                      iconSize: 30,
-                                      icon: const Icon(Icons.qr_code_2_sharp),
-                                      onPressed: () {
-                                        // Navigator.of(context).push(
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) {
-                                        //   return QRViewExample();
-                                        // }));
-                                      },
-                                    ),
+                                    Container(height: 30,),
+                                    // IconButton(
+                                    //   iconSize: 30,
+                                    //   icon: const Icon(Icons.qr_code_2_sharp),
+                                    //   onPressed: () {
+                                    //     // Navigator.of(context).push(
+                                    //     //     MaterialPageRoute(
+                                    //     //         builder: (context) {
+                                    //     //   return QRViewExample();
+                                    //     // }));
+                                    //   },
+                                    // ),
                                     Container(
                                       child: Column(
                                         children: [
