@@ -369,7 +369,7 @@ class _MyAppState extends State<MyApp> {
             colorScheme: ColorScheme.fromSwatch(
               primarySwatch: Colors.grey,
             ).copyWith(),
-            accentColor: primaryColor,
+            // accentColor: primaryColor,
             primaryColor: primaryColor,
             scaffoldBackgroundColor: Colors.white,
             textTheme: TextTheme(

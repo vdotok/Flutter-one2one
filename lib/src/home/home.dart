@@ -401,6 +401,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateRinging:
           {
+            setState(() {
+              _session = session;
+              mediaType = session!.mediaType!;
+            });
             _callProvider!.callReceive();
           }
           break;
@@ -583,7 +587,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     //here
     // _callBloc.add(CallDialEvent());
     // print("this is switch speaker $switchSpeaker");
-    _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
+    _callticker = Timer.periodic(Duration(seconds: 40), (_) => _callcheck());
     print("here in start call");
     // _callProvider!.callDial();
     // }
