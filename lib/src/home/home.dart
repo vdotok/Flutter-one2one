@@ -281,7 +281,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       if (mesg == "Connected") {
         setState(() {
           if (inCall == true) {
-            print("fdjhfjd");
             isTimer = true;
           }
           isConnected = true;
@@ -418,6 +417,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               _session = null;
               _ticker?.cancel();
               pressDuration = "";
+              inCall = false;
             });
           }
           break;
@@ -426,7 +426,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateConnected:
           {
-            _callticker?.cancel();
+            // _callticker?.cancel();
             _time = DateTime.now();
             print(
                 "this is current time......... $_time......this is calll start time");
@@ -508,40 +508,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   _callcheck() {
     _hangUp();
-
-//     print("i am here in call chck function $count");
-
-//     count = count + 1;
-
-//     if (count == 30 && iscallAcceptedbyuser == false) {
-//       print("I am here in stopcall if");
-
-//       _callticker.cancel();
-
-//       count = 0;
-// //5
-//       // signalingClient.stopCall(registerRes["mcToken"]);
-
-//       _callProvider!.initial();
-
-//       iscallAcceptedbyuser = false;
-//     } else if (count == 30 && iscallAcceptedbyuser == true) {
-//       _callticker.cancel();
-
-//       count = 0;
-
-//       print("I am here in stopcall call accept true");
-
-//       iscallAcceptedbyuser = false;
-//     } else if (iscallAcceptedbyuser == true) {
-//       _callticker.cancel();
-
-//       print("I am here in emptyyyyyyyyyy stopcall call accept true");
-
-//       count = 0;
-
-//       iscallAcceptedbyuser = false;
-//     } else {}
   }
 
   Future<bool> _onWillPop() async {
@@ -556,8 +522,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   _startCall(List<String> to, String mtype, String callType,
       String sessionType) async {
     setState(() {
-      Wakelock.toggle(enable: true);
       inCall = true;
+    });
+    setState(() {
+      Wakelock.toggle(enable: true);
+      // inCall = true;
       pressDuration = "";
       onRemoteStream = false;
       // switchMute = true;
@@ -587,7 +556,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     //here
     // _callBloc.add(CallDialEvent());
     // print("this is switch speaker $switchSpeaker");
-    _callticker = Timer.periodic(Duration(seconds: 40), (_) => _callcheck());
+    // _callticker = Timer.periodic(Duration(seconds: 40), (_) => _callcheck());
     print("here in start call");
     // _callProvider!.callDial();
     // }
@@ -697,9 +666,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _hangUp() {
-    if (_callticker?.isActive == true) {
-      _callticker?.cancel();
-    }
+    // if (_callticker?.isActive == true) {
+    //   _callticker?.cancel();
+    // }
     if (_session != null) {
       signalingClient.bye(_session!.sid);
     }
@@ -793,7 +762,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       onWillPop: _onWillPop,
       child: Consumer3<CallProvider, AuthProvider, ContactProvider>(
         builder: (context, callProvider, authProvider, contactProvider, child) {
-          print("this is callStatus ${callProvider.callStatus} $inCall");
           if (callProvider.callStatus == CallStatus.CallReceive)
             return callReceive();
           // Navigator.of(context).push(
@@ -1845,13 +1813,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   Container(
                     child: TextButton(
                       onPressed: () {
-                        islogout = true;
-                        if (isRegisteredAlready) {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          isRegisteredAlready = false;
-                        }
+                        if (!inCall) {
+                          islogout = true;
+                          if (isRegisteredAlready) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            isRegisteredAlready = false;
+                          }
 
-                        signalingClient.unRegister();
+                          signalingClient.unRegister();
+                        }
                       },
                       child: Text(
                         "LOG OUT",
