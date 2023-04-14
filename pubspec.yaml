@@ -47,7 +47,7 @@ dependencies:
   vdotok_stream:
     path: ../vdotok_stream
   move_to_background: ^1.0.2
-  wakelock: ^0.5.6
+  wakelock: ^0.6.2
   firebase_core: ^2.8.0
   firebase_messaging: ^14.3.0
 

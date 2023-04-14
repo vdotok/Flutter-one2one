@@ -20,8 +20,9 @@
     <application
         android:icon="@mipmap/launcher_icon"
         android:label="flt_one2one"
-        android:usesCleartextTraffic="true">
-        
+        android:usesCleartextTraffic="true"
+        >
+        <!-- android:debuggable="true" -->
 
         <activity
             android:name=".MainActivity"
@@ -75,11 +76,11 @@
         <!-- android:enabled="true" -->
         <!-- android:exported="true" -->
         <!-- android:foregroundServiceType="mediaProjection" /> -->
-        <service
-            android:name="com.vdotok_stream.vdotok_stream.FlutterForegroundService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="mediaProjection" />
+<!--        <service-->
+<!--            android:name="com.vdotok_stream.vdotok_stream.FlutterForegroundService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="false"-->
+<!--            android:foregroundServiceType="mediaProjection" />-->
             <service
                          android:name=".PushNotificationService"
                          android:exported="false">
