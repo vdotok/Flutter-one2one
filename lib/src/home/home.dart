@@ -188,10 +188,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider!.getContacts(_auth.getUser.auth_token);
 
     signalingClient.connect(
-        projectid,
+      _auth.deviceId,
+         projectid,
         _auth.completeAddress,
         _auth.getUser.authorization_token.toString(),
-        _auth.getUser.ref_id.toString());
+        _auth.getUser.ref_id.toString(),
+        
+        );
 
     signalingClient.onConnect = (res) {
       print("onConnect $res");
@@ -582,12 +585,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       "groupName": "",
       "groupAutoCreatedValue": ""
     };
-    signalingClient.startCallonetoone(
+    signalingClient.startCallOneToOne(
         customData: customData,
         from: _auth.getUser.ref_id,
         to: to,
         mcToken: registerRes["mcToken"],
-        meidaType: mtype,
+        mediaType: mtype,
         callType: callType,
         sessionType: sessionType);
     // if (_localStream != null) {
@@ -652,7 +655,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider!.getContacts(_auth.getUser.auth_token);
     bool connectionFlag = await signalingClient.getInternetStatus();
     if (connectionFlag && sockett == false) {
+     
       signalingClient.connect(
+        _auth.deviceId,
           _auth.projectId,
           _auth.completeAddress,
           _auth.getUser.authorization_token.toString(),
