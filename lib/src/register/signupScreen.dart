@@ -147,7 +147,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   //     MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(height: 30,),
+                                     Container(height:30),
                                     // IconButton(
                                     //   iconSize: 30,
                                     //   icon: const Icon(Icons.qr_code_2_sharp),
