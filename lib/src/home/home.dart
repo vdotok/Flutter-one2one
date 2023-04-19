@@ -475,6 +475,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       case AppLifecycleState.inactive:
         {
+          // Workmanager().registerOneOffTask("task-identifier", "simpleTask");
           print("app in inactive");
 
           inInactive = true;

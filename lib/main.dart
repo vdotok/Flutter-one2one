@@ -326,8 +326,25 @@ class MyHttpOverrides extends HttpOverrides {
 //   }
 // }
 
+// @pragma(
+//     'vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) {
+//     print(
+//         "Native called background task: $task"); //simpleTask will be emitted here.
+//     return Future.value(true);
+//   });
+// }
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Workmanager().initialize(
+  //     callbackDispatcher, // The top level function, aka callbackDispatcher
+  //     isInDebugMode:
+  //         true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+  //     );
+
   HttpOverrides.global = new MyHttpOverrides();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
