@@ -1062,6 +1062,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   Scaffold callStart() {
+    
     return Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Container(
@@ -1147,18 +1148,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                           element!.ref_id == incomingfrom);
                                   print("i am here-");
 
-                                  return Text(
-                                    index == -1
-                                        ? incomingfrom
-                                        : contact.contactList.users![index]!
-                                            .full_name,
-                                    style: TextStyle(
-                                        fontFamily: primaryFontFamily,
-                                        color: darkBlackColor,
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w700,
-                                        fontStyle: FontStyle.normal,
-                                        fontSize: 24),
+                                  return Expanded(
+                                    child: Text(
+                                      index == -1
+                                          ? incomingfrom
+                                          : contact.contactList.users![index]!
+                                              .full_name,
+                                      style: TextStyle(
+                                          fontFamily: primaryFontFamily,
+                                          color: darkBlackColor,
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w700,
+                                          fontStyle: FontStyle.normal,
+                                          fontSize: 24),
+                                    ),
                                   );
                                 } else {
                                   return Container();
@@ -1203,7 +1206,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             children: [
                               Container(
                                 padding: const EdgeInsets.fromLTRB(
-                                    0.0, 120.33, 20, 27),
+                                    0.0, 160.33, 20, 27),
                                 child: GestureDetector(
                                   child: SvgPicture.asset(
                                     'assets/switch_camera.svg',
