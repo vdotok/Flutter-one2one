@@ -15,6 +15,10 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 
 <img width="603" alt="MicrosoftTeams-image" src="https://user-images.githubusercontent.com/86484384/139054351-32baf182-20d3-476a-b73e-df1927210ffe.png">
 
+## VS Code Installation: 
+
+Install the latest version of <b>VS Code</b>
+
 ## Repo Clone:	
 
 1. Open Github URL of VdoTok’s Flutter one2one Audio/Video Call " https://github.com/vdotok/Flutter-one2one "
@@ -23,11 +27,6 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 4. On HTTPS section, copy repository <b>URL</b> 
 5. Open <b>Terminal/Command Prompt</b> and go to the <b>Directory</b> where you want to clone the project
 6. Write git clone and <b>Paste</b> copied repository URL and press <b>Enter</b> 
-
-## VS Code Installation: 
-
-1. Install the latest version of <b>VS Code</b>
-2. Open your Project in <b>VS Code</b>
 
 ## Project Run Steps:
 
