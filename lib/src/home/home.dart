@@ -159,7 +159,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     else {
       return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
     }
-    ;
+    
   }
 
   @override

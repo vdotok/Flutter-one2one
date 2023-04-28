@@ -11,6 +11,8 @@
 	
 <key>NSCameraUsageDescription</key>
 <string>This app needs camera access to scan QR codes</string>
+<key>aps-environment</key>
+    <string>development</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
