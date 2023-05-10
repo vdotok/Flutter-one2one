@@ -53,8 +53,8 @@ class _SignInScreenState extends State<SignInScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _emailController.text = "tkkhan";
-    _passwordController.text = "12345678";
+    _emailController.text = "";
+    _passwordController.text = "";
   }
 
   @override
