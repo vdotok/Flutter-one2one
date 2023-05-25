@@ -229,7 +229,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
-    print("this is user data auth ${_auth.getUser}");
+    print("this is user data auth ${_auth.getUser.ref_id}");
+    print("this is user data auth ${_auth.getUser.authorization_token}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
 
     signalingClient.connect(
@@ -546,7 +547,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       "groupName": "",
       "groupAutoCreatedValue": ""
     };
-    signalingClient.startCallonetoone(
+    signalingClient.startCall(
         customData: customData,
         from: _auth.getUser.ref_id,
         to: to,
@@ -655,14 +656,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   _accept() {
     if (_session != null) {
-      signalingClient.accept(_session!.sid);
+      signalingClient.accept(_session!);
     }
     _callProvider!.callStart();
   }
 
   _reject() {
     if (_session != null) {
-      signalingClient.reject(_session!.sid);
+      signalingClient.reject(_session!);
     }
   }
 
