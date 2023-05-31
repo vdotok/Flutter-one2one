@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
             colorScheme: ColorScheme.fromSwatch(
               primarySwatch: Colors.grey,
             ).copyWith(),
-            accentColor: primaryColor,
+            hintColor: primaryColor,
             primaryColor: primaryColor,
             scaffoldBackgroundColor: Colors.white,
             textTheme: TextTheme(

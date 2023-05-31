@@ -188,7 +188,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider!.getContacts(_auth.getUser.auth_token);
 
     signalingClient.connect(
-      _auth.deviceId,
+        _auth.deviceId,
          projectid,
         _auth.completeAddress,
         _auth.getUser.authorization_token.toString(),
@@ -493,34 +493,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         } else {
           print("this is variable for resume $sockett $isConnected $isResumed");
           bool connectionFlag = await signalingClient.getInternetStatus();
-          // bool status=await signalingClient.checkInternetConnectivity();
-
-          // if (connectionFlag == false) {
-          //   Fluttertoast.showToast(
-          //       msg: "Waiting for Internet.",
-          //       toastLength: Toast.LENGTH_SHORT,
-          //       gravity: ToastGravity.TOP_RIGHT,
-          //       timeInSecForIosWeb: 1,
-          //       backgroundColor: Colors.black,
-          //       textColor: Colors.white,
-          //       fontSize: 14.0);
-          // } else {
-          //   Fluttertoast.showToast(
-          //       msg: "Connected to Internet.",
-          //       toastLength: Toast.LENGTH_SHORT,
-          //       gravity: ToastGravity.TOP_RIGHT,
-          //       timeInSecForIosWeb: 1,
-          //       backgroundColor: Colors.black,
-          //       textColor: Colors.white,
-          //       fontSize: 14.0);
-          // }
-          // if (connectionFlag && sockett == false) {
-          //   signalingClient.connect(
-          //       _auth.projectId,
-          //       _auth.completeAddress,
-          //       _auth.getUser.authorization_token.toString(),
-          //       _auth.getUser.ref_id.toString());
-          // }
+        
         }
 
         break;
