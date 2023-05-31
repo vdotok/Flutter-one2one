@@ -1,11 +1,9 @@
 PODS:
-  - battery_plus (1.0.0):
-    - Flutter
-  - connectivity_plus (0.0.1):
-    - Flutter
-    - ReachabilitySwift
-  - device_info (0.0.1):
-    - Flutter
+  - _NIODataStructures (2.40.0)
+  - CNIOAtomics (2.40.0)
+  - CNIODarwin (2.40.0)
+  - CNIOLinux (2.40.0)
+  - CNIOWindows (2.40.0)
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -27,28 +25,55 @@ PODS:
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
-  - ReachabilitySwift (5.0.0)
   - replay_kit_launcher (1.0.0):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
   - SocketRocket (0.6.0)
+  - SwiftNIO (2.40.0):
+    - _NIODataStructures (= 2.40.0)
+    - CNIOAtomics (= 2.40.0)
+    - CNIODarwin (= 2.40.0)
+    - CNIOLinux (= 2.40.0)
+    - CNIOWindows (= 2.40.0)
+    - SwiftNIOConcurrencyHelpers (= 2.40.0)
+    - SwiftNIOCore (= 2.40.0)
+    - SwiftNIOEmbedded (= 2.40.0)
+    - SwiftNIOPosix (= 2.40.0)
+  - SwiftNIOConcurrencyHelpers (2.40.0):
+    - CNIOAtomics (= 2.40.0)
+  - SwiftNIOCore (2.40.0):
+    - CNIOAtomics (= 2.40.0)
+    - CNIOLinux (= 2.40.0)
+    - SwiftNIOConcurrencyHelpers (= 2.40.0)
+  - SwiftNIOEmbedded (2.40.0):
+    - _NIODataStructures (= 2.40.0)
+    - CNIOAtomics (= 2.40.0)
+    - CNIOLinux (= 2.40.0)
+    - SwiftNIOConcurrencyHelpers (= 2.40.0)
+    - SwiftNIOCore (= 2.40.0)
+  - SwiftNIOPosix (2.40.0):
+    - _NIODataStructures (= 2.40.0)
+    - CNIOAtomics (= 2.40.0)
+    - CNIODarwin (= 2.40.0)
+    - CNIOLinux (= 2.40.0)
+    - CNIOWindows (= 2.40.0)
+    - SwiftNIOConcurrencyHelpers (= 2.40.0)
+    - SwiftNIOCore (= 2.40.0)
   - Toast (4.0.0)
   - vdotok_stream (0.0.1):
     - Flutter
     - Libyuv (= 1703)
     - MMWormhole
     - VdoTokStreaming
-  - VdoTokStreaming (1.1.17):
+  - VdoTokStreaming (1.1.25):
     - SocketRocket
+    - SwiftNIO
   - wakelock (0.0.1):
     - Flutter
 
 DEPENDENCIES:
-  - battery_plus (from `.symlinks/plugins/battery_plus/ios`)
-  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
-  - device_info (from `.symlinks/plugins/device_info/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
@@ -63,21 +88,24 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - _NIODataStructures
+    - CNIOAtomics
+    - CNIODarwin
+    - CNIOLinux
+    - CNIOWindows
     - Libyuv
     - MMWormhole
     - MTBBarcodeScanner
-    - ReachabilitySwift
     - SocketRocket
+    - SwiftNIO
+    - SwiftNIOConcurrencyHelpers
+    - SwiftNIOCore
+    - SwiftNIOEmbedded
+    - SwiftNIOPosix
     - Toast
     - VdoTokStreaming
 
 EXTERNAL SOURCES:
-  battery_plus:
-    :path: ".symlinks/plugins/battery_plus/ios"
-  connectivity_plus:
-    :path: ".symlinks/plugins/connectivity_plus/ios"
-  device_info:
-    :path: ".symlinks/plugins/device_info/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
@@ -102,9 +130,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock/ios"
 
 SPEC CHECKSUMS:
-  battery_plus: 7851ab482c336dd101ae735dc9363f01e1223c7c
-  connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
-  device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
+  _NIODataStructures: 3d45d8e70a1d17a15b1dc59d102c63dbc0525ffd
+  CNIOAtomics: 8edf08644e5e6fa0f021c239be9e8beb1cd9ef18
+  CNIODarwin: 93850990d29f2626b05306c6c9309f9be0d74c2f
+  CNIOLinux: 62e3505f50de558c393dc2f273dde71dcce518da
+  CNIOWindows: 3047f2d8165848a3936a0a755fee27c6b5ee479b
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   fluttertoast: eb263d302cc92e04176c053d2385237e9f43fad0
@@ -112,16 +142,20 @@ SPEC CHECKSUMS:
   MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
-  path_provider_foundation: 37748e03f12783f9de2cb2c4eadfaa25fe6d4852
+  path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
-  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   replay_kit_launcher: 828739da18c9785d5e9aafd4f075ea11d6b61499
-  shared_preferences_foundation: 297b3ebca31b34ec92be11acd7fb0ba932c822ca
+  shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  SwiftNIO: 829958aab300642625091f82fc2f49cb7cf4ef24
+  SwiftNIOConcurrencyHelpers: 697370136789b1074e4535eaae75cbd7f900370e
+  SwiftNIOCore: 473fdfe746534d7aa25766916459eeaf6f92ef49
+  SwiftNIOEmbedded: ffcb5147db67d9686c8366b7f8427b36132f2c8a
+  SwiftNIOPosix: b49af4bdbecaadfadd5c93dfe28594d6722b75e4
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
-  VdoTokStreaming: 020891c3ec5f5a9e35deed9a2e3de32a87c93afb
+  VdoTokStreaming: 65a1e299e66ca5257944bb42dde2577feda9cf26
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
 PODFILE CHECKSUM: dd3a4d28c528e36e2905ee1599e1a41676ca43ae
