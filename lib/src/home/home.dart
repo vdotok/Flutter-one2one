@@ -11,7 +11,6 @@ import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/noContactsScreen.dart';
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
 import 'package:provider/provider.dart';
-import 'package:vdotok_stream_example/src/core/qrocde/qrcode.dart';
 import 'package:vdotok_stream_example/src/home/drag.dart';
 import 'package:wakelock/wakelock.dart';
 import 'dart:io' show File, Platform;
@@ -492,7 +491,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (_auth.loggedInStatus == Status.LoggedOut) {
         } else {
           print("this is variable for resume $sockett $isConnected $isResumed");
-          bool connectionFlag = await signalingClient.getInternetStatus();
+         
         
         }
 
