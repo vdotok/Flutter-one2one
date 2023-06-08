@@ -287,7 +287,9 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:vdotok_stream_example/PushNotificationService.dart';
+import 'package:vdotok_stream_example/callkit.dart';
 import 'package:vdotok_stream_example/src/home/home.dart';
 import 'src/core/providers/auth.dart';
 import 'src/home/homeIndex.dart';
@@ -370,6 +372,14 @@ class _MyAppState extends State<MyApp> {
     _notificationService.initialize();
 
     rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
+//     FlutterCallkitIncomingListeners();
+//     showCallkitIncoming();
+//     Future.delayed(const Duration(seconds: 10), () {
+//       FlutterCallkitIncoming.endAllCalls();
+
+// // Here you can write your code
+//     });
   }
 
   @override
