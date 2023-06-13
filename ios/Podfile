@@ -9,7 +9,7 @@ project 'Runner', {
   'Profile' => :release,
   'Release' => :release,
 }
-use_modular_headers!
+
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
@@ -34,7 +34,7 @@ target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
-pod 'VdoTokStreaming', :git => 'https://github.com/vdotok/VdoTokStreaming.git'
+#pod 'VdoTokStreaming', :git => 'https://github.com/vdotok/VdoTokStreaming.git'
 
 
 post_install do |installer|
