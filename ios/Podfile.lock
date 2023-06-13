@@ -20,7 +20,7 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - permission_handler_apple (9.0.4):
+  - permission_handler_apple (9.1.0):
     - Flutter
   - qr_code_scanner (0.2.0):
     - Flutter
@@ -67,7 +67,7 @@ PODS:
     - Libyuv (= 1703)
     - MMWormhole
     - VdoTokStreaming
-  - VdoTokStreaming (1.1.25):
+  - VdoTokStreaming (1.1.30):
     - SocketRocket
     - SwiftNIO
   - wakelock (0.0.1):
@@ -78,12 +78,13 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
-  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - replay_kit_launcher (from `.symlinks/plugins/replay_kit_launcher/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - vdotok_stream (from `.symlinks/plugins/vdotok_stream/ios`)
+  - VdoTokStreaming (from `https://github.com/vdotok/VdoTokStreaming.git`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
 
 SPEC REPOS:
@@ -103,7 +104,6 @@ SPEC REPOS:
     - SwiftNIOEmbedded
     - SwiftNIOPosix
     - Toast
-    - VdoTokStreaming
 
 EXTERNAL SOURCES:
   device_info_plus:
@@ -115,7 +115,7 @@ EXTERNAL SOURCES:
   move_to_background:
     :path: ".symlinks/plugins/move_to_background/ios"
   path_provider_foundation:
-    :path: ".symlinks/plugins/path_provider_foundation/ios"
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   qr_code_scanner:
@@ -123,11 +123,18 @@ EXTERNAL SOURCES:
   replay_kit_launcher:
     :path: ".symlinks/plugins/replay_kit_launcher/ios"
   shared_preferences_foundation:
-    :path: ".symlinks/plugins/shared_preferences_foundation/ios"
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   vdotok_stream:
     :path: ".symlinks/plugins/vdotok_stream/ios"
+  VdoTokStreaming:
+    :git: https://github.com/vdotok/VdoTokStreaming.git
   wakelock:
     :path: ".symlinks/plugins/wakelock/ios"
+
+CHECKOUT OPTIONS:
+  VdoTokStreaming:
+    :commit: 7288fe1136e7401d7af05be975995634d8d80f30
+    :git: https://github.com/vdotok/VdoTokStreaming.git
 
 SPEC CHECKSUMS:
   _NIODataStructures: 3d45d8e70a1d17a15b1dc59d102c63dbc0525ffd
@@ -137,13 +144,13 @@ SPEC CHECKSUMS:
   CNIOWindows: 3047f2d8165848a3936a0a755fee27c6b5ee479b
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  fluttertoast: eb263d302cc92e04176c053d2385237e9f43fad0
+  fluttertoast: fafc4fa4d01a6a9e4f772ecd190ffa525e9e2d9c
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
-  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+  permission_handler_apple: 8f116445eff3c0e7c65ad60f5fef5490aa94b4e4
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   replay_kit_launcher: 828739da18c9785d5e9aafd4f075ea11d6b61499
   shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
@@ -155,9 +162,9 @@ SPEC CHECKSUMS:
   SwiftNIOPosix: b49af4bdbecaadfadd5c93dfe28594d6722b75e4
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
-  VdoTokStreaming: 65a1e299e66ca5257944bb42dde2577feda9cf26
+  VdoTokStreaming: 1e26e7a85d5b5b3b0c17a8b92fadf4ac07a13f5b
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
-PODFILE CHECKSUM: dd3a4d28c528e36e2905ee1599e1a41676ca43ae
+PODFILE CHECKSUM: c00516518b82249d749396770b8ea2d6422f0552
 
 COCOAPODS: 1.11.3
