@@ -1362,6 +1362,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         }
       });
     }
+      var userIndex = _contactProvider!.contactList.users!.indexWhere((element) => element!.ref_id == _auth.getUser.ref_id);
+    print("This is the userindex $userIndex");
+    if (userIndex != -1) {
+   _contactProvider!.contactList.users!.removeAt(userIndex);
+    }
 
     return Scaffold(
       body: RefreshIndicator(
