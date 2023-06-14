@@ -67,7 +67,7 @@ PODS:
     - Libyuv (= 1703)
     - MMWormhole
     - VdoTokStreaming
-  - VdoTokStreaming (1.1.26):
+  - VdoTokStreaming (1.1.30):
     - SocketRocket
     - SwiftNIO
   - wakelock (0.0.1):
@@ -155,9 +155,9 @@ SPEC CHECKSUMS:
   SwiftNIOPosix: b49af4bdbecaadfadd5c93dfe28594d6722b75e4
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
-  VdoTokStreaming: 877d8643b8c7ca00fddaf47a4b3c251ca7e0df8e
+  VdoTokStreaming: 1e26e7a85d5b5b3b0c17a8b92fadf4ac07a13f5b
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
-PODFILE CHECKSUM: f6392e387f7b587d693da9b7b473669fcf6032a9
+PODFILE CHECKSUM: 82ac75ed1e0f196ab464eb2a5f705fa852842d84
 
 COCOAPODS: 1.11.3

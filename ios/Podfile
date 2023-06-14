@@ -34,7 +34,6 @@ target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
-#pod 'VdoTokStreaming', :git => 'https://github.com/vdotok/VdoTokStreaming.git'
 
 
 post_install do |installer|
