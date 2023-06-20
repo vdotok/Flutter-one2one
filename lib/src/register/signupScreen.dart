@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vdotok_stream_example/src/core/config/config.dart';
 import '../../src/common/logo.dart';
 import '../../src/common/custombutton.dart';
 import '../../src/common/customtext.dart';
@@ -32,13 +33,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   handlePress() async {
     if (_nameController.text.isNotEmpty && _emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty) {
-      // if (project_id == null || tenant_api_url == null) {
-      //   snackBar = SnackBar(
-      //     content: Text("Please scan QR first"),
-      //     duration: Duration(seconds: 2),
-      //   );
-      //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      // } else {
+      if (tenant_url == "" || project_id == "") {
+        snackBar = SnackBar(
+          content: Text("Please scan or manually add projectId and Url in config file"),
+          duration: Duration(seconds: 2),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
         if (_registerformkey.currentState!.validate()) {
           AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
           bool res = await auth.register(_emailController.text,
@@ -51,13 +52,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           if (res) {
             Navigator.pop(context);
           }
-          ;
-        } else {
+          
+        } 
+        else {
           setState(() {
             _autoValidate = true;
           });
         }
-      //}
+      }
     }
     
     else{if (_registerformkey.currentState!.validate()) {
@@ -147,18 +149,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   //     MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                     Container(height:30),
-                                    // IconButton(
-                                    //   iconSize: 30,
-                                    //   icon: const Icon(Icons.qr_code_2_sharp),
-                                    //   onPressed: () {
-                                    //     // Navigator.of(context).push(
-                                    //     //     MaterialPageRoute(
-                                    //     //         builder: (context) {
-                                    //     //   return QRViewExample();
-                                    //     // }));
-                                    //   },
-                                    // ),
+                                     //Container(height:30),
+                                    IconButton(
+                                      iconSize: 30,
+                                      icon: const Icon(Icons.qr_code_2_sharp),
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return QRViewExample();
+                                        }));
+                                      },
+                                    ),
                                     Container(
                                       child: Column(
                                         children: [

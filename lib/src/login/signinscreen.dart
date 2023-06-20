@@ -11,6 +11,7 @@ import '../../src/core/providers/auth.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant.dart';
+import '../core/config/config.dart';
 import '../core/qrocde/qrcode.dart';
 import '../home/home.dart';
 
@@ -33,32 +34,58 @@ class _SignInScreenState extends State<SignInScreen> {
   handlePress() async {
     if (_emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty) {
-      // if (project_id == null || tenant_api_url == null) {
-      //   snackBar = SnackBar(
-      //     content: Text("Please scan QR first"),
-      //     duration: Duration(seconds: 2),
-      //   );
-      //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      // }
-      // else{
-         if (_loginformkey.currentState!.validate()) {
-        print("this isssssss");
-        AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
-        await auth.login(_emailController.text, _passwordController.text);
+      print("ydghds ${tenant_url} ${project_id}");
 
-        if (auth.getUser.auth_token == null) {
+      
+        if (tenant_url == "" || project_id == "") {
+          if (url == "" || project == "") {
+          snackBar = SnackBar(
+            content:
+                Text("Please scan/manually add configurations in config file."),
+            duration: Duration(seconds: 2),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+        else{
+          if (_loginformkey.currentState!.validate()) {
+          print("this isssssss");
+          AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+          await auth.login(_emailController.text, _passwordController.text);
+
+          if (auth.getUser.auth_token == null) {
+            setState(() {
+              _autoValidate = true;
+            });
+          }
+
+          // _loginBloc
+          //     .add(LoginEvent(_emailController.text, _passwordController.text));
+        } else {
           setState(() {
             _autoValidate = true;
           });
-      //  }
+        }
+        }
 
-        // _loginBloc
-        //     .add(LoginEvent(_emailController.text, _passwordController.text));
       } else {
-        setState(() {
-          _autoValidate = true;
-        });
-      }
+        if (_loginformkey.currentState!.validate()) {
+          print("this isssssss");
+          AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+          await auth.login(_emailController.text, _passwordController.text);
+
+          if (auth.getUser.auth_token == null) {
+            setState(() {
+              _autoValidate = true;
+            });
+          }
+
+          // _loginBloc
+          //     .add(LoginEvent(_emailController.text, _passwordController.text));
+        } else {
+          setState(() {
+            _autoValidate = true;
+          });
+        }
       }
     } else {
       if (_loginformkey.currentState!.validate()) {
@@ -153,17 +180,17 @@ class _SignInScreenState extends State<SignInScreen> {
                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(height:30),
-                            // IconButton(
-                            //   iconSize: 30,
-                            //   icon: const Icon(Icons.qr_code_2_sharp),
-                            //   onPressed: () {
-                            //     // Navigator.of(context)
-                            //     //     .push(MaterialPageRoute(builder: (context) {
-                            //     //   return QRViewExample();
-                            //     // }));
-                            //   },
-                            // ),
+                            //Container(height:30),
+                            IconButton(
+                              iconSize: 30,
+                              icon: const Icon(Icons.qr_code_2_sharp),
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (context) {
+                                  return QRViewExample();
+                                }));
+                              },
+                            ),
                             Container(
                               child: Column(
                                 children: [

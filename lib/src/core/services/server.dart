@@ -2,15 +2,18 @@ import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../../src/core/config/config.dart';
+
+import '../config/config.dart';
+import '../qrocde/qrcode.dart';
 
 // The function take will take the user request and verfies it with the api. in this case it will authenticate the user
 Future<dynamic> callAPI(datarequest, myurl, authToken) async {
-  print("this is url..... $URL");
-  final url = Uri.parse("${URL + myurl}");
 
-  print("this is api call $datarequest $url  $authToken");
-  final response = await http.post(url,
+  final urlLink = Uri.parse("${
+    url == "" ? tenant_url + myurl :url + myurl}");
+
+  print("this is api call $datarequest $urlLink  $authToken");
+  final response = await http.post(urlLink,
       headers: authToken != null
           ? {
               HttpHeaders.contentTypeHeader: 'application/json',
@@ -28,10 +31,12 @@ Future<dynamic> callAPI(datarequest, myurl, authToken) async {
 }
 
 Future<dynamic> getAPI(myurl, authToken) async {
-  final url = Uri.parse("${URL + myurl}");
+ final urlLink = Uri.parse("${
+    url == "" ? tenant_url + myurl :url 
+    + myurl}");
   print('this is url $url');
   final response = await http.get(
-    url,
+    urlLink,
     headers: authToken != null
         ? {
             HttpHeaders.contentTypeHeader: 'application/json',

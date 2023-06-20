@@ -21,11 +21,13 @@ import '../core/models/contactList.dart';
 import '../core/providers/auth.dart';
 import '../core/providers/call_provider.dart';
 import '../core/providers/contact_provider.dart';
+import '../core/qrocde/qrcode.dart';
 
 SignalingClient signalingClient = SignalingClient.instance;
 Map<String, RTCVideoRenderer> renderObj = {};
 GlobalKey forsmallView = new GlobalKey();
 bool enableCamera = true;
+var snackBar;
 
 class Home extends StatefulWidget {
   @override
@@ -65,7 +67,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   GlobalKey forDialView = new GlobalKey();
   bool noInternetCallHungUp = false;
   bool isRinging = false;
-  var snackBar;
+
   bool switchMute = true;
   bool switchSpeaker = true;
   bool _isPressed = false;
@@ -158,7 +160,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     else {
       return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
     }
-    
   }
 
   @override
@@ -182,21 +183,22 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
     print("this is user data auth ${_auth.getUser}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
-    // project_id = _auth.projectId;
-    // tenant_api_url = _auth.tenantUrl;
+    
     _contactProvider!.getContacts(_auth.getUser.auth_token);
-
+print("auth project id ${_auth.projectId}");
     signalingClient.connect(
-        _auth.deviceId,
-         projectid,
-        _auth.completeAddress,
-        _auth.getUser.authorization_token.toString(),
-        _auth.getUser.ref_id.toString(),
-        
-        );
+      _auth.deviceId,
+      _auth.projectId,
+      _auth.completeAddress,
+      _auth.getUser.authorization_token.toString(),
+      _auth.getUser.ref_id.toString(),
+    );
 
     signalingClient.onConnect = (res) {
       print("onConnect $res");
+      if (!mounted) {
+        return;
+      }
       setState(() {
         sockett = true;
       });
@@ -209,8 +211,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     signalingClient.unRegisterSuccessfullyCallBack = () {
       _auth.logout();
-      // project_id = null;
-      // tenant_api_url = null;
+      project = "";
+      url = "";
     };
 
     signalingClient.onError = (code, reason) async {
@@ -277,6 +279,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     signalingClient.onRegister = (res) {
       print("onregister  $res");
+      if (!mounted) {
+        return;
+      }
       setState(() {
         registerRes = res;
         print("this is mc token in register ${registerRes["mcToken"]}");
@@ -491,8 +496,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (_auth.loggedInStatus == Status.LoggedOut) {
         } else {
           print("this is variable for resume $sockett $isConnected $isResumed");
-         
-        
         }
 
         break;
@@ -626,9 +629,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider!.getContacts(_auth.getUser.auth_token);
     bool connectionFlag = await signalingClient.getInternetStatus();
     if (connectionFlag && sockett == false) {
-     
       signalingClient.connect(
-        _auth.deviceId,
+          _auth.deviceId,
           _auth.projectId,
           _auth.completeAddress,
           _auth.getUser.authorization_token.toString(),
@@ -681,8 +683,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           });
         });
   }
-
-  
 
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -1034,7 +1034,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   Scaffold callStart() {
-    
     return Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Container(
@@ -1362,10 +1361,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         }
       });
     }
-      var userIndex = _contactProvider!.contactList.users!.indexWhere((element) => element!.ref_id == _auth.getUser.ref_id);
+
+    var userIndex = _contactProvider!.contactList.users!
+        .indexWhere((element) => element!.ref_id == _auth.getUser.ref_id);
     print("This is the userindex $userIndex");
     if (userIndex != -1) {
-   _contactProvider!.contactList.users!.removeAt(userIndex);
+      _contactProvider!.contactList.users!.removeAt(userIndex);
     }
 
     return Scaffold(
@@ -1469,24 +1470,27 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                             SvgPicture.asset('assets/call.svg'),
                                         onPressed: !isConnected
                                             ? () {}
-                                            : 
-                                             _isPressed?(){}:
-                                            () {
-                                                print(
-                                                    "here in connected start call $isConnected");
-                                                _startCall(
-                                                    [element.ref_id],
-                                                    MediaType.audio,
-                                                    CAllType.one2one,
-                                                    SessionType.call);
-                                                setState(() {
-                                                  callTo = element.full_name;
-                                                  meidaType = MediaType.audio;
-                                                  print(
-                                                      "this is callTo $callTo");
-                                                });
-                                                print("three dot icon pressed");
-                                              }),
+                                            : _isPressed
+                                                ? () {}
+                                                : () {
+                                                    print(
+                                                        "here in connected start call $isConnected");
+                                                    _startCall(
+                                                        [element.ref_id],
+                                                        MediaType.audio,
+                                                        CAllType.one2one,
+                                                        SessionType.call);
+                                                    setState(() {
+                                                      callTo =
+                                                          element.full_name;
+                                                      meidaType =
+                                                          MediaType.audio;
+                                                      print(
+                                                          "this is callTo $callTo");
+                                                    });
+                                                    print(
+                                                        "three dot icon pressed");
+                                                  }),
                                   ),
                                   Container(
                                     padding: EdgeInsets.only(right: 5.9),
@@ -1497,23 +1501,26 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                             'assets/videocallicon.svg'),
                                         onPressed: !isConnected
                                             ? () {}
-                                            :
-                                            _isPressed?(){}:
-                                             () {
-                                                _startCall(
-                                                    [element.ref_id],
-                                                    MediaType.video,
-                                                    CAllType.one2one,
-                                                    SessionType.call);
-                                                setState(() {
-                                                  callTo = element.full_name;
-                                                  meidaType = MediaType.video;
-                                                  print(
-                                                      "this is callTo $callTo");
+                                            : _isPressed
+                                                ? () {}
+                                                : () {
+                                                    _startCall(
+                                                        [element.ref_id],
+                                                        MediaType.video,
+                                                        CAllType.one2one,
+                                                        SessionType.call);
+                                                    setState(() {
+                                                      callTo =
+                                                          element.full_name;
+                                                      meidaType =
+                                                          MediaType.video;
+                                                      print(
+                                                          "this is callTo $callTo");
                                                       _isPressed = true;
-                                                });
-                                                print("three dot icon pressed");
-                                              }),
+                                                    });
+                                                    print(
+                                                        "three dot icon pressed");
+                                                  }),
                                   ),
                                 ],
                               ),

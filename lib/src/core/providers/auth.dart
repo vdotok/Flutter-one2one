@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
+import 'package:vdotok_stream_example/src/core/qrocde/qrcode.dart';
 import '../../../src/core/services/server.dart';
 import '../models/user.dart';
 import '../../shared_preference/shared_preference.dart';
@@ -32,10 +33,10 @@ class AuthProvider with ChangeNotifier {
   late String _completeAddress;
   String get completeAddress => _completeAddress;
 
-  String? _projectId;
-  String? get projectId => _projectId;
-  String? _tenantUrl;
-  String? get tenantUrl => _tenantUrl;
+  String _projectId="";
+  String get projectId => _projectId;
+  String _tenantUrl = "";
+  String get tenantUrl => _tenantUrl;
   String? _deviceId;
   String? get deviceId => _deviceId;
   SharedPref _sharedPref = SharedPref();
@@ -82,7 +83,7 @@ class AuthProvider with ChangeNotifier {
       "device_model": model,
       "device_os_ver": version,
       "app_version": "1.1.5",
-      "project_id": projectid
+      "project_id": project == ""? project_id:project
     };
     print("json data of signup  $jsonData");
     final response = await callAPI(jsonData, "SignUp", null);
@@ -96,15 +97,13 @@ class AuthProvider with ChangeNotifier {
         final now = DateTime.now();
       _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
-      _projectId = projectid;
-      //project_id;
-      _tenantUrl = URL;
-      //tenant_api_url;
+      _projectId = project == ""? project_id:project;
+      _tenantUrl = url == ""?tenant_url:url;
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
        sharedPref.save("deviceId", deviceId);
-      // sharedPref.save("project_id", project_id);
-      // sharedPref.save("tenant_url", tenant_api_url);
+      sharedPref.save("project_id", projectId);
+      sharedPref.save("tenant_url", tenantUrl);
       _registeredInStatus = Status.Registered;
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(response);
@@ -120,7 +119,7 @@ class AuthProvider with ChangeNotifier {
     Map<String, dynamic> jsonData = {
       "email": username,
       "password": password,
-      "project_id": projectid
+      "project_id": project == ""? project_id:project
     };
     final response = await callAPI(jsonData, "Login", null);
     print("this is response $response");
@@ -132,17 +131,15 @@ class AuthProvider with ChangeNotifier {
        final now = DateTime.now();
       _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
-       _projectId = projectid;
-      //project_id;
-      _tenantUrl = URL;
-      //tenant_api_url;
-
+       _projectId = project == ""? project_id:project;
+      _tenantUrl =url == ""?tenant_url:url;
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
-       sharedPref.save("deviceId", deviceId);
-      // sharedPref.save("project_id", project_id);
-      // sharedPref.save("tenant_url", tenant_api_url);
+      sharedPref.save("deviceId", deviceId);
+      sharedPref.save("project_id", projectId);
+      sharedPref.save("tenant_url", tenantUrl);
+
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(response);
       notifyListeners();
