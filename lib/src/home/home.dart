@@ -183,8 +183,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
     print("this is user data auth ${_auth.getUser}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
-    
-    _contactProvider!.getContacts(_auth.getUser.auth_token);
+   
+    _contactProvider!.getContacts(_auth.getUser.auth_token, _auth.tenantUrl);
 print("auth project id ${_auth.projectId}");
     signalingClient.connect(
       _auth.deviceId,
@@ -626,7 +626,7 @@ print("auth project id ${_auth.projectId}");
   }
 
   renderList() async {
-    _contactProvider!.getContacts(_auth.getUser.auth_token);
+    _contactProvider!.getContacts(_auth.getUser.auth_token, _auth.tenantUrl);
     bool connectionFlag = await signalingClient.getInternetStatus();
     if (connectionFlag && sockett == false) {
       signalingClient.connect(

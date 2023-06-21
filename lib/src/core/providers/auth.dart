@@ -34,9 +34,9 @@ class AuthProvider with ChangeNotifier {
   String get completeAddress => _completeAddress;
 
   String _projectId="";
-  String get projectId => _projectId;
-  String _tenantUrl = "";
-  String get tenantUrl => _tenantUrl;
+   String get projectId => _projectId;
+   String _tenantUrl = "";
+   String get tenantUrl => _tenantUrl;
   String? _deviceId;
   String? get deviceId => _deviceId;
   SharedPref _sharedPref = SharedPref();
@@ -46,7 +46,7 @@ class AuthProvider with ChangeNotifier {
   late String _registerErrorMsg;
   String get registerErrorMsg => _registerErrorMsg;
 
-  Future<bool> register(String email, username, password) async {
+  Future<bool> register(String email, username, password,String url) async {
     _registeredInStatus = Status.Loading;
     notifyListeners();
 
@@ -86,7 +86,7 @@ class AuthProvider with ChangeNotifier {
       "project_id": project == ""? project_id:project
     };
     print("json data of signup  $jsonData");
-    final response = await callAPI(jsonData, "SignUp", null);
+    final response = await callAPI(jsonData, "SignUp", null,url);
     print("this is response of sign up $response");
     if (response['status'] != 200) {
       _registeredInStatus = Status.Failure;
@@ -112,7 +112,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  login(String username, password) async {
+  login(String username, password,String url) async {
     _loggedInStatus = Status.Loading;
     notifyListeners();
 
@@ -121,7 +121,7 @@ class AuthProvider with ChangeNotifier {
       "password": password,
       "project_id": project == ""? project_id:project
     };
-    final response = await callAPI(jsonData, "Login", null);
+    final response = await callAPI(jsonData, "Login", null,url);
     print("this is response $response");
     if (response['status'] != 200) {
       _loggedInStatus = Status.Failure;
@@ -131,8 +131,9 @@ class AuthProvider with ChangeNotifier {
        final now = DateTime.now();
       _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
+      print("this issss $project  $url");
        _projectId = project == ""? project_id:project;
-      _tenantUrl =url == ""?tenant_url:url;
+      _tenantUrl = url == ""? tenant_url:url;
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
@@ -159,89 +160,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<Map<String, dynamic>> login(String email, String password) async {
-  //   var result;
-  //
-  //   final Map<String, dynamic> loginData = {
-  //     'user': {'email': email, 'password': password}
-  //   };
-  //
-  //   _loggedInStatus = Status.Authenticating;
-  //   notifyListeners();
-  //
-  //   Response response = await post(
-  //     AppUrl.login,
-  //     body: json.encode(loginData),
-  //     headers: {'Content-Type': 'application/json'},
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> responseData = json.decode(response.body);
-  //
-  //     var userData = responseData['data'];
-  //
-  //     User authUser = User.fromJson(userData);
-  //
-  //     UserPreferences().saveUser(authUser);
-  //
-  //     _loggedInStatus = Status.LoggedIn;
-  //     notifyListeners();
-  //
-  //     result = {'status': true, 'message': 'Successful', 'user': authUser};
-  //   } else {
-  //     _loggedInStatus = Status.NotLoggedIn;
-  //     notifyListeners();
-  //     result = {
-  //       'status': false,
-  //       'message': json.decode(response.body)['error']
-  //     };
-  //   }
-  //   return result;
-  // }
 
-  // Future<Map<String, dynamic>> register(
-  //     String email, String password, String passwordConfirmation) async {
-  //   final Map<String, dynamic> registrationData = {
-  //     'user': {
-  //       'email': email,
-  //       'password': password,
-  //       'password_confirmation': passwordConfirmation
-  //     }
-  //   };
-  //   return await post(AppUrl.register,
-  //           body: json.encode(registrationData),
-  //           headers: {'Content-Type': 'application/json'})
-  //       .then(onValue)
-  //       .catchError(onError);
-  // }
 
-//   static Future<FutureOr> onValue(Response response) async {
-//     var result;
-//     final Map<String, dynamic> responseData = json.decode(response.body);
-//
-//     print(response.statusCode);
-//     if (response.statusCode == 200) {
-//       var userData = responseData['data'];
-//
-//       User authUser = User.fromJson(userData);
-//
-//       UserPreferences().saveUser(authUser);
-//       result = {
-//         'status': true,
-//         'message': 'Successfully registered',
-//         'data': authUser
-//       };
-//     } else {
-// //      if (response.statusCode == 401) Get.toNamed("/login");
-//       result = {
-//         'status': false,
-//         'message': 'Registration failed',
-//         'data': responseData
-//       };
-//     }
-//
-//     return result;
-//   }
 
   isUserLogedIn() async {
     final authUser = await _sharedPref.read("authUser");

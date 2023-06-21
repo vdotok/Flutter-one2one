@@ -50,7 +50,7 @@ class _SignInScreenState extends State<SignInScreen> {
           if (_loginformkey.currentState!.validate()) {
           print("this isssssss");
           AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
-          await auth.login(_emailController.text, _passwordController.text);
+          await auth.login(_emailController.text, _passwordController.text,auth.tenantUrl);
 
           if (auth.getUser.auth_token == null) {
             setState(() {
@@ -71,7 +71,7 @@ class _SignInScreenState extends State<SignInScreen> {
         if (_loginformkey.currentState!.validate()) {
           print("this isssssss");
           AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
-          await auth.login(_emailController.text, _passwordController.text);
+          await auth.login(_emailController.text, _passwordController.text,auth.tenantUrl);
 
           if (auth.getUser.auth_token == null) {
             setState(() {
@@ -91,7 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (_loginformkey.currentState!.validate()) {
         print("this isssssss");
         AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
-        await auth.login(_emailController.text, _passwordController.text);
+        await auth.login(_emailController.text, _passwordController.text,auth.tenantUrl);
 
         if (auth.getUser.auth_token == null) {
           setState(() {

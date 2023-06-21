@@ -43,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (_registerformkey.currentState!.validate()) {
           AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
           bool res = await auth.register(_emailController.text,
-              _nameController.text, _passwordController.text);
+              _nameController.text, _passwordController.text,auth.tenantUrl);
           if (auth.getUser.auth_token == null) {
             setState(() {
               _autoValidate = true;
@@ -65,7 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     else{if (_registerformkey.currentState!.validate()) {
       AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
       bool res = await auth.register(_emailController.text,
-          _nameController.text, _passwordController.text);
+          _nameController.text, _passwordController.text,auth.tenantUrl);
       if (auth.getUser.auth_token == null) {
         setState(() {
           _autoValidate = true;

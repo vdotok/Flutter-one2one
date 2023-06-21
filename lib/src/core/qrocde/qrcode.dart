@@ -10,8 +10,8 @@ import 'package:vdotok_stream_example/src/core/config/config.dart';
 
 import '../../home/home.dart';
  
- String project = "";
- String url = "";
+String project = "";
+String url = "";
 Barcode? result;
 bool snackBarShowed = false;
 

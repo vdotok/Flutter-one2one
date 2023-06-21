@@ -4,15 +4,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../config/config.dart';
+import '../providers/auth.dart';
 import '../qrocde/qrcode.dart';
 
 // The function take will take the user request and verfies it with the api. in this case it will authenticate the user
-Future<dynamic> callAPI(datarequest, myurl, authToken) async {
+Future<dynamic> callAPI(datarequest, myurl, authToken,url) async {
 
-  final urlLink = Uri.parse("${
-    url == "" ? tenant_url + myurl :url + myurl}");
+  final urlLink = Uri.parse("${url + myurl
+    }");
 
-  print("this is api call $datarequest $urlLink  $authToken");
+  print("this is api call $datarequest $urlLink $tenant_url $url $project $project_id");
   final response = await http.post(urlLink,
       headers: authToken != null
           ? {
@@ -30,10 +31,9 @@ Future<dynamic> callAPI(datarequest, myurl, authToken) async {
   }
 }
 
-Future<dynamic> getAPI(myurl, authToken) async {
+Future<dynamic> getAPI(myurl, authToken, url) async {
  final urlLink = Uri.parse("${
-    url == "" ? tenant_url + myurl :url 
-    + myurl}");
+   url + myurl }");
   print('this is url $url');
   final response = await http.get(
     urlLink,
