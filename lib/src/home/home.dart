@@ -228,6 +228,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _auth.logout();
       project = "";
       url = "";
+      tenant_url="";
+      project_id="";
     };
 
     signalingClient.onError = (code, reason) async {
