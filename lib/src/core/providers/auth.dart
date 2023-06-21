@@ -33,10 +33,10 @@ class AuthProvider with ChangeNotifier {
   late String _completeAddress;
   String get completeAddress => _completeAddress;
 
-  String _projectId="";
-   String get projectId => _projectId;
-   String _tenantUrl = "";
-   String get tenantUrl => _tenantUrl;
+  static String _projectId = "";
+  static String get projectId => _projectId;
+  static String _tenantUrl = "";
+  static String get tenantUrl => _tenantUrl;
   String? _deviceId;
   String? get deviceId => _deviceId;
   SharedPref _sharedPref = SharedPref();
@@ -46,7 +46,11 @@ class AuthProvider with ChangeNotifier {
   late String _registerErrorMsg;
   String get registerErrorMsg => _registerErrorMsg;
 
-  Future<bool> register(String email, username, password,String url) async {
+  Future<bool> register(
+    String email,
+    username,
+    password,
+  ) async {
     _registeredInStatus = Status.Loading;
     notifyListeners();
 
@@ -71,6 +75,8 @@ class AuthProvider with ChangeNotifier {
         // iOS 13.1, iPhone 11 Pro Max iPhone
       }
     }
+    _projectId = project == "" ? project_id : project;
+    _tenantUrl = url == "" ? tenant_url : url;
     Map<String, dynamic> jsonData = {
       "email": email,
       "full_name": username,
@@ -83,10 +89,10 @@ class AuthProvider with ChangeNotifier {
       "device_model": model,
       "device_os_ver": version,
       "app_version": "1.1.5",
-      "project_id": project == ""? project_id:project
+      "project_id": project == "" ? project_id : project
     };
     print("json data of signup  $jsonData");
-    final response = await callAPI(jsonData, "SignUp", null,url);
+    final response = await callAPI(jsonData, "SignUp", null);
     print("this is response of sign up $response");
     if (response['status'] != 200) {
       _registeredInStatus = Status.Failure;
@@ -94,14 +100,12 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return false;
     } else {
-        final now = DateTime.now();
+      final now = DateTime.now();
       _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
-      _projectId = project == ""? project_id:project;
-      _tenantUrl = url == ""?tenant_url:url;
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
-       sharedPref.save("deviceId", deviceId);
+      sharedPref.save("deviceId", deviceId);
       sharedPref.save("project_id", projectId);
       sharedPref.save("tenant_url", tenantUrl);
       _registeredInStatus = Status.Registered;
@@ -112,28 +116,36 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  login(String username, password,String url) async {
+  login(
+    String username,
+    password,
+  ) async {
     _loggedInStatus = Status.Loading;
     notifyListeners();
 
     Map<String, dynamic> jsonData = {
       "email": username,
       "password": password,
-      "project_id": project == ""? project_id:project
+      "project_id": project == "" ? project_id : project
     };
-    final response = await callAPI(jsonData, "Login", null,url);
+    _projectId = project == "" ? project_id : project;
+    _tenantUrl = url == "" ? tenant_url : url;
+    final response = await callAPI(
+      jsonData,
+      "Login",
+      null,
+    );
     print("this is response $response");
     if (response['status'] != 200) {
       _loggedInStatus = Status.Failure;
       _loginErrorMsg = response['message'];
       notifyListeners();
     } else {
-       final now = DateTime.now();
+      final now = DateTime.now();
       _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
       print("this issss $project  $url");
-       _projectId = project == ""? project_id:project;
-      _tenantUrl = url == ""? tenant_url:url;
+
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
@@ -160,9 +172,6 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
-
-
   isUserLogedIn() async {
     final authUser = await _sharedPref.read("authUser");
     final projId = await _sharedPref.read("project_id");
@@ -177,7 +186,7 @@ class AuthProvider with ChangeNotifier {
           jsonDecode(authUser)['media_server_map']['complete_address'];
       _projectId = jsonDecode(projId.toString());
       _tenantUrl = jsonDecode(tenantURL.toString());
-       _deviceId = deviceId;
+      _deviceId = deviceId;
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(jsonDecode(authUser));
       notifyListeners();

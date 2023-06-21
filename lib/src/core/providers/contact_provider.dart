@@ -10,7 +10,9 @@ class ContactProvider with ChangeNotifier {
   ContactStates _contactStates = ContactStates.Loading;
   ContactStates get contactState => _contactStates;
 
-  getContacts(String authToken,String url) async {
+  getContacts(
+    String authToken,
+  ) async {
     if (_contactStates != ContactStates.Loading) {
       _contactStates = ContactStates.Loading;
       notifyListeners();
@@ -22,14 +24,18 @@ class ContactProvider with ChangeNotifier {
       "sorting": "ORDER BY username ASC",
       "start_row": 0
     };
-    final response = await callAPI(jsonData, "AllUsers", authToken, url);
+    final response = await callAPI(
+      jsonData,
+      "AllUsers",
+      authToken,
+    );
     if (response["status"] == 200) {
       final json = {"users": response["users"]};
       _contactList = ContactList.fromJson(json);
       print("this is list $_contactList");
       _contactStates = ContactStates.Success;
       notifyListeners();
-    } else if(response["status"]==400){
+    } else if (response["status"] == 400) {
       _contactStates = ContactStates.NoUser;
       notifyListeners();
     }

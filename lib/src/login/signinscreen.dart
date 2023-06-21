@@ -36,42 +36,43 @@ class _SignInScreenState extends State<SignInScreen> {
         _passwordController.text.isNotEmpty) {
       print("ydghds ${tenant_url} ${project_id}");
 
-      
-        if (tenant_url == "" || project_id == "") {
-          if (url == "" || project == "") {
+      if (tenant_url == "" || project_id == "") {
+        if (url == "" || project == "") {
           snackBar = SnackBar(
             content:
                 Text("Please scan/manually add configurations in config file."),
             duration: Duration(seconds: 2),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        }
-        else{
+        } else {
           if (_loginformkey.currentState!.validate()) {
-          print("this isssssss");
-          AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
-          await auth.login(_emailController.text, _passwordController.text,auth.tenantUrl);
+            print("this isssssss");
+            AuthProvider auth =
+                Provider.of<AuthProvider>(context, listen: false);
+            await auth.login(
+              _emailController.text,
+              _passwordController.text,
+            );
 
-          if (auth.getUser.auth_token == null) {
+            if (auth.getUser.auth_token == null) {
+              setState(() {
+                _autoValidate = true;
+              });
+            }
+
+            // _loginBloc
+            //     .add(LoginEvent(_emailController.text, _passwordController.text));
+          } else {
             setState(() {
               _autoValidate = true;
             });
           }
-
-          // _loginBloc
-          //     .add(LoginEvent(_emailController.text, _passwordController.text));
-        } else {
-          setState(() {
-            _autoValidate = true;
-          });
         }
-        }
-
       } else {
         if (_loginformkey.currentState!.validate()) {
           print("this isssssss");
           AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
-          await auth.login(_emailController.text, _passwordController.text,auth.tenantUrl);
+          await auth.login(_emailController.text, _passwordController.text);
 
           if (auth.getUser.auth_token == null) {
             setState(() {
@@ -91,7 +92,10 @@ class _SignInScreenState extends State<SignInScreen> {
       if (_loginformkey.currentState!.validate()) {
         print("this isssssss");
         AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
-        await auth.login(_emailController.text, _passwordController.text,auth.tenantUrl);
+        await auth.login(
+          _emailController.text,
+          _passwordController.text,
+        );
 
         if (auth.getUser.auth_token == null) {
           setState(() {

@@ -22,6 +22,7 @@ import '../core/providers/auth.dart';
 import '../core/providers/call_provider.dart';
 import '../core/providers/contact_provider.dart';
 import '../core/qrocde/qrcode.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 SignalingClient signalingClient = SignalingClient.instance;
 Map<String, RTCVideoRenderer> renderObj = {};
@@ -137,6 +138,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     500,
     1000
   ];
+  void playRingingbyD() async {
+    FlutterRingtonePlayer.play(
+      android: AndroidSounds.ringtone,
+      ios: IosSounds.electronic,
+      looping: true,
+      volume: 1.0,
+    );
+  }
+
+  void stopRingingbyD() {
+    FlutterRingtonePlayer.stop();
+    print('Stopping ringing android');
+  }
 
   void _updateTimer() {
     final duration = DateTime.now().difference(_time);
@@ -183,12 +197,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
     print("this is user data auth ${_auth.getUser}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
-   
-    _contactProvider!.getContacts(_auth.getUser.auth_token, _auth.tenantUrl);
-print("auth project id ${_auth.projectId}");
+
+    _contactProvider!.getContacts(_auth.getUser.auth_token);
+    print(
+        "auth project id ${AuthProvider.tenantUrl}---${AuthProvider.projectId} ");
     signalingClient.connect(
       _auth.deviceId,
-      _auth.projectId,
+      AuthProvider.projectId,
       _auth.completeAddress,
       _auth.getUser.authorization_token.toString(),
       _auth.getUser.ref_id.toString(),
@@ -296,6 +311,7 @@ print("auth project id ${_auth.projectId}");
       });
     };
     signalingClient.onRemoteStream = (stream, String refid) async {
+      stopRingingbyD();
       print(
           "this is home page on remote stream ${stream.id} $refid $inCall $isTimer");
 
@@ -353,7 +369,7 @@ print("auth project id ${_auth.projectId}");
     signalingClient.onReceiveCallFromUser = (res, ismultisession) async {
       print("incomming call from user");
       // startRinging();
-
+      playRingingbyD();
       setState(() {
         inCall = true;
         pressDuration = "";
@@ -379,6 +395,7 @@ print("auth project id ${_auth.projectId}");
       }
     };
     signalingClient.onCallAcceptedByUser = () async {
+      stopRingingbyD();
       print("this is call accepted");
       inCall = true;
       pressDuration = "";
@@ -391,7 +408,7 @@ print("auth project id ${_auth.projectId}");
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
       print("call decliend by other user $inPaused $inCall");
-
+      stopRingingbyD();
       if (inPaused) {
         print("here in paused");
       }
@@ -443,7 +460,7 @@ print("auth project id ${_auth.projectId}");
 
     signalingClient.onCallBusyCallback = () {
       print("hey i am here");
-
+      stopRingingbyD();
       Fluttertoast.showToast(
           msg: "User is busy.",
           toastLength: Toast.LENGTH_SHORT,
@@ -626,12 +643,12 @@ print("auth project id ${_auth.projectId}");
   }
 
   renderList() async {
-    _contactProvider!.getContacts(_auth.getUser.auth_token, _auth.tenantUrl);
+    _contactProvider!.getContacts(_auth.getUser.auth_token);
     bool connectionFlag = await signalingClient.getInternetStatus();
     if (connectionFlag && sockett == false) {
       signalingClient.connect(
           _auth.deviceId,
-          _auth.projectId,
+          AuthProvider.projectId,
           _auth.completeAddress,
           _auth.getUser.authorization_token.toString(),
           _auth.getUser.ref_id.toString());
