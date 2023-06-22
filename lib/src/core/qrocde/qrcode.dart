@@ -112,7 +112,7 @@ class _QRViewExampleState extends State<QRViewExample> {
 
           snackBar = SnackBar(
             content: Text(
-              "آپ کے پاس پروجیکٹ آئی ڈی آ گئی ہے۔",
+            "Url and Project Id copied",
               textAlign: TextAlign.center,
             ),
             duration: Duration(seconds: 4),
