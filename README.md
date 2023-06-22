@@ -89,13 +89,13 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 
 ## iOS Setup: 
 
-* Make sure that you have the latest <b>Xcode</b> installed in your MacBook 
+* Make sure that you have <b>Xcode</b> version (14.3.1) installed in your MacBook 
 * For pod installation: 
 
 1. Open <b>Terminal</b>
 2. Go to <b>Project Directory</b>
 3. Run <b>cd ios</b>
-4. Run <b>Pod Install</b>
+4. Run <b>pod install / pod update </b>
 
 ![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/86484384/139202518-daeb9b97-fa18-476b-bc5f-d48020131d92.jpg)
 
