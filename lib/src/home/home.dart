@@ -91,6 +91,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   SignalingClient signalingClient = SignalingClient.instance;
 
   bool isInternetConnected = false;
+
   void _getTimer() {
     final duration = DateTime.now().difference(_time);
     final newDuration = _formatDuration(duration);
@@ -122,8 +123,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   MediaStream? _localStream;
   bool isConnected = true;
   var registerRes;
+
   // bool isdev = true;
   Map<String, dynamic>? customData;
+
   // late String incomingfrom;
   // ContactBloc _contactBloc;
   // CallBloc _callBloc;
@@ -349,7 +352,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       }
     };
 
-    signalingClient.onLocalStream = (stream) async {
+    signalingClient.onLocalStream = (RTCVideoRenderer localRenderer) async {
       // if (renderObj["local"] != null) {
       //   renderObj["local"]!.dispose();
       //   renderObj["local"] = await initRenderers(new RTCVideoRenderer());
@@ -359,11 +362,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //     renderObj["local"]!.srcObject = stream;
       //   });
       // } else {
-      renderObj["local"] = await initRenderers(new RTCVideoRenderer());
 
-      print("this is local stream id ${stream.id}");
+      // print("this is local stream id ${stream.id}");
       setState(() {
-        renderObj["local"]!.srcObject = stream;
+        // renderObj["local"]!.srcObject = stream;
+        renderObj["local"] = localRenderer;
       });
       // }
     };
@@ -412,8 +415,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           {
             _callProvider!.initial();
             setState(() {
-              renderObj["local"]?.dispose();
-              renderObj["remote"]?.dispose();
+              // renderObj["local"]?.dispose();
+              // renderObj["remote"]?.dispose();
               renderObj.clear();
               _session = null;
               _ticker?.cancel();
@@ -548,12 +551,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       "groupAutoCreatedValue": ""
     };
     signalingClient.startCall(
-        customData: customData,
-        from: _auth.getUser.ref_id,
+        from: _auth.getUser.ref_id!,
         to: to,
         mediaType: mtype,
         callType: callType,
-        sessionType: sessionType);
+        sessionType: sessionType,
+        customData: customData);
     // if (_localStream != null) {
     //here
     // _callBloc.add(CallDialEvent());
@@ -579,8 +582,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     FlutterRingtonePlayer.play(
       android: AndroidSounds.ringtone,
       ios: IosSounds.glass,
-      looping: true, // Android only - API >= 28
-      volume: 1.0, // Android only - API >= 28
+      looping: true,
+      // Android only - API >= 28
+      volume: 1.0,
+      // Android only - API >= 28
       asAlarm: false, // Android only - all APIs
     );
   }
@@ -672,7 +677,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     //   _callticker?.cancel();
     // }
     if (_session != null) {
-      signalingClient.bye(_session!.sid);
+      signalingClient.bye(_session!);
     }
   }
 
@@ -745,6 +750,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   bool _isPressed = false;
+
   // bool isRadioButtonEnabble = false;
   void _myCallback() {
     setState(() {

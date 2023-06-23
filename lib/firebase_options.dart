@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -49,9 +46,18 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAS6qKkT5YAW8F00RkmGJoRAuSJ0CDruyw',
+    appId: '1:582576275879:web:b3a9708f2492eae608f682',
+    messagingSenderId: '582576275879',
+    projectId: 'flutterone2one',
+    authDomain: 'flutterone2one.firebaseapp.com',
+    storageBucket: 'flutterone2one.appspot.com',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBjSWxMVcOJxrB-arodRRb4ngb6JcJU-sI',
-    appId: '1:582576275879:android:7fec280ebe8dbc7708f682',
+    appId: '1:582576275879:android:ccc5d6dfbe28fc3908f682',
     messagingSenderId: '582576275879',
     projectId: 'flutterone2one',
     storageBucket: 'flutterone2one.appspot.com',
@@ -59,12 +65,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDP5T6pjFOYXksk98o0q80iOKgs1tuVkww',
-    appId: '1:582576275879:ios:91d5b0dd660e30df08f682',
+    appId: '1:582576275879:ios:100f078f28af06cd08f682',
     messagingSenderId: '582576275879',
     projectId: 'flutterone2one',
     storageBucket: 'flutterone2one.appspot.com',
-    iosClientId:
-        '582576275879-6vce30uc52hshmsbbf7s1kbnh7h1np2i.apps.googleusercontent.com',
+    iosClientId: '582576275879-6vce30uc52hshmsbbf7s1kbnh7h1np2i.apps.googleusercontent.com',
     iosBundleId: 'com.vdotok.flutterone2one',
   );
 }
