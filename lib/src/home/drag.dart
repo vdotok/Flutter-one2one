@@ -35,11 +35,11 @@ class DragBoxState extends State<DragBox> {
         height: 150,
         width: 100,
         child: widget.localAudioVideoStates["CameraState"]!
-            ? renderObj["local"] == null
+         ? localRenderer.srcObject == null
                 ? Container()
-                : RTCVideoView(renderObj["local"]!,
+                : RTCVideoView(localRenderer!,
                     key: forsmallView,
-                    mirror: false,
+                    mirror: true,
                     objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover)
             : Container(
                 decoration: BoxDecoration(
