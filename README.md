@@ -76,12 +76,12 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 
 ![8](https://user-images.githubusercontent.com/87179594/184071053-df6bd93e-ed00-46fe-9495-8d990a0ac5e9.jpg) 
 
-* Copy <b>Tenant Testing Server</b> and <b>Project ID</b>
+* Copy <b>Tenant Testing Server</b> and <b>Project ID</b> or you can scan <b>QR</b> below. <b>QR Scanner</b> will also give you <b>Tenant Testing Server</b> and <b>Project ID</b>
 
 ![9](https://user-images.githubusercontent.com/87179594/184071060-9909513b-f880-4de8-9481-6ab91ae2be95.jpg)
 
 2. Open Project in <b>VS Code</b>
-3. Go to <b>lib</b> folder > <b> src > core > config > </b> open <b>config.dart</b> file, add <b>API Service URL</b> in const URL as <b>http:// Paste Url Here Which You Copied/API/</b> and <b>Project ID</b> against project_id String in config.dart file
+3. Go to <b>lib</b> folder > <b> src > core > config > </b> open <b>config.dart</b> file, add <b>Tenant Testing Server</b> in const tenant_url and <b>Project ID</b> against project_id String
 
 ![6](https://user-images.githubusercontent.com/87179594/158434303-53a0a655-607d-402d-bc9b-7e8dd0242b5f.jpg)
 
@@ -132,7 +132,9 @@ Now run <b>"flutter doctor"</b> in <b>Terminal/Command Prompt</b>, and make sure
 6. Select <b>Continue</b> button
 <img width="442" alt="MicrosoftTeams-image (3)" src="https://user-images.githubusercontent.com/86484384/139232081-ba1d8eed-2075-4cac-84f0-b1c3083e3079.png">
 
-7. The end-product will look like below screenshot. Make sure it contains no error box 
+7. You have to change <b>Bundle Identifier</b> also which will be associated to your Apple Account as it is <b>Unique</b> for each account.
+
+8. The end-product will look like below screenshot. Make sure it contains no error box
 ![MicrosoftTeams-image (4)](https://user-images.githubusercontent.com/86484384/139232686-8c872744-db54-4785-bc1b-b22ae0691dd3.jpg)
 
 * <b>To Run Code on a Physical Device:</b>
