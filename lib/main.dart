@@ -483,7 +483,7 @@ class _TestState extends State<Test> {
             ),
             ElevatedButton(
               onPressed: () {
-                signalingClient!.createStream("video", false);
+                //signalingClient!.createStream("video", false);
               },
               child: Text("getUserMedia"),
             ),

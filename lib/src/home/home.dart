@@ -130,10 +130,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   // bool isdev = true;
   Map<String, dynamic>? customData;
 
-  // late String incomingfrom;
-  // ContactBloc _contactBloc;
-  // CallBloc _callBloc;
-  // LoginBloc _loginBloc;
+ 
   CallProvider? _callProvider;
   late AuthProvider _auth;
   bool isRegisteredAlready = false;
@@ -382,9 +379,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           textColor: Colors.white,
           fontSize: 14.0);
     };
-    signalingClient.onInComingCall = (refId) {
+    signalingClient.onInComingCall = (dynamic data) {
+      print("this is data from incoming $data");
       setState(() {
-        incomingFrom= refId;
+        //incomingFrom= refId;
       });
       _callProvider!.callReceive();
     };
@@ -1329,6 +1327,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             )
           ]),
         );
+    
+    
       }),
     );
   }
