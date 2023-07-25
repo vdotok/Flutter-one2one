@@ -500,7 +500,7 @@ class _TestState extends State<Test> {
                 // MediaStream screenStream =
                 //     await signalingClient!.createStream("video", true);
                 // if (screenStream != null)
-                signalingClient?.switchToScreenSharing();
+                // signalingClient?.switchToScreenSharing();
               },
               child: Text("getUserDisplayMedia"),
             ),
