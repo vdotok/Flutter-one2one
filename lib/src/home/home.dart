@@ -56,7 +56,7 @@ Map<String, RTCVideoRenderer> renderObj = {};
 bool isRinging = false;
 var snackBar;
 
-Map<String, Session>? _session;
+List<Map<String, Session>>? _session;
 
 class Home extends StatefulWidget {
   // User user;
@@ -424,6 +424,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateBye:
           {
+            print('this is call state byeee----');
             stopRingingbyD();
             _callProvider!.initial();
             setState(() {
@@ -1036,10 +1037,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             mediaType == MediaType.video
                 ? remoteVideoFlag
                     ? _session != null
-                        ? _session!.values.first.remoteRenderer.srcObject !=
+                        ? _session![0].values.first.remoteRenderer.srcObject !=
                                 null
                             ? RTCVideoView(
-                                _session!.values.first.remoteRenderer,
+                                _session![0].values.first.remoteRenderer,
                                 mirror: true,
                                 objectFit:
                                     // kIsWeb
