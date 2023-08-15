@@ -284,10 +284,8 @@
 
 import 'dart:io';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:vdotok_stream_example/PushNotificationService.dart';
 import 'package:vdotok_stream_example/src/home/home.dart';
 import 'src/core/providers/auth.dart';
 import 'src/home/homeIndex.dart';
@@ -300,9 +298,6 @@ import 'package:provider/provider.dart';
 import 'constant.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 // import 'package:flutter_webrtc/flutter_webrtc.dart';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 GlobalKey<ScaffoldMessengerState>? rootScaffoldMessengerKey;
 
@@ -346,12 +341,9 @@ void main() async {
   //     );
 
   HttpOverrides.global = new MyHttpOverrides();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
 
   // _notificationService.initialize();
-  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
@@ -362,12 +354,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final PushNotificationService _notificationService =
-      PushNotificationService();
+
   @override
   void initState() {
     super.initState();
-    _notificationService.initialize();
 
     rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
