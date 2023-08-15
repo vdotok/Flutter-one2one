@@ -50,7 +50,7 @@ GlobalKey forsmallView = new GlobalKey();
 GlobalKey forlargView = new GlobalKey();
 GlobalKey forDialView = new GlobalKey();
 bool noInternetCallHungUp = false;
-RTCVideoRenderer localRenderer = new RTCVideoRenderer();
+RTCVideoRenderer? localRenderer;
 Map<String, RTCVideoRenderer> renderObj = {};
 // AudioPlayer _audioPlayer = AudioPlayer();
 bool isRinging = false;
@@ -77,7 +77,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Timer? _callticker;
   int count = 0;
   bool iscallAcceptedbyuser = false;
-
 
   var number;
   var nummm;
@@ -125,12 +124,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   MediaStream? _localStream;
   bool isConnected = true;
   var registerRes;
-  String incomingFrom="";
+  String incomingFrom = "";
 
   // bool isdev = true;
   Map<String, dynamic>? customData;
 
- 
   CallProvider? _callProvider;
   late AuthProvider _auth;
   bool isRegisteredAlready = false;
@@ -207,6 +205,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     500,
     1000
   ];
+  void playRingingbyD() async {
+    FlutterRingtonePlayer.play(
+      android: AndroidSounds.ringtone,
+      ios: IosSounds.electronic,
+      looping: true,
+      volume: 1.0,
+    );
+  }
+
+  void stopRingingbyD() {
+    FlutterRingtonePlayer.stop();
+    print('Stopping ringing android');
+  }
+
   String mediaType = MediaType.video;
 
   bool remoteAudioFlag = true;
@@ -260,7 +272,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onLocalAudioVideoStates =
         (Map<String, bool> localAudioVideoStates) {
-          print("this is localvideostates $localAudioVideoStates");
+      print("this is localvideostates $localAudioVideoStates");
       setState(() {
         _localAudioVideoStates = localAudioVideoStates;
       });
@@ -357,8 +369,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       print("this is local stream $local");
       setState(() {
         localRenderer = local;
-        print("this is local renderer srcobject ${localRenderer.srcObject}");
-
+        // print("this is local renderer srcobject ${localRenderer.srcObject}");
       });
       // }
     };
@@ -369,6 +380,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       });
     };
     signalingClient.onCallBusy = () {
+      stopRingingbyD();
       print("user is busy");
       Fluttertoast.showToast(
           msg: "User is busy.",
@@ -380,6 +392,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           fontSize: 14.0);
     };
     signalingClient.onInComingCall = (dynamic data) {
+      playRingingbyD();
       print("this is data from incoming $data");
       setState(() {
         //incomingFrom= refId;
@@ -411,8 +424,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateBye:
           {
+            stopRingingbyD();
             _callProvider!.initial();
             setState(() {
+              localRenderer = null;
               // renderObj["local"]?.dispose();
               // renderObj["remote"]?.dispose();
               renderObj.clear();
@@ -428,6 +443,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateConnected:
           {
+            stopRingingbyD();
             // _callticker?.cancel();
             _time = DateTime.now();
             print(
@@ -571,37 +587,37 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     return renderer;
   }
 
-  startRinging() async {
-    if (Platform.isAndroid) {
-      // if (await Vibration.hasVibrator()) {
-      //   Vibration.vibrate(pattern: vibrationList);
-      // }
-    }
-    FlutterRingtonePlayer.play(
-      android: AndroidSounds.ringtone,
-      ios: IosSounds.glass,
-      looping: true,
-      // Android only - API >= 28
-      volume: 1.0,
-      // Android only - API >= 28
-      asAlarm: false, // Android only - all APIs
-    );
-  }
+  // startRinging() async {
+  //   if (Platform.isAndroid) {
+  //     // if (await Vibration.hasVibrator()) {
+  //     //   Vibration.vibrate(pattern: vibrationList);
+  //     // }
+  //   }
+  //   FlutterRingtonePlayer.play(
+  //     android: AndroidSounds.ringtone,
+  //     ios: IosSounds.glass,
+  //     looping: true,
+  //     // Android only - API >= 28
+  //     volume: 1.0,
+  //     // Android only - API >= 28
+  //     asAlarm: false, // Android only - all APIs
+  //   );
+  // }
 
-  stopRinging() {
-    print("this is on rejected ");
-    if (kIsWeb) {
-    }
-    // startRinging();
-    else {
-      vibrationList.clear();
-      // });
-      Vibration.cancel();
-      FlutterRingtonePlayer.stop();
-    }
+  // stopRinging() {
+  //   print("this is on rejected ");
+  //   if (kIsWeb) {
+  //   }
+  //   // startRinging();
+  //   else {
+  //     vibrationList.clear();
+  //     // });
+  //     Vibration.cancel();
+  //     FlutterRingtonePlayer.stop();
+  //   }
 
-    // setState(() {
-  }
+  //   // setState(() {
+  // }
 
   showSnackbar(text, Color color, Color backgroundColor, bool check) {
     if (check == false) {
@@ -659,24 +675,24 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   _accept() {
     // if (_session != null) {
-      signalingClient.accept();
-    
+    signalingClient.accept();
+
     _callProvider!.callStart();
   }
 
   _reject() {
-  //  if (_session != null) {
-      signalingClient.reject();
-  //  }
+    //  if (_session != null) {
+    signalingClient.reject();
+    //  }
   }
 
   _hangUp() {
     // if (_callticker?.isActive == true) {
     //   _callticker?.cancel();
     // }
-  //  if (_session != null) {
-      signalingClient.bye();
-  //  }
+    //  if (_session != null) {
+    signalingClient.bye();
+    //  }
   }
 
   _muteMic() {
@@ -770,15 +786,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         builder: (context, callProvider, authProvider, contactProvider, child) {
           if (callProvider.callStatus == CallStatus.CallReceive)
             return callReceive();
-         
+
           if (callProvider.callStatus == CallStatus.CallStart) {
             print("here in call provider status");
-       
+
             return callStart();
           }
           if (callProvider.callStatus == CallStatus.CallDial)
             return callDial();
-         
           else if (callProvider.callStatus == CallStatus.Initial)
             return SafeArea(
               child: GestureDetector(
@@ -829,7 +844,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Scaffold callReceive() {
     return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
       return Stack(children: <Widget>[
-      
         Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -870,10 +884,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 builder: (context, contact, child) {
                   if (contact.contactState == ContactStates.Success) {
                     int index = contact.contactList.users!.indexWhere(
-                        (element) =>
-                            element!.ref_id ==
-                            incomingFrom);
-                
+                        (element) => element!.ref_id == incomingFrom);
 
                     return Text(
                       index == -1
@@ -907,9 +918,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   'assets/end.svg',
                 ),
                 onTap: () {
-                  stopRinging();
+                  // stopRinging();
                   _reject();
-
                 },
               ),
               SizedBox(
@@ -925,15 +935,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       //     ?
                       () {
                     print("this is pressed accept");
-                    stopRinging();
+                    // stopRinging();
                     _accept();
 
                     setState(() {
                       _isPressed = true;
                       print("tap me");
                     });
-
-                 
                   })
             ],
           ),
@@ -943,8 +951,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   Scaffold callDial() {
-   
-
     print(
         "ths is width ${MediaQuery.of(context).size.height}, ${MediaQuery.of(context).size.width}");
     return Scaffold(
@@ -952,7 +958,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         builder: (context, orientation) {
           return Stack(
             children: [
-             
               Container(
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -1030,23 +1035,21 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           child: Stack(children: <Widget>[
             mediaType == MediaType.video
                 ? remoteVideoFlag
-                ?_session !=null
-                    ?  _session!.values
-                            .first
-                            .remoteRenderer.srcObject!=null
-                        ? RTCVideoView(_session!.values
-                            .first
-                            .remoteRenderer,
-                            mirror: true,
-                            objectFit:
-                                // kIsWeb
-                                //  ?
-                                RTCVideoViewObjectFit
-                                    .RTCVideoViewObjectFitCover
-                            //  : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
-                            )
+                    ? _session != null
+                        ? _session!.values.first.remoteRenderer.srcObject !=
+                                null
+                            ? RTCVideoView(
+                                _session!.values.first.remoteRenderer,
+                                mirror: true,
+                                objectFit:
+                                    // kIsWeb
+                                    //  ?
+                                    RTCVideoViewObjectFit
+                                        .RTCVideoViewObjectFitCover
+                                //  : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
+                                )
+                            : Container()
                         : Container()
-                        :Container()
                     : Container(
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -1084,11 +1087,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     ),
                   ),
 
-            
             Container(
               padding: EdgeInsets.only(top: 55, left: 20),
-      
-
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1119,13 +1119,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             builder: (context, contact, child) {
                           if (contact.contactState == ContactStates.Success) {
                             int index = contact.contactList.users!.indexWhere(
-                                (element) =>
-                                    element!.ref_id ==
-                                    incomingFrom);
+                                (element) => element!.ref_id == incomingFrom);
                             print("i am here----- $index $incomingFrom");
                             return Text(
-                              index ==-1? callTo:
-                              contact.contactList.users![index]!.full_name,
+                              index == -1
+                                  ? callTo
+                                  : contact
+                                      .contactList.users![index]!.full_name,
                               style: TextStyle(
                                   fontFamily: primaryFontFamily,
                                   color: darkBlackColor,
@@ -1138,7 +1138,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             return Container();
                           }
                         }),
-                     
 
                         Text(
                           pressDuration,
@@ -1153,11 +1152,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       ],
                     ),
                   ),
-                
                   SizedBox(
                     height: 20,
                   ),
-                  
                 ],
               ),
             ),
@@ -1189,7 +1186,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                           'assets/VolumeOff.svg'),
                                   onTap: () {
                                     _switchSpeaker();
-                                  
                                   },
                                 ),
                               ),
@@ -1214,8 +1210,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   //  if  (!kIsWeb){
 
                                   _switchSpeaker();
-
-                                  
                                 },
                               ),
                             ),
@@ -1224,11 +1218,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       ))
                 : SizedBox(),
 
-
             !kIsWeb
-                ?
-             
-                mediaType == MediaType.video
+                ? mediaType == MediaType.video
                     ? DragBox(
                         localAudioVideoStates: _localAudioVideoStates,
                       )
@@ -1248,12 +1239,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: _localAudioVideoStates["CameraState"]!
-                              ? localRenderer.srcObject == null
+                              ? localRenderer == null
                                   ? Container()
-                                  : RTCVideoView(localRenderer,
+                                  : RTCVideoView(
+                                      localRenderer!,
                                       key: forsmallView,
                                       mirror: true,
-                                      )
+                                    )
                               : Container(),
                         ),
                       ),
@@ -1278,7 +1270,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   ? SvgPicture.asset('assets/video.svg')
                                   : SvgPicture.asset('assets/video_off.svg'),
                               onTap: () {
-                               
                                 _enableCamera();
                               },
                             ),
@@ -1288,7 +1279,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           ],
                         )
                       : SizedBox(),
-
                   GestureDetector(
                     child: SvgPicture.asset(
                       'assets/end.svg',
@@ -1304,13 +1294,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         _hangUp();
                       }
                       remoteVideoFlag = true;
-
-                     
                     },
                   ),
-
-                 
-
                   SizedBox(width: 20),
                   GestureDetector(
                     child: _localAudioVideoStates["UnMuteState"]!
@@ -1318,17 +1303,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         : SvgPicture.asset('assets/mute_microphone.svg'),
                     onTap: () {
                       _muteMic();
-                     
                     },
                   ),
-                 
                 ],
               ),
             )
           ]),
         );
-    
-    
       }),
     );
   }

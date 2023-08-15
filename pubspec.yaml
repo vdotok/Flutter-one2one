@@ -33,7 +33,7 @@ dependencies:
   path_provider:
   provider: ^5.0.0
   flutter_svg: 
-  audioplayers: 
+  # audioplayers: 
   # data_connection_checker: 
   flutter_device_type: ^0.4.0
   dart_ipify: ^1.1.1
@@ -45,7 +45,7 @@ dependencies:
   # flutter_webrtc:
   #   path: ./flutter_webrtc-0.9.23
   vdotok_stream:
-    path: ../vdotok_stream
+   path: ../vdotok_stream
   move_to_background: ^1.0.2
   wakelock: ^0.6.2
   firebase_core: ^2.8.0
