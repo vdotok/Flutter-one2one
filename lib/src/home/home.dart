@@ -560,6 +560,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // print("thogh $res");
     // if (res == 1) {
     //await _audioPlayer.play(file.path, isLocal: true);
+
     customData = {
       "calleName": callTo,
       "groupName": "",
@@ -572,6 +573,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         callType: callType,
         sessionType: sessionType,
         customData: customData);
+    print(
+        'startingcalll---------- ${mtype} ${callType} ${sessionType} ${customData} ${to}');
     // if (_localStream != null) {
     //here
     // _callBloc.add(CallDialEvent());
@@ -702,7 +705,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   _switchCamera() {
     if (_localAudioVideoStates["CameraState"] == true) {
-      signalingClient.switchCamera(!_localAudioVideoStates["isBackCamera"]!);
+      signalingClient.switchCamera(_localAudioVideoStates["isBackCamera"]);
     } else {
       Fluttertoast.showToast(msg: "First enable camera");
     }
