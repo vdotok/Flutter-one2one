@@ -22,11 +22,15 @@ PODS:
   - Libyuv (1703)
   - move_to_background (0.0.1):
     - Flutter
+  - MTBBarcodeScanner (5.0.11)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
   - permission_handler_apple (9.1.1):
     - Flutter
+  - qr_code_scanner (0.2.0):
+    - Flutter
+    - MTBBarcodeScanner
   - ReachabilitySwift (5.0.0)
   - replay_kit_launcher (1.0.0):
     - Flutter
@@ -88,6 +92,7 @@ DEPENDENCIES:
   - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - replay_kit_launcher (from `.symlinks/plugins/replay_kit_launcher/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - vdotok_stream (from `.symlinks/plugins/vdotok_stream/ios`)
@@ -102,6 +107,7 @@ SPEC REPOS:
     - CNIOLinux
     - CNIOWindows
     - Libyuv
+    - MTBBarcodeScanner
     - ReachabilitySwift
     - SocketRocket
     - SwiftNIO
@@ -133,6 +139,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  qr_code_scanner:
+    :path: ".symlinks/plugins/qr_code_scanner/ios"
   replay_kit_launcher:
     :path: ".symlinks/plugins/replay_kit_launcher/ios"
   shared_preferences_foundation:
@@ -159,8 +167,10 @@ SPEC CHECKSUMS:
   fluttertoast: fafc4fa4d01a6a9e4f772ecd190ffa525e9e2d9c
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
+  MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
+  qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   replay_kit_launcher: 828739da18c9785d5e9aafd4f075ea11d6b61499
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126

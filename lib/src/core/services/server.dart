@@ -1,15 +1,22 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:vdotok_stream_example/src/core/providers/auth.dart';
 import 'dart:convert';
 import '../../../src/core/config/config.dart';
+import '../qrcode/qrcode.dart';
 
 // The function take will take the user request and verfies it with the api. in this case it will authenticate the user
-Future<dynamic> callAPI(datarequest, myurl, authToken) async {
-  final url =Uri.parse("${URL + version + myurl}") ;
-  URL + version + myurl;
-  print("this is api call $datarequest $url  $authToken");
-  final response = await http.post(url,
+Future<dynamic> callAPI(
+  datarequest,
+  myurl,
+  authToken,
+) async {
+  final urlLink = Uri.parse("${AuthProvider.tenantUrl + myurl}");
+
+  print(
+      "this is api call $datarequest $urlLink $tenant_url $project $project_id");
+  final response = await http.post(urlLink,
       headers: authToken != null
           ? {
               HttpHeaders.contentTypeHeader: 'application/json',
@@ -26,11 +33,11 @@ Future<dynamic> callAPI(datarequest, myurl, authToken) async {
   }
 }
 
-Future<dynamic> getAPI(myurl, authToken) async {
-  final url =Uri.parse("${URL + version + myurl}") ;
+Future<dynamic> getAPI(myurl, authToken, url) async {
+  final urlLink = Uri.parse("${url + myurl}");
   print('this is url $url');
   final response = await http.get(
-    url,
+    urlLink,
     headers: authToken != null
         ? {
             HttpHeaders.contentTypeHeader: 'application/json',

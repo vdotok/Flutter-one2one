@@ -249,7 +249,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _callProvider = Provider.of<CallProvider>(context, listen: false);
 
     signalingClient.connect(
-        project_id,
+        AuthProvider.projectId,
         _auth.completeAddress,
         _auth.getUser.ref_id.toString(),
         _auth.getUser.authorization_token.toString(),
@@ -454,7 +454,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
             _callProvider!.callStart();
           }
-
           break;
       }
     };

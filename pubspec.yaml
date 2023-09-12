@@ -51,6 +51,7 @@ dependencies:
 #  firebase_core: ^2.8.0
 #  firebase_messaging: ^14.3.0
   uuid: ^3.0.7
+  qr_code_scanner: ^1.0.1
   
 
 
