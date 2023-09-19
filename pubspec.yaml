@@ -27,7 +27,7 @@ dependencies:
   vibration: ^1.7.4-nullsafety.0
   equatable:
   shared_preferences: ^2.0.5
-  http: ^0.13.4
+  http: 
   json_annotation: ^4.5.0
   device_info: ^2.0.0
   path_provider:

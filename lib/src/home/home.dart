@@ -244,10 +244,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
-    print("this is user data auth ${_auth.getUser.ref_id}");
-    print("this is user data auth ${_auth.getUser.authorization_token}");
+    // print("this is user data auth ${_auth.getUser.ref_id}");
+    // print("this is user data auth ${_auth.getUser.authorization_token}");
     _callProvider = Provider.of<CallProvider>(context, listen: false);
-
+    print(
+        "this is user data auth ${AuthProvider.projectId}${_auth.completeAddress} ${_auth.getUser.ref_id.toString()} ${_auth.getUser.authorization_token.toString()} ${_auth.StungIP} ${int.parse(_auth.StungPort)}");
+    // 8786BUCW 8786BUCW wss://signalling.vdotok.com:8443/callV1 8786BUCW42a7249408f81b882770d7cac52a50fa 988f6dd18d4a3e718c36eb36924a28d4 r-stun1.vdotok.dev 3478
     signalingClient.connect(
         AuthProvider.projectId,
         _auth.completeAddress,
@@ -277,10 +279,24 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _localAudioVideoStates = localAudioVideoStates;
       });
     };
-    signalingClient.onInfoCallback = (type, msg) {
-      Fluttertoast.showToast(msg: msg);
-      if (type == "AllowPermissions") {
-        openAppSettings();
+    signalingClient.onInfoCallback = (String type, msg) {
+      if (type == 'unAvailable') {
+        print('User is Unavailable');
+        stopRingingbyD();
+        _callProvider!.initial();
+        setState(() {
+          localRenderer = null;
+          renderObj.clear();
+          _session = null;
+          _ticker?.cancel();
+          pressDuration = "";
+          inCall = false;
+        });
+      } else {
+        Fluttertoast.showToast(msg: msg);
+        if (type == "AllowPermissions") {
+          openAppSettings();
+        }
       }
     };
     signalingClient.onError = (code, reason) async {
@@ -320,12 +336,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           print("I am in Re Reregister ");
           remoteVideoFlag = true;
           print("here in init state register");
-          // if (noInternetCallHungUp == true) {
-          //   print('this issussus $noInternetCallHungUp');
-          //   //signalingClient.closeSession();
-          //    stopCall();
-          // }
-          // signalingClient.register(_auth.getUser.toJson(), project_id);
         }
       } else {
         print("onError no internet connection");
@@ -341,11 +351,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             backgroundColor: Colors.black,
             textColor: Colors.white,
             fontSize: 14.0);
-        // showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
-        // if (Platform.isIOS) {
         print("uyututuir");
         signalingClient.closeSocket();
-        //}
       }
     };
 
@@ -393,9 +400,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onInComingCall = (dynamic data) {
       playRingingbyD();
-      print("this is data from incoming $data");
+      print("this is data from incoming ${data}");
       setState(() {
-        //incomingFrom= refId;
+        incomingFrom = data['from'];
+        if (data['mediaType'] == 'video') {
+          setState(() {
+            mediaType = MediaType.video;
+          });
+        } else {
+          mediaType = MediaType.audio;
+        }
       });
       _callProvider!.callReceive();
     };
@@ -886,9 +900,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               Consumer<ContactProvider>(
                 builder: (context, contact, child) {
                   if (contact.contactState == ContactStates.Success) {
+                    print('this is list ${contact.contactList.users!}');
                     int index = contact.contactList.users!.indexWhere(
                         (element) => element!.ref_id == incomingFrom);
-
                     return Text(
                       index == -1
                           ? incomingFrom
@@ -1044,14 +1058,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             ? RTCVideoView(
                                 _session![0].values.first.remoteRenderer,
                                 mirror: true,
-                                objectFit:
-                                    // kIsWeb
-                                    //  ?
-                                    RTCVideoViewObjectFit
-                                        .RTCVideoViewObjectFitCover
-                                //  : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
-                                )
-                            : Container()
+                                objectFit: RTCVideoViewObjectFit
+                                    .RTCVideoViewObjectFitCover)
+                            : Center(
+                                child: SvgPicture.asset(
+                                  'assets/userIconCall.svg',
+                                ),
+                              )
                         : Container()
                     : Container(
                         decoration: BoxDecoration(

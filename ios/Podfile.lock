@@ -20,6 +20,9 @@ PODS:
     - Flutter
     - Toast
   - Libyuv (1703)
+  - MMWormhole (2.0.0):
+    - MMWormhole/Core (= 2.0.0)
+  - MMWormhole/Core (2.0.0)
   - move_to_background (0.0.1):
     - Flutter
   - MTBBarcodeScanner (5.0.11)
@@ -72,6 +75,7 @@ PODS:
   - vdotok_stream (0.9.17):
     - Flutter
     - Libyuv (= 1703)
+    - MMWormhole
     - VdoTokStreaming
   - VdoTokStreaming (1.1.30):
     - SocketRocket
@@ -107,6 +111,7 @@ SPEC REPOS:
     - CNIOLinux
     - CNIOWindows
     - Libyuv
+    - MMWormhole
     - MTBBarcodeScanner
     - ReachabilitySwift
     - SocketRocket
@@ -166,6 +171,7 @@ SPEC CHECKSUMS:
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
   fluttertoast: fafc4fa4d01a6a9e4f772ecd190ffa525e9e2d9c
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
+  MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
@@ -181,7 +187,7 @@ SPEC CHECKSUMS:
   SwiftNIOEmbedded: ffcb5147db67d9686c8366b7f8427b36132f2c8a
   SwiftNIOPosix: b49af4bdbecaadfadd5c93dfe28594d6722b75e4
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
-  vdotok_stream: ff6c2aa5f7b9ac1c3009e6285930a31b3660d03c
+  vdotok_stream: 13ac76a91551e51e2e9268fd4ddb66f82188abf7
   VdoTokStreaming: 1e26e7a85d5b5b3b0c17a8b92fadf4ac07a13f5b
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
