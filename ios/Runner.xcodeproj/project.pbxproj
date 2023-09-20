@@ -385,7 +385,7 @@
 				DEVELOPMENT_TEAM = 58S2HSAU7C;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = flt_one2one;
+				INFOPLIST_KEY_CFBundleDisplayName = flutter_one2one;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -527,7 +527,7 @@
 				DEVELOPMENT_TEAM = 58S2HSAU7C;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = flt_one2one;
+				INFOPLIST_KEY_CFBundleDisplayName = flutter_one2one;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -559,7 +559,7 @@
 				DEVELOPMENT_TEAM = 58S2HSAU7C;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = flt_one2one;
+				INFOPLIST_KEY_CFBundleDisplayName = flutter_one2one;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
