@@ -1,6 +1,7 @@
 // ignore_for_file: unused_field
 
 import 'dart:async';
+// import 'dart:js_interop';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +31,7 @@ import '../core/providers/contact_provider.dart';
 String pressDuration = "";
 bool remoteVideoFlag = true;
 bool isDeviceConnected = false;
-
+ContactProvider? _contactProvider;
 // bool enableCamera = true;
 // bool switchMute = true;
 // bool switchSpeaker = true;
@@ -222,7 +223,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   String mediaType = MediaType.video;
 
   bool remoteAudioFlag = true;
-  ContactProvider? _contactProvider;
 
   @override
   void didChangeDependencies() {
@@ -363,13 +363,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("this is mc token in register ${registerRes["mcToken"]}");
         if (noInternetCallHungUp == true) {
           print('this issussus $noInternetCallHungUp');
-          //3
-          // signalingClient.closeSession(true);
         }
       });
-      if (_contactProvider!.contactState != ContactStates.Success) {
+      if (_contactProvider!.contactList == null) {
         _contactProvider!.getContacts(_auth.getUser.auth_token);
+        print('Allusers Api is called');
       }
+      // if (_contactProvider!.contactState != ContactStates.Success) {
+      // _contactProvider!.getContacts(_auth.getUser.auth_token);
+      // }
     };
 
     signalingClient.onLocalStream = (RTCVideoRenderer local) async {
@@ -833,7 +835,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           ));
                         else if (contact.contactState ==
                             ContactStates.Success) {
-                          if (contact.contactList.users == null)
+                          if (contact.contactList!.users == null)
                             return NoContactsScreen(
                               state: isConnected,
                               isSocketConnect: sockett,
@@ -841,7 +843,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                               authProvider: _auth,
                             );
                           else
-                            return contactList(contact.contactList);
+                            return contactList(contact.contactList!);
                         } else
                           return Container(
                             child: Text("no contacts found"),
@@ -900,13 +902,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               Consumer<ContactProvider>(
                 builder: (context, contact, child) {
                   if (contact.contactState == ContactStates.Success) {
-                    print('this is list ${contact.contactList.users!}');
-                    int index = contact.contactList.users!.indexWhere(
+                    print('this is list ${contact.contactList!.users!}');
+                    int index = contact.contactList!.users!.indexWhere(
                         (element) => element!.ref_id == incomingFrom);
                     return Text(
                       index == -1
                           ? incomingFrom
-                          : contact.contactList.users![index]!.full_name,
+                          : contact.contactList!.users![index]!.full_name,
                       style: TextStyle(
                           fontFamily: primaryFontFamily,
                           color: darkBlackColor,
@@ -1134,14 +1136,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         Consumer<ContactProvider>(
                             builder: (context, contact, child) {
                           if (contact.contactState == ContactStates.Success) {
-                            int index = contact.contactList.users!.indexWhere(
+                            int index = contact.contactList!.users!.indexWhere(
                                 (element) => element!.ref_id == incomingFrom);
                             print("i am here----- $index $incomingFrom");
                             return Text(
                               index == -1
                                   ? callTo
                                   : contact
-                                      .contactList.users![index]!.full_name,
+                                      .contactList!.users![index]!.full_name,
                               style: TextStyle(
                                   fontFamily: primaryFontFamily,
                                   color: darkBlackColor,

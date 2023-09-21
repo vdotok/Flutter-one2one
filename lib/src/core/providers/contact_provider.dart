@@ -5,8 +5,8 @@ import '../../../src/core/services/server.dart';
 enum ContactStates { Loading, Success }
 
 class ContactProvider with ChangeNotifier {
-  late ContactList _contactList;
-  ContactList get contactList => _contactList;
+  ContactList? _contactList;
+  ContactList? get contactList => _contactList;
   ContactStates _contactStates = ContactStates.Loading;
   ContactStates get contactState => _contactStates;
 
