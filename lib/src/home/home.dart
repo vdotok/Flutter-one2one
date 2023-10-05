@@ -1,6 +1,8 @@
 // ignore_for_file: unused_field
 
 import 'dart:async';
+
+// import 'dart:html';
 // import 'dart:js_interop';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,10 +39,11 @@ ContactProvider? _contactProvider;
 // bool switchSpeaker = true;
 
 Map<String, bool> _localAudioVideoStates = {
-  "UnMuteState": false,
+  "MuteState": false,
   "SpeakerState": false,
   "CameraState": false,
   "ScreenShareState": false,
+  "MuteAppAudioState": false,
   "isBackCamera": false
 };
 
@@ -70,7 +73,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool notmatched = false;
   bool isConnect = false;
-
   late DateTime _time;
   late DateTime _callTime;
 
@@ -78,7 +80,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Timer? _callticker;
   int count = 0;
   bool iscallAcceptedbyuser = false;
-
+  bool isCallended = false;
   var number;
   var nummm;
   late double upstream;
@@ -90,6 +92,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool inPaused = false;
   var bottom = 20.0;
   var right = 20.0;
+  dynamic DuratinafterReinvite;
   SignalingClient signalingClient = SignalingClient.instance;
 
   bool isInternetConnected = false;
@@ -100,6 +103,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     setState(() {
       pressDuration = newDuration;
     });
+    print('this si pressduration ${pressDuration}');
   }
 
   String _formatDuration(Duration duration) {
@@ -367,7 +371,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       });
       if (_contactProvider!.contactList == null) {
         _contactProvider!.getContacts(_auth.getUser.auth_token);
-        print('Allusers Api is called');
+        print('=============');
       }
       // if (_contactProvider!.contactState != ContactStates.Success) {
       // _contactProvider!.getContacts(_auth.getUser.auth_token);
@@ -378,7 +382,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       print("this is local stream $local");
       setState(() {
         localRenderer = local;
-        // print("this is local renderer srcobject ${localRenderer.srcObject}");
       });
       // }
     };
@@ -452,22 +455,29 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               _ticker?.cancel();
               pressDuration = "";
               inCall = false;
+              isCallended = true;
             });
           }
           break;
         case CallState.CallStateInvite:
           _callProvider!.callDial();
+
           break;
         case CallState.CallStateConnected:
           {
             stopRingingbyD();
             // _callticker?.cancel();
-            _time = DateTime.now();
             print(
-                "this is current time......... $_time......this is calll start time");
-            _ticker = Timer.periodic(Duration(seconds: 1), (_) => _getTimer());
+                "this is current time......... $pressDuration......this is calll start time");
+            if (pressDuration == "" || pressDuration.isEmpty) {
+              _time = DateTime.now();
+              _ticker =
+                  Timer.periodic(Duration(seconds: 1), (_) => _getTimer());
+            } else {}
             print("ticker is $_ticker");
-
+            setState(() {
+              isCallended = false;
+            });
             _callProvider!.callStart();
           }
           break;
@@ -715,12 +725,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _muteMic() {
-    signalingClient.muteMic(!_localAudioVideoStates["UnMuteState"]!);
+    signalingClient.muteMic();
   }
 
   _switchCamera() {
     if (_localAudioVideoStates["CameraState"] == true) {
-      signalingClient.switchCamera(_localAudioVideoStates["isBackCamera"]);
+      signalingClient
+          .switchCamera(!(_localAudioVideoStates["isBackCamera"] as bool));
     } else {
       Fluttertoast.showToast(msg: "First enable camera");
     }
@@ -1156,9 +1167,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             return Container();
                           }
                         }),
-
                         Text(
-                          pressDuration,
+                          pressDuration != "" ? pressDuration : pressDuration,
                           style: TextStyle(
                               decoration: TextDecoration.none,
                               fontSize: 14,
@@ -1316,7 +1326,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   ),
                   SizedBox(width: 20),
                   GestureDetector(
-                    child: _localAudioVideoStates["UnMuteState"]!
+                    child: _localAudioVideoStates["MuteState"]!
                         ? SvgPicture.asset('assets/microphone.svg')
                         : SvgPicture.asset('assets/mute_microphone.svg'),
                     onTap: () {
@@ -1495,13 +1505,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                                     });
                                                     print(
                                                         "three dot icon pressed");
-
-// if(!isRegisteredAlready)
-//                                                 {snackBar = SnackBar(
-//                                                     content: Text(
-//                                                         'Make sure your device has internet connection'));
-//                                                 ScaffoldMessenger.of(context)
-//                                                     .showSnackBar(snackBar);}
                                                   }),
                                   ),
                                   Container(

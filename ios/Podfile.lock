@@ -169,7 +169,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_foreground_task: 21ef182ab0a29a3005cc72cd70e5f45cb7f7f817
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
-  fluttertoast: fafc4fa4d01a6a9e4f772ecd190ffa525e9e2d9c
+  fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
@@ -194,4 +194,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 82ac75ed1e0f196ab464eb2a5f705fa852842d84
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.13.0
